@@ -1,0 +1,12 @@
+# Ignore the virtualenv
+venv/
+
+# Ignore all python caches
+__pycache__/
+
+# Ignore development DB
+db.sqlite3
+
+# Ignore configurations by various IDEs
+.idea/
+

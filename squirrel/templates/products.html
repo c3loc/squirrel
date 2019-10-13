@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block title %}Squirrel | Product List{% endblock %}
+
+{% block content %}
+  <h1>Products</h1>
+  <p><a href="{% url 'new_product' %}" role="button" class="btn btn-primary">New Product</a></p>
+  {% render_table table %}
+{% endblock %}
