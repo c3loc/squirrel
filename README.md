@@ -32,6 +32,7 @@ with
 
 ```shell script
 ln -s $PWD/pre-commit.sh .git/hooks/pre-commit
+ln -s $PWD/prepare-commit-msg.sh .git/hooks/prepare-commit-msg
 ``` 
  
 ### Commit message style
