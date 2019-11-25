@@ -91,7 +91,7 @@ def product(request, product_id=None):
                 product_object.created_by = user
             product_object.save()
 
-            return redirect('orders')
+            return redirect('products')
     else:
         if product_object:
             form = ProductForm(instance=product_object)
