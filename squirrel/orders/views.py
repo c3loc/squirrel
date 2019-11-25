@@ -76,7 +76,7 @@ def product(request, product_id=None):
     if product_id:
         product_object = Product.objects.get(id=product_id)
     else:
-        order_object = None
+        product_object = None
 
     if request.method == 'POST':
         if product_object:
@@ -86,10 +86,10 @@ def product(request, product_id=None):
             form = ProductForm(request.POST)
 
         if form.is_valid():
-            order_object = form.save(commit=False)
+            product_object = form.save(commit=False)
             if not product_id:
-                order_object.created_by = user
-            order_object.save()
+                product_object.created_by = user
+            product_object.save()
 
             return redirect('orders')
     else:
