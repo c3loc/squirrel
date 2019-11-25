@@ -13,3 +13,6 @@ db.sqlite3
 # Ignore node stuff
 node_modules/
 package-lock.json
+
+# Code coverage
+.coverage

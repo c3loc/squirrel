@@ -134,3 +134,12 @@ LOGIN_REDIRECT_URL = 'orders'
 
 # django-tables2 config
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+
+# Test running
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=orders',
+]
