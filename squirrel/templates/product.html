@@ -2,10 +2,10 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Squirrel | Order{% endblock %}
+{% block title %}Squirrel | Product{% endblock %}
 
 {% block content %}
-  <h1>New Order</h1>
+  <h1>Product</h1>
   <form method="post">
     {% csrf_token %}
     <div class="row">
@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-    <button type="submit" class="btn btn-success">Save order</button>
+    <button type="submit" class="btn btn-success" >Save product</button>
   </form>
 {% endblock %}
 
