@@ -19,6 +19,6 @@ class ProductTable(tables.Table):
     class Meta:
         model = Product
         attrs = {'class': 'table table-sm'}
-        fields = ['name', 'unit', 'url']
+        fields = ['name', 'unit', 'unit_price', 'url']
 
     edit = TemplateColumn(template_name='tables/product_button_column.html')
