@@ -24,4 +24,4 @@ flake8 squirrel/
 
 # Run python tests
 cd squirrel
-python manage.py test 1>/dev/null
+python manage.py test -v 0
