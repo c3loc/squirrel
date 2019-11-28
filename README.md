@@ -37,7 +37,7 @@ Activate the venv and setup pre-commit
 source venv/bin/activate
 
 # Set up pre-commit
-pre-commit install --hook-type commit-msg
+pre-commit install --hook-type commit-msg --hook-type pre-commit
 ```
 
 That’s it. Now, every time before a commit is created, the defined checks
