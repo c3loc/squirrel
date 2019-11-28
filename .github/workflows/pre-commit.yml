@@ -1,6 +1,6 @@
 name: format, lint & test
 
-on: [pull_request]
+on: [push]
 
 jobs:
   ci:
