@@ -30,6 +30,10 @@ class OrderTable(tables.Table):
             return f"{order_sum} €"
         return "—"
 
+    @staticmethod
+    def render_unit_price(value):
+        return f"{value} €"
+
 
 class ProductTable(tables.Table):
     class Meta:
@@ -38,3 +42,7 @@ class ProductTable(tables.Table):
         fields = ["name", "unit", "unit_price", "url"]
 
     edit = TemplateColumn(template_name="tables/product_button_column.html")
+
+    @staticmethod
+    def render_unit_price(value):
+        return f"{value} €"
