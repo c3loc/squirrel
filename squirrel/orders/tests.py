@@ -184,3 +184,20 @@ class ProductUpdateTests(TestCase):
         # This order is completed and must not change its unit_price
         order_no_price_change = Order.objects.get(amount=42)
         self.assertEqual(order_no_price_change.unit_price, Decimal("423.2312"))
+
+
+class OrderCreateTests(TestCase):
+    def setUp(self) -> None:
+        User.objects.create_user("Wheatly")
+        Team.objects.create(name="Aperture Science Laboratories")
+
+        Product.objects.create(name="Dr. Cave Johnson", unit_price=23.42)
+        Order.objects.create(
+            product=Product.objects.first(), team=Team.objects.first(),
+        )
+
+    def test_inherit_product_price_on_create(self):
+        order = Order.objects.first()
+
+        # The order has to have the products unit_price as it was not specified on creation
+        self.assertEqual(order.unit_price, Decimal("23.420"))
