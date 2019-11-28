@@ -25,47 +25,39 @@ pip install -r requirements-dev.txt
 ## Contributions
 
 To contribute, please read through this section before submitting a PR.
-Everything described below is automatically tested in with Github Actions.
+Everything described below is automatically tested in with Github Actions and with
+the supplied pre-commit configuration.
 
-The included pre-commit hook performs all checks detailed below. Please set it up
-with 
+### Setup
 
-```shell script
-ln -s $PWD/pre-commit.sh .git/hooks/pre-commit
-ln -s $PWD/prepare-commit-msg.sh .git/hooks/prepare-commit-msg
-``` 
- 
-### Commit message style
-
-Your commit message adheres to the [conventional commit standard](https://www.conventionalcommits.org/en/v1.0.0/), version 1.0.0.
-
-TL;DR: Your commit must start with a type which has to be one of:
-
-* `fix:` for bug fixes (patch version increment)
-* `feat:` for new features (minor version increment)
-* `docs:` for documentation changes
-* `test:` for changes to tests only
-
-If you introduce a breaking change, add a `!` after the type. This also requires a major version update.
-
-### Linting
-
-The code has to pass a flake8 test with the [.flake8](.flake8) config for this repository.
-
-You can install and run it manually with
+Activate the venv and setup pre-commit
 
 ```
-pip install flake8
-flake8 squirrel/
+# Activate the venv
+source venv/bin/activate
+
+# Set up pre-commit
+pre-commit install --hook-type commit-msg
 ```
+
+That’s it. Now, every time before a commit is created, the defined checks
+will run.
+
+### Formatting and Linting
+
+`pre-commit` runs:
+
+* `isort` for include sorting
+* `black` for code formatting
+* `flak8` for syntax checking
+
+If any of those fail, you need to fix all problems before you can commit
+your change. If you need help with any of it, please open an issue.
 
 ### Tests
 
-The code has to pass all defined tests. If you add new functionality, you should add tests for it.
+When you push to the repository on github or update your Pull Request,
+all django tests run automatically. Please try to add tests for everything
+you’re changing/adding.
 
-You can manually run tests with
-
-```
-cd squirrel
-python manage.py test
-```
+If you need help with that, you can always open an issue and ask for help.
