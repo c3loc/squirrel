@@ -53,6 +53,7 @@ class Order(models.Model):
         Event, on_delete=models.PROTECT, related_name="orders", blank=True, null=True
     )
     team = models.ForeignKey(Team, on_delete=models.PROTECT, related_name="orders")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
     created_by = models.ForeignKey(
