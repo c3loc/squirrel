@@ -6,11 +6,29 @@ class OrderTable(tables.Table):
     class Meta:
         model = Order
         attrs = {"class": "table table-sm"}
-        fields = ["amount", "unit", "product", "state", "event", "team"]
+        fields = [
+            "amount",
+            "unit",
+            "product",
+            "state",
+            "event",
+            "team",
+            "unit_price",
+            "price",
+        ]
 
     amount = Column(attrs={"td": {"align": "center"}})
     unit = Column(accessor=A("product__unit"))
     edit = TemplateColumn(template_name="tables/order_button_column.html")
+    price = Column(empty_values=(), verbose_name="Order sum")
+
+    @staticmethod
+    def render_price(record):
+        if record.amount and record.unit_price:
+            order_sum = record.amount * record.unit_price
+
+            return f"{order_sum} €"
+        return "—"
 
 
 class ProductTable(tables.Table):
