@@ -10,14 +10,11 @@ repos:
     rev: 19.10b0
     hooks:
     -   id: black
-        files: "squirrel/"
 
 -   repo: https://github.com/pre-commit/mirrors-isort
     rev: v4.3.21
     hooks:
     -   id: isort
-        args:
-        -   "--recursive"
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.4.0
