@@ -5,7 +5,6 @@ from django.core import mail
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import resolve, reverse
-
 from orders.models import Event, Order, Product, Team
 from orders.views import overview
 

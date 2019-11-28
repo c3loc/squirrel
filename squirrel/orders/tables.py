@@ -1,5 +1,4 @@
 from django_tables2 import A, Column, TemplateColumn, tables
-
 from orders.models import Order, Product
 
 
