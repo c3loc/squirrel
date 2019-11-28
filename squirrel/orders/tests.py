@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
@@ -145,3 +147,40 @@ class PasswordResetDoneTests(TestCase):
     def test_view_function(self):
         view = resolve("/reset/done")
         self.assertEquals(view.func.view_class, auth_views.PasswordResetDoneView)
+
+
+class ProductUpdateTests(TestCase):
+    def setUp(self) -> None:
+        # https://github.com/moby/moby/blob/3152f9436292115c97b4d8bb18c66cf97876ee75/pkg/namesgenerator/names-generator.go#L838-L840
+        User.objects.create_user("Boring Wozniak")
+        Team.objects.create(name="Aperture Science Laboratories")
+
+        Product.objects.create(name="Tardis", unit_price=17.0042)
+        Order.objects.create(
+            amount=42,
+            product=Product.objects.first(),
+            team=Team.objects.first(),
+            state="COM",
+            unit_price=423.2312,
+        )
+
+        Order.objects.create(
+            amount=23,
+            product=Product.objects.first(),
+            team=Team.objects.first(),
+            unit_price=13.5731,
+        )
+
+    def test_inherit_product_price(self):
+        product = Product.objects.first()
+
+        product.unit_price = 23.0341
+        product.save()
+
+        # This order has to change its unit_price as it’s not completed yet
+        order_price_change = Order.objects.get(amount=23)
+        self.assertEqual(order_price_change.unit_price, Decimal("23.0341"))
+
+        # This order is completed and must not change its unit_price
+        order_no_price_change = Order.objects.get(amount=42)
+        self.assertEqual(order_no_price_change.unit_price, Decimal("423.2312"))

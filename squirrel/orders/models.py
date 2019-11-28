@@ -31,6 +31,19 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        """Set the unit_price for all non-completed orders to the new product price"""
+        orders = Order.objects.filter(product=self)
+
+        # We exclude completed orders
+        orders = orders.exclude(state="COM")
+
+        for order in orders:
+            order.unit_price = self.unit_price
+            order.save()
+
+        super().save(*args, **kwargs)
+
 
 class Order(models.Model):
     """A single order. Orders are always referenced to a team"""
