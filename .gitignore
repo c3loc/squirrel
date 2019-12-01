@@ -16,3 +16,6 @@ package-lock.json
 
 # Code coverage
 .coverage
+
+# vim
+*.swp
