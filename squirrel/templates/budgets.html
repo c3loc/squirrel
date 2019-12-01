@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block title %}Squirrel | Budgets{% endblock %}
+
+{% block content %}
+  <h1>Budgets</h1>
+  {% render_table table %}
+{% endblock %}

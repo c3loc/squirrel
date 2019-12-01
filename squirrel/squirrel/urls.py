@@ -42,6 +42,7 @@ urlpatterns = [
     path("teams/new", views.team, name="new_team"),
     path("teams/<int:team_id>", views.team, name="edit_team"),
     path("teams/delete/<int:team_id>", views.delete_team, name="delete_team"),
+    path("budgets", views.BudgetListView.as_view(), name="budgets"),
     path("admin/", admin.site.urls),
     path("accounts/login/", views.login_redirect),
 ]

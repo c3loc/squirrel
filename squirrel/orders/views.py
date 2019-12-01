@@ -6,7 +6,7 @@ from django_tables2 import SingleTableView
 
 from .forms import OrderForm, ProductForm, TeamForm
 from .models import Event, Order, Product, Team
-from .tables import OrderTable, ProductTable, TeamTable
+from .tables import BudgetTable, OrderTable, ProductTable, TeamTable
 
 
 def login_redirect(request):
@@ -33,6 +33,12 @@ class TeamListView(LoginRequiredMixin, SingleTableView):
     model = Team
     table_class = TeamTable
     template_name = "teams.html"
+
+
+class BudgetListView(LoginRequiredMixin, SingleTableView):
+    model = Team
+    table_class = BudgetTable
+    template_name = "budgets.html"
 
 
 @login_required
