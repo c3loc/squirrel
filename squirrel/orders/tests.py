@@ -4,6 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.core import mail
+from django.core.exceptions import PermissionDenied
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import resolve, reverse
@@ -156,13 +157,6 @@ class ProductUpdateTests(TestCase):
         Team.objects.create(name="Aperture Science Laboratories")
 
         Product.objects.create(name="Tardis", unit_price=17.0042)
-        Order.objects.create(
-            amount=42,
-            product=Product.objects.first(),
-            team=Team.objects.first(),
-            state="COM",
-            unit_price=423.2312,
-        )
 
         Order.objects.create(
             amount=23,
@@ -178,15 +172,11 @@ class ProductUpdateTests(TestCase):
         product.save()
 
         # This order has to change its unit_price as it’s not completed yet
-        order_price_change = Order.objects.get(amount=23)
+        order_price_change = Order.objects.first()
         self.assertEqual(order_price_change.unit_price, Decimal("23.0341"))
 
-        # This order is completed and must not change its unit_price
-        order_no_price_change = Order.objects.get(amount=42)
-        self.assertEqual(order_no_price_change.unit_price, Decimal("423.2312"))
 
-
-class OrderCreateTests(TestCase):
+class OrderModelTests(TestCase):
     def setUp(self) -> None:
         User.objects.create_user("Wheatly")
         Team.objects.create(name="Aperture Science Laboratories")
@@ -201,3 +191,16 @@ class OrderCreateTests(TestCase):
 
         # The order has to have the products unit_price as it was not specified on creation
         self.assertEqual(order.unit_price, Decimal("23.420"))
+
+    def test_forbid_completed_order_deletion_or_update(self):
+        order = Order.objects.first()
+
+        order.state = "COM"
+        order.save()
+
+        # The order is now completed and must not be deleted
+        self.assertRaises(PermissionDenied, order.delete())
+
+        # The order must also not be changed once it’s completed
+        order.amount = 1337
+        self.assertRaises(PermissionDenied, order.save())

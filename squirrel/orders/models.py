@@ -2,6 +2,7 @@
 Models for our orders
 """
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 from django.db import models
 
 
@@ -48,6 +49,12 @@ class Product(models.Model):
 class Order(models.Model):
     """A single order. Orders are always referenced to a team"""
 
+    __old_state = None
+
+    def __init__(self, *args, **kwargs):
+        super(Order, self).__init__(*args, **kwargs)
+        self.__old_state = self.state
+
     STATE_CHOICES = [
         ("REQ", "Requested"),  # User has requested Order
         ("APP", "Approved"),  # Order was approved by purchase department
@@ -75,11 +82,27 @@ class Order(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        """If no unit_price was set, set the price to the price of the product if one is set"""
+        """Orders have some special behavior on saving"""
+
+        # If no unit_price was set, set the price to the price of the product if one is set
         if not self.unit_price and self.product:
             self.unit_price = self.product.unit_price
 
+        # If the old state was COM, the order can’t be changed anymore
+        # An order can however be created in the „completed“ state, therefore the (and self.id)
+        if self.__old_state == "COM" and self.id:
+            raise PermissionDenied("Completed orders can’t be changed.")
+
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Orders have some special behavior on deletion"""
+
+        # If the order is completed, it must not be deleted
+        if self.__old_state == "COM":
+            raise PermissionDenied("Completed orders can’t be deleted.")
+
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return "{} {} of {}".format(self.amount, self.product.unit, self.product)
