@@ -38,6 +38,10 @@ urlpatterns = [
     path(
         "products/delete/<int:product_id>", views.delete_product, name="delete_product"
     ),
+    path("teams", views.TeamListView.as_view(), name="teams"),
+    path("teams/new", views.team, name="new_team"),
+    path("teams/<int:team_id>", views.team, name="edit_team"),
+    path("teams/delete/<int:team_id>", views.delete_team, name="delete_team"),
     path("admin/", admin.site.urls),
     path("accounts/login/", views.login_redirect),
 ]

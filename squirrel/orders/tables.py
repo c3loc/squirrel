@@ -1,5 +1,14 @@
 from django_tables2 import A, Column, TemplateColumn, tables
-from orders.models import Order, Product
+from orders.models import Order, Product, Team
+
+
+class TeamTable(tables.Table):
+    class Meta:
+        model = Team
+        attrs = {"class": "table table-sm"}
+        fields = ["name"]
+
+    edit = TemplateColumn(template_name="tables/team_button_column.html")
 
 
 class OrderTable(tables.Table):

@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
-from .forms import OrderForm, ProductForm
+from .forms import OrderForm, ProductForm, TeamForm
 from .models import Event, Order, Product, Team
-from .tables import OrderTable, ProductTable
+from .tables import OrderTable, ProductTable, TeamTable
 
 
 def login_redirect(request):
@@ -27,6 +27,12 @@ class ProductListView(LoginRequiredMixin, SingleTableView):
     model = Product
     table_class = ProductTable
     template_name = "products.html"
+
+
+class TeamListView(LoginRequiredMixin, SingleTableView):
+    model = Team
+    table_class = TeamTable
+    template_name = "teams.html"
 
 
 @login_required
@@ -113,3 +119,44 @@ def delete_product(request, product_id=None):
     product_object.delete()
 
     return redirect("products")
+
+
+@login_required
+def team(request, team_id=None):
+    user = User.objects.first()  # TODO: get the currently logged in user
+
+    if team_id:
+        team_object = Team.objects.get(id=team_id)
+    else:
+        team_object = None
+
+    if request.method == "POST":
+        if team_object:
+            # TODO: Check that user has rights to edit team
+            form = TeamForm(request.POST, instance=team_object)
+        else:
+            form = TeamForm(request.POST)
+
+        if form.is_valid():
+            team_object = form.save(commit=False)
+            if not team_id:
+                team_object.created_by = user
+            team_object.save()
+
+            return redirect("teams")
+    else:
+        if team_object:
+            form = TeamForm(instance=team_object)
+        else:
+            form = TeamForm()
+
+    return render(request, "team.html", {"form": form})
+
+
+@login_required
+def delete_team(request, team_id=None):
+    # TODO: Check that user has rights to delete product
+    team_object = get_object_or_404(Team, id=team_id)
+    team_object.delete()
+
+    return redirect("teams")
