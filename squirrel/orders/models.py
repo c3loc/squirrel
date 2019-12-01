@@ -2,7 +2,7 @@
 Models for our orders
 """
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models
 
 
@@ -63,7 +63,14 @@ class Order(models.Model):
     ]
 
     amount = models.PositiveIntegerField(default=1)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=True)
+
+    # Either a product or a free form item have to be specified
+    product = models.ForeignKey(
+        Product, on_delete=models.PROTECT, null=True, blank=True
+    )
+    wish = models.CharField(max_length=255, blank=True)
+    url = models.URLField(blank=True)
+
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -80,6 +87,13 @@ class Order(models.Model):
     updated_by = models.ForeignKey(
         User, null=True, related_name="orders_updates", on_delete=models.SET_NULL
     )
+
+    def clean(self):
+        """We need to check if either a product or a free form text are set"""
+        if not self.product and not self.wish:
+            raise ValidationError("An order must have either a product or an item set")
+        elif self.product and self.wish:
+            raise ValidationError("An order must not have a product and an item set")
 
     def save(self, *args, **kwargs):
         """Orders have some special behavior on saving"""

@@ -6,7 +6,16 @@ from .models import Order, Product, Team
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ["amount", "product", "state", "unit_price", "event", "team"]
+        fields = [
+            "amount",
+            "product",
+            "wish",
+            "url",
+            "state",
+            "unit_price",
+            "event",
+            "team",
+        ]
 
 
 class ProductForm(forms.ModelForm):

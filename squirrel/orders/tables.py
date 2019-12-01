@@ -18,7 +18,7 @@ class OrderTable(tables.Table):
         fields = [
             "amount",
             "unit",
-            "product",
+            "item",
             "state",
             "event",
             "team",
@@ -26,10 +26,20 @@ class OrderTable(tables.Table):
             "price",
         ]
 
+    # The item that is displayed to the user can either be the wish or the configured product
+    item = Column(empty_values=())
+
     amount = Column(attrs={"td": {"align": "center"}})
     unit = Column(accessor=A("product__unit"))
     edit = TemplateColumn(template_name="tables/order_button_column.html")
     price = Column(empty_values=(), verbose_name="Order sum")
+
+    @staticmethod
+    def render_item(record):
+        if record.product:
+            return record.product
+        else:
+            return record.wish
 
     @staticmethod
     def render_price(record):
