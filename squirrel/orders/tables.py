@@ -83,10 +83,6 @@ class BudgetTable(tables.Table):
     @staticmethod
     def render_orders_sum(record):
         orders = Order.objects.filter(team=record)
-
         total = sum(order.unit_price * order.amount for order in orders)
 
-        if total:
-            return f"{total} €"
-        else:
-            return "No orders yet."
+        return f"{total} €"
