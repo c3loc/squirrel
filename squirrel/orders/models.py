@@ -26,7 +26,7 @@ class Product(models.Model):
 
     name = models.CharField(max_length=250)
     unit = models.CharField(max_length=20, default="pieces")
-    unit_price = models.DecimalField(max_digits=10, decimal_places=4, default=1.0000)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
     url = models.URLField(blank=True)
 
     def __str__(self):
@@ -65,7 +65,7 @@ class Order(models.Model):
     amount = models.PositiveIntegerField(default=1)
     product = models.ForeignKey(Product, on_delete=models.PROTECT, null=True)
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=4)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     event = models.ForeignKey(
         Event, on_delete=models.PROTECT, related_name="orders", blank=True, null=True
