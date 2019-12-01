@@ -1,4 +1,4 @@
-from django_tables2 import A, Column, TemplateColumn, tables
+from django_tables2 import Column, TemplateColumn, tables
 from orders.models import Order, Product, Team
 
 
@@ -17,7 +17,6 @@ class OrderTable(tables.Table):
         attrs = {"class": "table table-sm"}
         fields = [
             "amount",
-            "unit",
             "item",
             "state",
             "event",
@@ -28,11 +27,17 @@ class OrderTable(tables.Table):
 
     # The item that is displayed to the user can either be the wish or the configured product
     item = Column(empty_values=())
-
-    amount = Column(attrs={"td": {"align": "center"}})
-    unit = Column(accessor=A("product__unit"))
     edit = TemplateColumn(template_name="tables/order_button_column.html")
     price = Column(empty_values=(), verbose_name="Order sum")
+
+    @staticmethod
+    def render_amount(record):
+
+        # A product always has a unit
+        if record.product:
+            return f"{record.amount} {record.product.unit}"
+        else:
+            return record.amount
 
     @staticmethod
     def render_item(record):
