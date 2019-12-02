@@ -5,32 +5,32 @@
 {% block title %}Squirrel | Product{% endblock %}
 
 {% block content %}
-  <h1>Product</h1>
   <form method="post">
     {% csrf_token %}
-    <div class="row">
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.name|as_crispy_field }}
+    <div class="card mt-3 mb-3">
+      <h5 class="card-header">Product</h5>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+              {{ form.name|as_crispy_field }}
+          </div>
+          <div class="col-sm-6 col-md-8">
+            {{ form.url|as_crispy_field }}
+          </div>
         </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.unit|as_crispy_field }}
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+            {{ form.unit|as_crispy_field }}
+          </div>
         </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.unit_price|as_crispy_field }}
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+            {{ form.unit_price|as_crispy_field }}
+          </div>
         </div>
-      </div>
-      <div class="col-md-12 col-lg-6">
-        <div class="form-group">
-          {{ form.url|as_crispy_field }}
-        </div>
+        <button type="submit" class="btn btn-success">Save product</button>
       </div>
     </div>
-    <button type="submit" class="btn btn-success" >Save product</button>
   </form>
 {% endblock %}
 
