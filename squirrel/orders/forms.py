@@ -9,7 +9,7 @@ class OrderForm(forms.ModelForm):
         fields = [
             "amount",
             "product",
-            "wish",
+            "product_suggestion",
             "url",
             "state",
             "unit_price",

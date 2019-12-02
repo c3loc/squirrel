@@ -68,7 +68,7 @@ class Order(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.PROTECT, null=True, blank=True
     )
-    wish = models.CharField(max_length=255, blank=True)
+    product_suggestion = models.CharField(max_length=255, blank=True)
     url = models.URLField(blank=True)
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
@@ -90,9 +90,9 @@ class Order(models.Model):
 
     def clean(self):
         """We need to check if either a product or a free form text are set"""
-        if not self.product and not self.wish:
+        if not self.product and not self.product_suggestion:
             raise ValidationError("An order must have either a product or an item set")
-        elif self.product and self.wish:
+        elif self.product and self.product_suggestion:
             raise ValidationError("An order must not have a product and an item set")
 
     def save(self, *args, **kwargs):
