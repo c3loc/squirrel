@@ -21,4 +21,4 @@ jobs:
         pre-commit run --all-files
     - name: Test with django tests
       run: |
-        python squirrel/manage.py test squirrel/
+        SECRET_KEY=ONLYFORTESTINGPURPOSES python squirrel/manage.py test squirrel/
