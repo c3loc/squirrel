@@ -46,7 +46,7 @@ def order(request, order_id=None):
     user = User.objects.first()  # TODO: get the currently logged in user
 
     if order_id:
-        order_object = Order.objects.get(id=order_id)
+        order_object = get_object_or_404(Order, id=order_id)
     else:
         order_object = None
 
@@ -91,7 +91,7 @@ def product(request, product_id=None):
     user = User.objects.first()  # TODO: get the currently logged in user
 
     if product_id:
-        product_object = Product.objects.get(id=product_id)
+        product_object = get_object_or_404(Product, id=product_id)
     else:
         product_object = None
 
@@ -132,7 +132,7 @@ def team(request, team_id=None):
     user = User.objects.first()  # TODO: get the currently logged in user
 
     if team_id:
-        team_object = Team.objects.get(id=team_id)
+        team_object = get_object_or_404(Team, id=team_id)
     else:
         team_object = None
 
