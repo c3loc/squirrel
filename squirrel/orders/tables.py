@@ -44,7 +44,7 @@ class OrderTable(tables.Table):
         if record.product:
             return record.product
         else:
-            return record.wish
+            return record.product_suggestion
 
     @staticmethod
     def render_price(record):
