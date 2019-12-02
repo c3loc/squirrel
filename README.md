@@ -10,6 +10,8 @@ For usage, see the [docs directory](docs):
 
 ## Setup
 
+You need to install all requirements from requirements.txt and have a config file that specifies a secret key. 
+
 ### Setup the venv
 
 ```sh
@@ -20,6 +22,47 @@ pip install -r requirements.txt
 
 # For development only
 pip install -r requirements-dev.txt
+```
+
+### Configure squirrel
+
+For squirrel to run, you need to configure it. The supplied [`settings.example.ini`](squirrel/settings.example.ini) lists
+all possible settings.
+
+Put your configuration file at `squirrel/settings.ini`.
+
+You need to set at least a `SECRET_KEY` or squirrel will not start.
+
+### Configure the web server
+
+Your web server must encrypt connections. squirrel will not work properly without HTTPS in production mode.
+
+Your web server must serve requests for `/public` from the directory `squirrel`.
+
+If squirrel is installed in `/var/www/squirrel`, the requests must be served from `/var/www/squirrel/squirrel/public`.
+
+Example for nginx:
+
+```
+location /public {
+    root /var/www/squirrel/squirrel;
+}
+```
+
+### Initialize and update squirrel 
+
+When you first install squirrel and when you update it, you have to perform some extra steps. In the `squirrel` directory, run:
+
+``` 
+# Migrate the database
+python3 manage.py migrate
+
+# Collect static files
+python3 manage.py collectstatic
+
+# Create a superuser with all rights
+# You only have to do this when installing. Updating preserves all data.
+python3 manage.py createsuperuser
 ```
 
 ## Contributions
