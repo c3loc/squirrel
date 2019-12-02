@@ -156,24 +156,24 @@ class ProductUpdateTests(TestCase):
         User.objects.create_user("Boring Wozniak")
         Team.objects.create(name="Aperture Science Laboratories")
 
-        Product.objects.create(name="Tardis", unit_price=17.0042)
+        Product.objects.create(name="Tardis", unit_price=17.00)
 
         Order.objects.create(
             amount=23,
             product=Product.objects.first(),
             team=Team.objects.first(),
-            unit_price=13.5731,
+            unit_price=13.57,
         )
 
     def test_inherit_product_price(self):
         product = Product.objects.first()
 
-        product.unit_price = 23.0341
+        product.unit_price = 23.03
         product.save()
 
         # This order has to change its unit_price as it’s not completed yet
         order_price_change = Order.objects.first()
-        self.assertEqual(order_price_change.unit_price, Decimal("23.0341"))
+        self.assertEqual(order_price_change.unit_price, Decimal("23.03"))
 
 
 class OrderModelTests(TestCase):
@@ -190,7 +190,7 @@ class OrderModelTests(TestCase):
         order = Order.objects.first()
 
         # The order has to have the products unit_price as it was not specified on creation
-        self.assertEqual(order.unit_price, Decimal("23.420"))
+        self.assertEqual(order.unit_price, Decimal("23.42"))
 
     def test_forbid_completed_order_deletion_or_update(self):
         order = Order.objects.first()
