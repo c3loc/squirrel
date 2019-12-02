@@ -5,10 +5,8 @@
 {% block title %}Squirrel | Order{% endblock %}
 
 {% block content %}
-  <h1>Order</h1>
   <form method="post">
     {% csrf_token %}
-    <button type="submit" class="btn btn-success">Save order</button>
     <div class="card mt-3">
       <h5 class="card-header">Order Item</h5>
       <div class="card-body">
