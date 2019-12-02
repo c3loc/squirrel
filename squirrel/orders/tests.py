@@ -8,8 +8,8 @@ from django.core.exceptions import PermissionDenied
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import resolve, reverse
+from orders import views
 from orders.models import Event, Order, Product, Team
-from orders.views import overview
 
 
 def login(self):
@@ -23,30 +23,79 @@ def login(self):
 class RoutingTests(TestCase):
     """Test routing of all urlpatterns"""
 
-    def test_root_resolves_overview_view(self):
+    def test_root_resolves_overview(self):
         view = resolve("/")
-        self.assertEqual(view.func, overview)
+        self.assertEqual(view.func, views.overview)
 
+    def test_orders_resolves_orders(self):
+        view = resolve("/orders")
+        self.assertEqual(view.url_name, "orders")
 
-class NoOrderTests(TestCase):
-    """Tests when there are no orders"""
+    def test_order_resolves_order(self):
+        view = resolve("/orders/23")
+        self.assertEqual(view.func, views.order)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"order_id": 23})
 
-    def setUp(self):
-        Event.objects.create(name="TestEvent")
+    def test_new_order_resolves_new_order(self):
+        view = resolve("/orders/new")
+        self.assertEqual(view.func, views.order)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
 
-        login(self)
+    def test_delete_order_resolves_delete_order(self):
+        view = resolve("/orders/delete/19")
+        self.assertEqual(view.func, views.delete_order)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"order_id": 19})
 
-    def test_orders_status_code(self):
-        """Order overview returns 200"""
-        url = reverse("orders")
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+    def test_products_resolves_products(self):
+        view = resolve("/products")
+        self.assertEqual(view.url_name, "products")
 
-    def test_empty_orders_shows_no_orders(self):
-        """Order overview shows no orders when there are none"""
-        url = reverse("orders")
-        response = self.client.get(url)
-        self.assertContains(response, "New Order</a>")
+    def test_product_resolves_product(self):
+        view = resolve("/products/17")
+        self.assertEqual(view.func, views.product)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"product_id": 17})
+
+    def test_new_product_resolves_new_product(self):
+        view = resolve("/products/new")
+        self.assertEqual(view.func, views.product)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
+
+    def test_delete_product_resolves_delete_product(self):
+        view = resolve("/products/delete/12")
+        self.assertEqual(view.func, views.delete_product)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"product_id": 12})
+
+    def test_teams_resolves_teams(self):
+        view = resolve("/teams")
+        self.assertEqual(view.url_name, "teams")
+
+    def test_team_resolves_team(self):
+        view = resolve("/teams/17")
+        self.assertEqual(view.func, views.team)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"team_id": 17})
+
+    def test_new_team_resolves_new_team(self):
+        view = resolve("/teams/new")
+        self.assertEqual(view.func, views.team)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
+
+    def test_delete_team_resolves_delete_team(self):
+        view = resolve("/teams/delete/12")
+        self.assertEqual(view.func, views.delete_team)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"team_id": 12})
+
+    def test_budgets_resolves_budgets(self):
+        view = resolve("/budgets")
+        self.assertEqual(view.url_name, "budgets")
 
 
 class OrderTests(TestCase):
@@ -71,6 +120,18 @@ class OrderTests(TestCase):
             team=team_object,
             created_by=user_object,
         )
+
+    def test_orders_status_code(self):
+        """Order overview returns 200"""
+        url = reverse("orders")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_orders_shows_new_button(self):
+        """Order overview shows no orders when there are none"""
+        url = reverse("orders")
+        response = self.client.get(url)
+        self.assertContains(response, "New Order</a>")
 
     def test_filled_orders_shows_orders(self):
         """Order overview does contain a link to existing order"""
