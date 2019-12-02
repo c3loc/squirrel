@@ -8,45 +8,64 @@
   <h1>Order</h1>
   <form method="post">
     {% csrf_token %}
-    <div class="row">
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.amount|as_crispy_field }}
+    <button type="submit" class="btn btn-success">Save order</button>
+    <div class="card mt-3">
+      <h5 class="card-header">Order Item</h5>
+      <div class="card-body">
+        <p class="card-text"><strong>You need to either choose a product or submit a wish.</strong> If you submit a wish, you can add a URL to the product.</p>
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+              {{ form.amount|as_crispy_field }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+            {{ form.product|as_crispy_field }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+            {{ form.wish|as_crispy_field }}
+          </div>
+          <div class="col-sm-6 col-md-4">
+            {{ form.url|as_crispy_field }}
+          </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.product|as_crispy_field }}
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header">Meta Info</h5>
+      <div class="card-body">
+        <p class="card-text">You must set a team. Setting the event is optional, though.</p>
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="form-group">
+              {{ form.team|as_crispy_field }}
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="form-group">
+              {{ form.event|as_crispy_field }}
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.wish|as_crispy_field }}
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.url|as_crispy_field }}
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.state|as_crispy_field }}
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.unit_price|as_crispy_field }}
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.event|as_crispy_field }}
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-        <div class="form-group">
-          {{ form.team|as_crispy_field }}
+    </div>
+    <div class="card mt-3 mb-3">
+      <h5 class="card-header">Einkauf Info</h5>
+      <div class="card-body">
+        <p class="card-text"><strong>Any change here will be overwritten by the Einkauf.</strong></p>
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="form-group">
+              {{ form.unit_price|as_crispy_field }}
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="form-group">
+              {{ form.state|as_crispy_field }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
