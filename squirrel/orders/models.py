@@ -30,7 +30,7 @@ class Product(models.Model):
 
     name = models.CharField(max_length=250)
     unit = models.CharField(max_length=20, default="pieces")
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     url = models.URLField(blank=True)
 
     def __str__(self):
@@ -76,7 +76,7 @@ class Order(models.Model):
     url = models.URLField(blank=True)
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     event = models.ForeignKey(
         Event, on_delete=models.PROTECT, related_name="orders", blank=True, null=True
