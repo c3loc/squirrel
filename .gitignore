@@ -20,5 +20,6 @@ package-lock.json
 # vim
 *.swp
 
-# config file
+# generated and config files
 squirrel/settings.ini
+squirrel/public/*
