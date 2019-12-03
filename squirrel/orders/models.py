@@ -123,4 +123,7 @@ class Order(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return "{} {} of {}".format(self.amount, self.product.unit, self.product)
+        if self.product:
+            return "{} {} of {}".format(self.amount, self.product.unit, self.product)
+        else:
+            return "{} of {}".format(self.amount, self.product_suggestion)
