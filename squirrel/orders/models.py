@@ -7,6 +7,8 @@ from django.db import models
 
 
 class Event(models.Model):
+    """An event for which orders can be made"""
+
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -14,6 +16,8 @@ class Event(models.Model):
 
 
 class Team(models.Model):
+    """A team or similar group that orders things"""
+
     name = models.CharField(max_length=50, unique=True)
     members = models.ManyToManyField(User, blank=True)
 
@@ -22,7 +26,7 @@ class Team(models.Model):
 
 
 class Product(models.Model):
-    """A product"""
+    """A product that can be ordered"""
 
     name = models.CharField(max_length=250)
     unit = models.CharField(max_length=20, default="pieces")
