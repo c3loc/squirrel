@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase
@@ -265,3 +265,81 @@ class OrderModelTests(TestCase):
         # The order must also not be changed once it’s completed
         order.amount = 1337
         self.assertRaises(PermissionDenied, order.save())
+
+
+class TeamViewTests(TestCase):
+    def setUp(self) -> None:
+        user = User.objects.create_user("engel", password="engel")
+
+        view_permission = Permission.objects.get(codename="view_team")
+        user = User.objects.create_user("loc_engel", password="loc_engel")
+        user.user_permissions.add(view_permission)
+
+        add_permission = Permission.objects.get(codename="add_team")
+        user = User.objects.create_user("order_engel", password="order_engel")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(add_permission)
+
+        change_permission = Permission.objects.get(codename="change_team")
+        user = User.objects.create_user("order_admin", password="order_admin")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(change_permission)
+
+        delete_permission = Permission.objects.get(codename="delete_team")
+        user = User.objects.create_user("morre", password="morre")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(delete_permission)
+
+    def test_view_login_required(self):
+        response = self.client.get("/teams")
+        self.assertEqual(response.status_code, 302)
+
+    def test_require_view_permissions_fails(self):
+        self.client.login(username="engel", password="engel")
+        response = self.client.get("/teams")
+        self.assertEqual(response.status_code, 403)
+
+    def test_require_view_permissions_ok(self):
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.get("/teams")
+        self.assertEqual(response.status_code, 200)
+
+    def test_require_add_permission_fails(self):
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.post("/teams/new", {"name": "Creatures"})
+        self.assertEqual(response.status_code, 403)
+
+    def test_require_add_permission_ok(self):
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.post("/teams/new", {"name": "Creatures"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_require_change_permission_fails(self):
+        team = Team(name="BadWolf")
+        team.save()
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.post("/teams/{}".format(team.id), {"name": "GoodWolf"})
+        self.assertEqual(response.status_code, 403)
+
+    def test_require_change_permission_ok(self):
+        team = Team(name="BadWolf")
+        team.save()
+        self.client.login(username="order_admin", password="order_admin")
+        response = self.client.post("/teams/{}".format(team.id), {"name": "GoodWolf"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_require_delete_permission_fails(self):
+        team = Team(name="EvilTeam")
+        team.save()
+        self.client.login(username="order_admin", password="order_admin")
+        response = self.client.post("/teams/delete/{}".format(team.id))
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Team.objects.all().count(), 1)
+
+    def test_require_delete_permission_ok(self):
+        team = Team(name="EvilTeam")
+        team.save()
+        self.client.login(username="morre", password="morre")
+        response = self.client.post("/teams/delete/{}".format(team.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Team.objects.all().count(), 0)

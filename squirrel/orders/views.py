@@ -1,5 +1,6 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
@@ -28,7 +29,8 @@ class ProductListView(LoginRequiredMixin, SingleTableView):
     template_name = "products.html"
 
 
-class TeamListView(LoginRequiredMixin, SingleTableView):
+class TeamListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_team"
     model = Team
     table_class = TeamTable
     template_name = "teams.html"
@@ -123,6 +125,7 @@ def delete_product(request, product_id=None):
 
 
 @login_required
+@permission_required("orders.view_team", raise_exception=True)
 def team(request, team_id=None):
     if team_id:
         team_object = get_object_or_404(Team, id=team_id)
@@ -131,10 +134,15 @@ def team(request, team_id=None):
 
     if request.method == "POST":
         if team_object:
-            # TODO: Check that user has rights to edit team
-            form = TeamForm(request.POST, instance=team_object)
+            if request.user.has_perm("orders.change_team"):
+                form = TeamForm(request.POST, instance=team_object)
+            else:
+                raise PermissionDenied
         else:
-            form = TeamForm(request.POST)
+            if request.user.has_perm("orders.add_team"):
+                form = TeamForm(request.POST)
+            else:
+                raise PermissionDenied
 
         if form.is_valid():
             team_object = form.save(commit=False)
@@ -153,8 +161,8 @@ def team(request, team_id=None):
 
 
 @login_required
+@permission_required("orders.delete_team", raise_exception=True)
 def delete_team(request, team_id=None):
-    # TODO: Check that user has rights to delete product
     team_object = get_object_or_404(Team, id=team_id)
     team_object.delete()
 
