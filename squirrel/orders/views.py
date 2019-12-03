@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
@@ -43,8 +42,6 @@ class BudgetListView(LoginRequiredMixin, SingleTableView):
 
 @login_required
 def order(request, order_id=None):
-    user = User.objects.first()  # TODO: get the currently logged in user
-
     if order_id:
         order_object = get_object_or_404(Order, id=order_id)
     else:
@@ -60,7 +57,7 @@ def order(request, order_id=None):
         if form.is_valid():
             order_object = form.save(commit=False)
             if not order_id:
-                order_object.created_by = user
+                order_object.created_by = request.user
             order_object.save()
 
             return redirect("orders")
@@ -88,8 +85,6 @@ def delete_order(request, order_id=None):
 
 @login_required
 def product(request, product_id=None):
-    user = User.objects.first()  # TODO: get the currently logged in user
-
     if product_id:
         product_object = get_object_or_404(Product, id=product_id)
     else:
@@ -105,7 +100,7 @@ def product(request, product_id=None):
         if form.is_valid():
             product_object = form.save(commit=False)
             if not product_id:
-                product_object.created_by = user
+                product_object.created_by = request.user
             product_object.save()
 
             return redirect("products")
@@ -129,8 +124,6 @@ def delete_product(request, product_id=None):
 
 @login_required
 def team(request, team_id=None):
-    user = User.objects.first()  # TODO: get the currently logged in user
-
     if team_id:
         team_object = get_object_or_404(Team, id=team_id)
     else:
@@ -146,7 +139,7 @@ def team(request, team_id=None):
         if form.is_valid():
             team_object = form.save(commit=False)
             if not team_id:
-                team_object.created_by = user
+                team_object.created_by = request.user
             team_object.save()
 
             return redirect("teams")
