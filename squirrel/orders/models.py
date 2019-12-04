@@ -28,7 +28,7 @@ class Team(models.Model):
 class Product(models.Model):
     """A product that can be ordered"""
 
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, default=None)
     unit = models.CharField(max_length=20, default="pieces")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     url = models.URLField(blank=True)

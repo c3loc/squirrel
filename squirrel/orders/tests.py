@@ -5,6 +5,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Permission, User
 from django.core import mail
 from django.core.exceptions import PermissionDenied
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.test.client import Client
 from django.urls import resolve, reverse
@@ -235,6 +236,12 @@ class ProductUpdateTests(TestCase):
         # This order has to change its unit_price as it’s not completed yet
         order_price_change = Order.objects.first()
         self.assertEqual(order_price_change.unit_price, Decimal("23.03"))
+
+
+class ProductModelTests(TestCase):
+    def test_require_name(self):
+        product = Product()
+        self.assertRaises(IntegrityError, product.save)
 
 
 class OrderModelTests(TestCase):
