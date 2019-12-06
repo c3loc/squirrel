@@ -148,11 +148,7 @@ def team(request, team_id=None):
                 raise PermissionDenied
 
         if form.is_valid():
-            team_object = form.save(commit=False)
-            if not team_id:
-                team_object.created_by = request.user
-            team_object.save()
-
+            form.save()
             return redirect("teams")
     else:
         if team_object:
