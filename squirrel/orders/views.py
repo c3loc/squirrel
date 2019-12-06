@@ -22,6 +22,12 @@ class OrderListView(LoginRequiredMixin, SingleTableView):
     table_class = OrderTable
     template_name = "orders.html"
 
+    def get_table_data(self):
+        if self.request.user.has_perm("orders.view_order"):
+            return Order.objects.all()
+        else:
+            return Order.objects.filter(team__members=self.request.user)
+
 
 class ProductListView(LoginRequiredMixin, SingleTableView):
     model = Product
@@ -49,12 +55,17 @@ def order(request, order_id=None):
     else:
         order_object = None
 
+    if request.user.has_perm("orders.view_team"):
+        my_teams = Team.objects.all()
+    else:
+        my_teams = Team.objects.filter(members=request.user)
+
     if request.method == "POST":
         if order_object:
             # TODO: Check that user has rights to edit order
-            form = OrderForm(request.POST, instance=order_object)
+            form = OrderForm(request.POST, instance=order_object, teams=my_teams)
         else:
-            form = OrderForm(request.POST)
+            form = OrderForm(request.POST, teams=my_teams)
 
         if form.is_valid():
             order_object = form.save(commit=False)
@@ -65,15 +76,11 @@ def order(request, order_id=None):
             return redirect("orders")
     else:
         if order_object:
-            form = OrderForm(instance=order_object)
+            form = OrderForm(instance=order_object, teams=my_teams)
         else:
-            form = OrderForm()
+            form = OrderForm(teams=my_teams)
 
-    return render(
-        request,
-        "order.html",
-        {"form": form, "teams": Team.objects.all(), "events": Event.objects.all()},
-    )
+    return render(request, "order.html", {"form": form, "events": Event.objects.all()},)
 
 
 @login_required
