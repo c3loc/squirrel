@@ -42,6 +42,12 @@ class BudgetListView(LoginRequiredMixin, SingleTableView):
     table_class = BudgetTable
     template_name = "budgets.html"
 
+    def get_table_data(self):
+        if self.request.user.has_perm("orders.view_budget"):
+            return Team.objects.all()
+        else:
+            return Team.objects.filter(members=self.request.user)
+
 
 @login_required
 def order(request, order_id=None):
