@@ -24,6 +24,9 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        permissions = [("view_budget", "Can view budget")]
+
 
 class Product(models.Model):
     """A product that can be ordered"""
