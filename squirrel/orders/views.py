@@ -121,7 +121,6 @@ def product(request, product_id=None):
 @login_required
 @permission_required("orders.delete_product", raise_exception=True)
 def delete_product(request, product_id=None):
-    # TODO: Check that user has rights to delete product
     product_object = get_object_or_404(Product, id=product_id)
     product_object.delete()
 
