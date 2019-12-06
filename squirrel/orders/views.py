@@ -23,7 +23,8 @@ class OrderListView(LoginRequiredMixin, SingleTableView):
     template_name = "orders.html"
 
 
-class ProductListView(LoginRequiredMixin, SingleTableView):
+class ProductListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_product"
     model = Product
     table_class = ProductTable
     template_name = "products.html"
@@ -86,6 +87,7 @@ def delete_order(request, order_id=None):
 
 
 @login_required
+@permission_required("orders.view_product", raise_exception=True)
 def product(request, product_id=None):
     if product_id:
         product_object = get_object_or_404(Product, id=product_id)
@@ -94,17 +96,18 @@ def product(request, product_id=None):
 
     if request.method == "POST":
         if product_object:
-            # TODO: Check that user has rights to edit product
-            form = ProductForm(request.POST, instance=product_object)
+            if request.user.has_perm("orders.change_product"):
+                form = ProductForm(request.POST, instance=product_object)
+            else:
+                raise PermissionDenied
         else:
-            form = ProductForm(request.POST)
+            if request.user.has_perm("orders.add_product"):
+                form = ProductForm(request.POST)
+            else:
+                raise PermissionDenied
 
         if form.is_valid():
-            product_object = form.save(commit=False)
-            if not product_id:
-                product_object.created_by = request.user
-            product_object.save()
-
+            form.save()
             return redirect("products")
     else:
         if product_object:
@@ -116,6 +119,7 @@ def product(request, product_id=None):
 
 
 @login_required
+@permission_required("orders.delete_product", raise_exception=True)
 def delete_product(request, product_id=None):
     # TODO: Check that user has rights to delete product
     product_object = get_object_or_404(Product, id=product_id)
