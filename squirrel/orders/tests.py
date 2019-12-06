@@ -315,11 +315,13 @@ class TeamViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.post("/teams/new", {"name": "Creatures"})
         self.assertEqual(response.status_code, 403)
+        self.assertEqual(Team.objects.all().count(), 0)
 
     def test_require_add_permission_ok(self):
         self.client.login(username="order_engel", password="order_engel")
         response = self.client.post("/teams/new", {"name": "Creatures"})
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(Team.objects.all().count(), 1)
 
     def test_require_change_permission_fails(self):
         team = Team(name="BadWolf")
