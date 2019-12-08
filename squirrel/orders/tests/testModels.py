@@ -20,7 +20,6 @@ class TeamModelTests(TestCase):
 
 class ProductModelTests(TestCase):
     def test_inherit_product_price(self):
-        # https://github.com/moby/moby/blob/3152f9436292115c97b4d8bb18c66cf97876ee75/pkg/namesgenerator/names-generator.go#L838-L840
         product = Product.objects.create(name="Tardis", unit_price=17.00)
         team = Team.objects.create(name="Aperture Science Laboratories")
         order = Order.objects.create(product=product, team=team)
@@ -41,7 +40,6 @@ class ProductModelTests(TestCase):
 
 class OrderModelTests(TestCase):
     def setUp(self) -> None:
-        # https://github.com/moby/moby/blob/3152f9436292115c97b4d8bb18c66cf97876ee75/pkg/namesgenerator/names-generator.go#L838-L840
         self.team = Team.objects.create(name="Aperture Science Laboratories")
         self.product = Product.objects.create(name="Dr. Cave Johnson", unit_price=23.42)
 
