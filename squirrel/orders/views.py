@@ -69,10 +69,18 @@ def order(request, order_id=None):
 
     if request.method == "POST":
         if order_object:
-            # TODO: Check that user has rights to edit order
-            form = OrderForm(request.POST, instance=order_object, teams=my_teams)
+            if (
+                request.user.has_perm("orders.change_order")
+                or request.user in order_object.team.members.all()
+            ):
+                form = OrderForm(request.POST, instance=order_object, teams=my_teams)
+            else:
+                raise PermissionDenied
         else:
-            form = OrderForm(request.POST, teams=my_teams)
+            if request.user.has_perm("orders.add_order"):
+                form = OrderForm(request.POST, teams=my_teams)
+            else:
+                raise PermissionDenied
 
         if form.is_valid():
             order_object = form.save(commit=False)
@@ -87,12 +95,20 @@ def order(request, order_id=None):
         else:
             form = OrderForm(teams=my_teams)
 
-    return render(request, "order.html", {"form": form, "events": Event.objects.all()},)
+    if (
+        request.user.has_perm("orders.view_order")
+        or request.user in order_object.team.members.all()
+    ):
+        return render(
+            request, "order.html", {"form": form, "events": Event.objects.all()},
+        )
+    else:
+        raise PermissionDenied
 
 
 @login_required
+@permission_required("orders.delete_order", raise_exception=True)
 def delete_order(request, order_id=None):
-    # TODO: Check that user has rights to delete order
     order_object = get_object_or_404(Order, id=order_id)
     order_object.delete()
 

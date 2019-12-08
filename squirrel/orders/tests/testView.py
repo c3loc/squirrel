@@ -1,9 +1,8 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from django.test.client import Client
-from django.urls import resolve, reverse
+from django.urls import resolve
 from orders import views
-from orders.models import Event, Order, Product, Team
+from orders.models import Order, Product, Team
 
 
 class RoutingTests(TestCase):
@@ -85,51 +84,168 @@ class RoutingTests(TestCase):
         self.assertEqual(view.url_name, "budgets")
 
 
+class OverviewViewTest(TestCase):
+    def test_static_overview(self):
+        response = self.client.get("/")
+        self.assertContains(response, "Welcome to Squirrel")
+
+
 class OrderViewTests(TestCase):
-    """Tests when there is at least one order"""
+    def setUp(self) -> None:
+        user = User.objects.create_user("engel", password="engel")
 
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(
-            "testuser", "user@example.com", "testpassword"
-        )
-        self.client.login(username="testuser", password="testpassword")
+        team_permission = Permission.objects.get(codename="view_team")
 
-        user_object = User.objects.create_user("TestUser")
+        view_permission = Permission.objects.get(codename="view_order")
+        user = User.objects.create_user("loc_engel", password="loc_engel")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(team_permission)
 
-        team_object = Team.objects.create(name="TestTeam",)
-        team_object.members.add(1)  # TestUser has the ID 1
+        add_permission = Permission.objects.get(codename="add_order")
+        user = User.objects.create_user("order_engel", password="order_engel")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(add_permission)
+        user.user_permissions.add(team_permission)
 
-        event_object = Event.objects.create(name="TestEvent")
+        change_permission = Permission.objects.get(codename="change_order")
+        user = User.objects.create_user("order_admin", password="order_admin")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(change_permission)
+        user.user_permissions.add(team_permission)
 
-        product = Product.objects.create(name="Testprodukt",)
+        delete_permission = Permission.objects.get(codename="delete_order")
+        user = User.objects.create_user("morre", password="morre")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(delete_permission)
+        user.user_permissions.add(team_permission)
 
-        Order.objects.create(
-            amount="42",
-            product=product,
-            event=event_object,
-            team=team_object,
-            created_by=user_object,
-        )
+        # https://github.com/moby/moby/blob/3152f9436292115c97b4d8bb18c66cf97876ee75/pkg/namesgenerator/names-generator.go#L838-L840
+        self.team = Team.objects.create(name="Aperture Science Laboratories")
+        self.product = Product.objects.create(name="Dr. Cave Johnson", unit_price=23.42)
 
-    def test_orders_status_code(self):
-        """Order overview returns 200"""
-        url = reverse("orders")
-        response = self.client.get(url)
+        user = User.objects.create_user("team_member", password="team_member")
+        self.team.members.add(user)
+
+    def test_view_login_required(self):
+        response = self.client.get("/orders")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/login/?next=/orders")
+
+    def test_no_orders_without_permission_or_membership(self):
+        self.client.login(username="engel", password="engel")
+        response = self.client.get("/orders")
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "<tbody></tbody>", html=True)
 
-    def test_orders_shows_new_button(self):
-        """Order overview shows no orders when there are none"""
-        url = reverse("orders")
-        response = self.client.get(url)
-        self.assertContains(response, "New Order</a>")
+    def test_members_can_view_team_orders(self):
+        my_order = Order.objects.create(product=self.product, team=self.team)
+        order = Order.objects.create(
+            product=self.product, team=Team.objects.create(name="Not My Team")
+        )
+        self.client.login(username="team_member", password="team_member")
+        response = self.client.get("/orders")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(my_order.id),
+        )
+        self.assertNotContains(
+            response,
+            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(order.id),
+        )
 
-    def test_filled_orders_shows_orders(self):
-        """Order overview does contain a link to existing order"""
-        url = reverse("orders")
+    def test_require_view_permissions_ok(self):
+        my_order = Order.objects.create(product=self.product, team=self.team)
+        order = Order.objects.create(product=self.product, team=self.team)
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.get("/orders")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(my_order.id),
+        )
+        self.assertContains(
+            response,
+            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(order.id),
+        )
 
-        response = self.client.get(url)
-        self.assertContains(response, "Testprodukt")
+    def test_require_add_permission_fails(self):
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.post(
+            "/orders/new",
+            {
+                "amount": 1,
+                "product": self.product.id,
+                "team": self.team.id,
+                "unit_price": 1,
+                "state": "REQ",
+            },
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Order.objects.all().count(), 0)
+
+    def test_require_add_permission_ok(self):
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.post(
+            "/orders/new",
+            {
+                "amount": 1,
+                "product": self.product.id,
+                "team": self.team.id,
+                "unit_price": 1,
+                "state": "REQ",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/orders")
+        self.assertEqual(Order.objects.all().count(), 1)
+
+    def test_require_change_permission_fails(self):
+        order = Order.objects.create(product=self.product, team=self.team)
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.post(
+            "/orders/{}".format(order.id),
+            {
+                "amount": 1,
+                "product": self.product.id,
+                "team": self.team.id,
+                "unit_price": 1,
+                "state": "REQ",
+            },
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_require_change_permission_ok(self):
+        order = Order.objects.create(product=self.product, team=self.team)
+        order.save()
+        self.client.login(username="order_admin", password="order_admin")
+        response = self.client.post(
+            "/orders/{}".format(order.id),
+            {
+                "amount": 1,
+                "product": self.product.id,
+                "team": self.team.id,
+                "unit_price": 1,
+                "state": "REQ",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/orders")
+
+    def test_require_delete_permission_fails(self):
+        order = Order.objects.create(product=self.product, team=self.team)
+        self.client.login(username="order_admin", password="order_admin")
+        response = self.client.post("/orders/delete/{}".format(order.id))
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Order.objects.all().count(), 1)
+
+    def test_require_delete_permission_ok(self):
+        order = Order.objects.create(product=self.product, team=self.team)
+        self.client.login(username="morre", password="morre")
+        response = self.client.post("/orders/delete/{}".format(order.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/orders")
+        self.assertEqual(Order.objects.all().count(), 0)
 
 
 class ProductViewTests(TestCase):
@@ -158,6 +274,7 @@ class ProductViewTests(TestCase):
     def test_view_login_required(self):
         response = self.client.get("/products")
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/login/?next=/products")
 
     def test_require_view_permissions_fails(self):
         self.client.login(username="engel", password="engel")
@@ -185,11 +302,11 @@ class ProductViewTests(TestCase):
             {"name": "Awesome Beer", "unit": "Hectoliter", "unit_price": "5"},
         )
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/products")
         self.assertEqual(Product.objects.all().count(), 1)
 
     def test_require_change_permission_fails(self):
-        product = Product(name="Bad Beer")
-        product.save()
+        product = Product.objects.create(name="Bad Beer")
         self.client.login(username="order_engel", password="order_engel")
         response = self.client.post(
             "/products/{}".format(product.id),
@@ -199,30 +316,29 @@ class ProductViewTests(TestCase):
         self.assertEqual(Product.objects.get(id=product.id).name, "Bad Beer")
 
     def test_require_change_permission_ok(self):
-        product = Product(name="Bad Beer")
-        product.save()
+        product = Product.objects.create(name="Bad Beer")
         self.client.login(username="order_admin", password="order_admin")
         response = self.client.post(
             "/products/{}".format(product.id),
             {"name": "Awesome Beer", "unit": "Hectoliter", "unit_price": "5"},
         )
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/products")
         self.assertEqual(Product.objects.get(id=product.id).name, "Awesome Beer")
 
     def test_require_delete_permission_fails(self):
-        product = Product(name="Bad Beer")
-        product.save()
+        product = Product.objects.create(name="Bad Beer")
         self.client.login(username="order_admin", password="order_admin")
         response = self.client.post("/products/delete/{}".format(product.id))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.all().count(), 1)
 
     def test_require_delete_permission_ok(self):
-        product = Product(name="Bad Beer")
-        product.save()
+        product = Product.objects.create(name="Bad Beer")
         self.client.login(username="morre", password="morre")
         response = self.client.post("/products/delete/{}".format(product.id))
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/products")
         self.assertEqual(Product.objects.all().count(), 0)
 
 
@@ -252,6 +368,7 @@ class TeamViewTests(TestCase):
     def test_view_login_required(self):
         response = self.client.get("/teams")
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/login/?next=/teams")
 
     def test_require_view_permissions_fails(self):
         self.client.login(username="engel", password="engel")
@@ -273,34 +390,33 @@ class TeamViewTests(TestCase):
         self.client.login(username="order_engel", password="order_engel")
         response = self.client.post("/teams/new", {"name": "Creatures"})
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/teams")
         self.assertEqual(Team.objects.all().count(), 1)
 
     def test_require_change_permission_fails(self):
-        team = Team(name="BadWolf")
-        team.save()
+        team = Team.objects.create(name="BadWolf")
         self.client.login(username="order_engel", password="order_engel")
         response = self.client.post("/teams/{}".format(team.id), {"name": "GoodWolf"})
         self.assertEqual(response.status_code, 403)
 
     def test_require_change_permission_ok(self):
-        team = Team(name="BadWolf")
-        team.save()
+        team = Team.objects.create(name="BadWolf")
         self.client.login(username="order_admin", password="order_admin")
         response = self.client.post("/teams/{}".format(team.id), {"name": "GoodWolf"})
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/teams")
 
     def test_require_delete_permission_fails(self):
-        team = Team(name="EvilTeam")
-        team.save()
+        team = Team.objects.create(name="EvilTeam")
         self.client.login(username="order_admin", password="order_admin")
         response = self.client.post("/teams/delete/{}".format(team.id))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Team.objects.all().count(), 1)
 
     def test_require_delete_permission_ok(self):
-        team = Team(name="EvilTeam")
-        team.save()
+        team = Team.objects.create(name="EvilTeam")
         self.client.login(username="morre", password="morre")
         response = self.client.post("/teams/delete/{}".format(team.id))
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/teams")
         self.assertEqual(Team.objects.all().count(), 0)
