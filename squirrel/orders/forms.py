@@ -6,14 +6,9 @@ from .models import Order, Product, Team
 
 class OrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        self.my_teams = kwargs.pop("teams")
+        my_teams = kwargs.pop("teams")
         super(OrderForm, self).__init__(*args, **kwargs)
-        self.fields["team"] = ModelChoiceField(queryset=self.my_teams)
-
-    def clean_team(self):
-        if Team.objects.get(name=self.cleaned_data["team"]) in self.my_teams:
-            return self.cleaned_data["team"]
-        raise forms.ValidationError("Team must be one of your Teams")
+        self.fields["team"] = ModelChoiceField(queryset=my_teams)
 
     class Meta:
         model = Order
