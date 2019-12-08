@@ -250,7 +250,8 @@ class OrderViewTests(TestCase):
 
 class ProductViewTests(TestCase):
     def setUp(self) -> None:
-        user = User.objects.create_user("engel", password="engel")
+        User.objects.create_user("engel", password="engel")
+        Vendor.objects.create(name="ACME Inc.")
 
         view_permission = Permission.objects.get(codename="view_product")
         user = User.objects.create_user("loc_engel", password="loc_engel")
@@ -288,18 +289,32 @@ class ProductViewTests(TestCase):
 
     def test_require_add_permission_fails(self):
         self.client.login(username="loc_engel", password="loc_engel")
+        vendor = Vendor.objects.get(name="ACME Inc.")
+
         response = self.client.post(
             "/products/new",
-            {"name": "Awesome Beer", "unit": "Hectoliter", "unit_price": "5"},
+            {
+                "name": "Awesome Beer",
+                "unit": "Hectoliter",
+                "unit_price": "5",
+                "vendor": vendor.id,
+            },
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.all().count(), 0)
 
     def test_require_add_permission_ok(self):
         self.client.login(username="order_engel", password="order_engel")
+        vendor = Vendor.objects.get(name="ACME Inc.")
+
         response = self.client.post(
             "/products/new",
-            {"name": "Awesome Beer", "unit": "Hectoliter", "unit_price": "5"},
+            {
+                "name": "Awesome Beer",
+                "unit": "Hectoliter",
+                "unit_price": "5",
+                "vendor": vendor.id,
+            },
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/products")
@@ -307,20 +322,34 @@ class ProductViewTests(TestCase):
 
     def test_require_change_permission_fails(self):
         product = Product.objects.create(name="Bad Beer")
+        vendor = Vendor.objects.get(name="ACME Inc.")
+
         self.client.login(username="order_engel", password="order_engel")
         response = self.client.post(
             "/products/{}".format(product.id),
-            {"name": "Awesome Beer", "unit": "Hectoliter", "unit_price": "5"},
+            {
+                "name": "Awesome Beer",
+                "unit": "Hectoliter",
+                "unit_price": "5",
+                "vendor": vendor.id,
+            },
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.get(id=product.id).name, "Bad Beer")
 
     def test_require_change_permission_ok(self):
         product = Product.objects.create(name="Bad Beer")
+        vendor = Vendor.objects.get(name="ACME Inc.")
+
         self.client.login(username="order_admin", password="order_admin")
         response = self.client.post(
             "/products/{}".format(product.id),
-            {"name": "Awesome Beer", "unit": "Hectoliter", "unit_price": "5"},
+            {
+                "name": "Awesome Beer",
+                "unit": "Hectoliter",
+                "unit_price": "5",
+                "vendor": vendor.id,
+            },
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/products")
