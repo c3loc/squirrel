@@ -15,6 +15,7 @@ class OrderFormTests(TestCase):
 
         helpdesk = User.objects.create_user(username="helpdesk", password="test123")
         helpdesk.user_permissions.add(Permission.objects.get(codename="view_team"))
+        helpdesk.user_permissions.add(Permission.objects.get(codename="add_order"))
 
         self.product = Product.objects.create(name="Tardis", unit_price=17.00)
 

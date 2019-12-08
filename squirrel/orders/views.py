@@ -91,19 +91,20 @@ def order(request, order_id=None):
             return redirect("orders")
     else:
         if order_object:
-            form = OrderForm(instance=order_object, teams=my_teams)
+            if (
+                request.user.has_perm("orders.view_order")
+                or request.user in order_object.team.members.all()
+            ):
+                form = OrderForm(instance=order_object, teams=my_teams)
+            else:
+                raise PermissionDenied
         else:
-            form = OrderForm(teams=my_teams)
+            if request.user.has_perm("orders.add_order"):
+                form = OrderForm(teams=my_teams)
+            else:
+                raise PermissionDenied
 
-    if (
-        request.user.has_perm("orders.view_order")
-        or request.user in order_object.team.members.all()
-    ):
-        return render(
-            request, "order.html", {"form": form, "events": Event.objects.all()},
-        )
-    else:
-        raise PermissionDenied
+    return render(request, "order.html", {"form": form, "events": Event.objects.all()},)
 
 
 @login_required
