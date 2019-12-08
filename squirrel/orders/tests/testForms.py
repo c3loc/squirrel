@@ -19,7 +19,6 @@ class OrderFormTests(TestCase):
         self.product = Product.objects.create(name="Tardis", unit_price=17.00)
 
     def test_require_amount(self):
-        # TODO: move to model test
         form_data = {
             "product": self.product.id,
             "team": self.team.id,
@@ -31,14 +30,6 @@ class OrderFormTests(TestCase):
         form_data["amount"] = 1
         form = OrderForm(data=form_data, teams=Team.objects.all())
         self.assertTrue(form.is_valid())
-
-    def test_require_product_or_suggestion(self):
-        self.client.login(username="helpdesk", password="test123")
-        response = self.client.post(
-            "/orders/new", {"team": self.team.id, "state": "REQ", "unit_price": 10.00}
-        )
-        self.assertEqual(response.status_code, 200)
-        # this is a silent error.
 
     def test_require_state(self):
         self.client.login(username="helpdesk", password="test123")
