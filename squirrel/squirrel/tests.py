@@ -128,3 +128,29 @@ class PasswordChangeDoneTests(TestCase):
     def test_view_function(self):
         view = resolve("/change/done")
         self.assertEquals(view.func.view_class, auth_views.PasswordChangeDoneView)
+
+
+class UnauthenticatedFrontendViewTests(TestCase):
+    def test_logout_button(self):
+        """Frontend does not show logout button to unauthenticated users"""
+        url = reverse("overview")
+        response = self.client.get(url)
+        self.assertNotContains(response, "Logout</a>")
+
+
+class AuthenticatedFrontendViewTests(TestCase):
+    def setUp(self) -> None:
+        User.objects.create_user(username="test", password="ufgdlneginetriunae")
+        self.client.login(username="test", password="ufgdlneginetriunae")
+
+    def test_logout_button(self):
+        """Frontend shows logout button to authenticated users"""
+        url = reverse("overview")
+        response = self.client.get(url)
+        self.assertContains(response, "Log out</a>")
+
+    def test_change_password_button(self):
+        """Frontend shows change password button to authenticated users"""
+        url = reverse("overview")
+        response = self.client.get(url)
+        self.assertContains(response, "Change password</a>")
