@@ -9,7 +9,7 @@ from django.db import models
 class Event(models.Model):
     """An event for which orders can be made"""
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True, default=None)
 
     def __str__(self):
         return self.name
@@ -18,7 +18,7 @@ class Event(models.Model):
 class Team(models.Model):
     """A team or similar group that orders things"""
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True, default=None)
     members = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
