@@ -12,6 +12,16 @@ urlpatterns = [
     path(
         "login", auth_views.LoginView.as_view(template_name="login.html"), name="login"
     ),
+    path(
+        "change",
+        auth_views.PasswordChangeView.as_view(success_url="orders"),
+        name="password_change",
+    ),
+    path(
+        "change/done",
+        auth_views.PasswordChangeDoneView.as_view(),
+        name="password_change_done",
+    ),
     path("reset", auth_views.PasswordResetView.as_view(), name="password_reset"),
     path(
         "reset/done",
