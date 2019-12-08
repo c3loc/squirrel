@@ -26,6 +26,11 @@
             <a class="nav-link" href="{% url 'products' %}">Products</a>
           </li>
           {% endif %}
+          {% if perms.orders.view_vendor %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'vendors' %}">Vendors</a>
+          </li>
+          {% endif %}
           {% if perms.orders.view_team %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'teams' %}">Teams</a>

@@ -2,7 +2,7 @@ from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import resolve
 from orders import views
-from orders.models import Order, Product, Team
+from orders.models import Order, Product, Team, Vendor
 
 
 class RoutingTests(TestCase):
@@ -340,6 +340,96 @@ class ProductViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/products")
         self.assertEqual(Product.objects.all().count(), 0)
+
+
+class VendorViewTests(TestCase):
+    def setUp(self) -> None:
+        User.objects.create_user("engel", password="engel")
+
+        view_permission = Permission.objects.get(codename="view_vendor")
+        user = User.objects.create_user("loc_engel", password="loc_engel")
+        user.user_permissions.add(view_permission)
+
+        add_permission = Permission.objects.get(codename="add_vendor")
+        user = User.objects.create_user("order_engel", password="order_engel")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(add_permission)
+
+        change_permission = Permission.objects.get(codename="change_vendor")
+        user = User.objects.create_user("order_admin", password="order_admin")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(change_permission)
+
+        delete_permission = Permission.objects.get(codename="delete_vendor")
+        user = User.objects.create_user("morre", password="morre")
+        user.user_permissions.add(view_permission)
+        user.user_permissions.add(delete_permission)
+
+    def test_view_login_required(self):
+        response = self.client.get("/vendors")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/login/?next=/vendors")
+
+    def test_require_view_permissions_fails(self):
+        self.client.login(username="engel", password="engel")
+        response = self.client.get("/vendors")
+        self.assertEqual(response.status_code, 403)
+
+    def test_require_view_permissions_ok(self):
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.get("/vendors")
+        self.assertEqual(response.status_code, 200)
+
+    def test_require_add_permission_fails(self):
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.post("/vendors/new", {"name": "Bällebäder for the win"},)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Vendor.objects.all().count(), 0)
+
+    def test_require_add_permission_ok(self):
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.post("/vendors/new", {"name": "Bällebäder for the win"},)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/vendors")
+        self.assertEqual(Vendor.objects.all().count(), 1)
+
+    def test_require_change_permission_fails(self):
+        vendor = Vendor.objects.create(name="Kein Bällebadverkäufer")
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.post(
+            "/vendors/{}".format(vendor.id), {"name": "Bällebäder for the win"},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            Vendor.objects.get(id=vendor.id).name, "Kein Bällebadverkäufer"
+        )
+
+    def test_require_change_permission_ok(self):
+        vendor = Vendor.objects.create(name="Kein Bällebadverkäufer")
+        self.client.login(username="order_admin", password="order_admin")
+        response = self.client.post(
+            "/vendors/{}".format(vendor.id), {"name": "Bällebäder for the win"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/vendors")
+        self.assertEqual(
+            Vendor.objects.get(id=vendor.id).name, "Bällebäder for the win"
+        )
+
+    def test_require_delete_permission_fails(self):
+        vendor = Vendor.objects.create(name="Bad Beer")
+        self.client.login(username="order_admin", password="order_admin")
+        response = self.client.post("/vendors/delete/{}".format(vendor.id))
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Vendor.objects.all().count(), 1)
+
+    def test_require_delete_permission_ok(self):
+        vendor = Vendor.objects.create(name="Kein Bällebadverkäufer")
+        self.client.login(username="morre", password="morre")
+        response = self.client.post("/vendors/delete/{}".format(vendor.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/vendors")
+        self.assertEqual(Vendor.objects.all().count(), 0)
 
 
 class TeamViewTests(TestCase):

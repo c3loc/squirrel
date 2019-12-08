@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Squirrel | Vendor{% endblock %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="card">
+      <h5 class="card-header">Vendor</h5>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+              {{ form.name|as_crispy_field }}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success">Save vendor</button>
+      </div>
+    </div>
+  </form>
+{% endblock %}
+

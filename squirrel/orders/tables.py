@@ -1,5 +1,14 @@
 from django_tables2 import Column, TemplateColumn, tables
-from orders.models import Order, Product, Team
+from orders.models import Order, Product, Team, Vendor
+
+
+class VendorTable(tables.Table):
+    class Meta:
+        model = Vendor
+        attrs = {"class": "table table-sm"}
+        fields = ["name"]
+
+    edit = TemplateColumn(template_name="tables/vendor_button_column.html")
 
 
 class TeamTable(tables.Table):
@@ -63,7 +72,7 @@ class ProductTable(tables.Table):
     class Meta:
         model = Product
         attrs = {"class": "table table-sm"}
-        fields = ["name", "unit", "unit_price", "url"]
+        fields = ["name", "unit", "unit_price", "vendor", "url"]
 
     edit = TemplateColumn(template_name="tables/product_button_column.html")
 

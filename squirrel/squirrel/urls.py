@@ -48,6 +48,10 @@ urlpatterns = [
     path(
         "products/delete/<int:product_id>", views.delete_product, name="delete_product"
     ),
+    path("vendors", views.VendorListView.as_view(), name="vendors"),
+    path("vendors/new", views.vendor, name="new_vendor"),
+    path("vendors/<int:vendor_id>", views.vendor, name="edit_vendor"),
+    path("vendors/delete/<int:vendor_id>", views.delete_vendor, name="delete_vendor"),
     path("teams", views.TeamListView.as_view(), name="teams"),
     path("teams/new", views.team, name="new_team"),
     path("teams/<int:team_id>", views.team, name="edit_team"),

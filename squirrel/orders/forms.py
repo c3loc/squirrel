@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelChoiceField
 
-from .models import Order, Product, Team
+from .models import Order, Product, Team, Vendor
 
 
 class OrderForm(forms.ModelForm):
@@ -27,10 +27,16 @@ class OrderForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["name", "unit", "unit_price", "url"]
+        fields = ["name", "unit", "unit_price", "url", "vendor"]
 
 
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
+        fields = ["name"]
+
+
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
         fields = ["name"]

@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
-from orders.models import Event, Order, Product, Team
+from orders.models import Event, Order, Product, Team, Vendor
 
 
 class EventModelTests(TestCase):
@@ -16,6 +16,12 @@ class TeamModelTests(TestCase):
     def test_require_name(self):
         team = Team()
         self.assertRaises(IntegrityError, team.save)
+
+
+class VendorModelTests(TestCase):
+    def test_require_name(self):
+        vendor = Vendor()
+        self.assertRaises(IntegrityError, vendor.save)
 
 
 class ProductModelTests(TestCase):

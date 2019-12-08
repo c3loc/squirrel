@@ -4,9 +4,9 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
-from .forms import OrderForm, ProductForm, TeamForm
-from .models import Event, Order, Product, Team
-from .tables import BudgetTable, OrderTable, ProductTable, TeamTable
+from .forms import OrderForm, ProductForm, TeamForm, VendorForm
+from .models import Event, Order, Product, Team, Vendor
+from .tables import BudgetTable, OrderTable, ProductTable, TeamTable, VendorTable
 
 
 def login_redirect(request):
@@ -27,6 +27,13 @@ class OrderListView(LoginRequiredMixin, SingleTableView):
             return Order.objects.all()
         else:
             return Order.objects.filter(team__members=self.request.user)
+
+
+class VendorListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_vendor"
+    model = Vendor
+    table_class = VendorTable
+    template_name = "vendors.html"
 
 
 class ProductListView(PermissionRequiredMixin, SingleTableView):
@@ -114,6 +121,52 @@ def delete_order(request, order_id=None):
     order_object.delete()
 
     return redirect("orders")
+
+
+@login_required
+def vendor(request, vendor_id=None):
+    if vendor_id:
+        vendor_object = get_object_or_404(Vendor, id=vendor_id)
+    else:
+        vendor_object = None
+
+    if request.method == "POST":
+        if vendor_object:
+            if request.user.has_perm("orders.change_vendor"):
+                form = VendorForm(request.POST, instance=vendor_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_vendor"):
+                form = VendorForm(request.POST)
+            else:
+                raise PermissionDenied
+
+        if form.is_valid():
+            vendor_object = form.save()
+            return redirect("vendors")
+    else:
+        if vendor_object:
+            if request.user.has_perm("orders.view_vendor"):
+                form = VendorForm(instance=vendor_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_vendor"):
+                form = VendorForm()
+            else:
+                raise PermissionDenied
+
+    return render(request, "vendor.html", {"form": form, "events": Event.objects.all()})
+
+
+@login_required
+@permission_required("orders.delete_vendor", raise_exception=True)
+def delete_vendor(request, vendor_id=None):
+    vendor_object = get_object_or_404(Vendor, id=vendor_id)
+    vendor_object.delete()
+
+    return redirect("vendors")
 
 
 @login_required

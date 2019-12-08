@@ -28,6 +28,15 @@ class Team(models.Model):
         permissions = [("view_budget", "Can view budget")]
 
 
+class Vendor(models.Model):
+    """A vendor"""
+
+    name = models.CharField(max_length=250, default=None, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     """A product that can be ordered"""
 
@@ -35,6 +44,7 @@ class Product(models.Model):
     unit = models.CharField(max_length=20, default="pieces")
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     url = models.URLField(blank=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return self.name
