@@ -1,8 +1,10 @@
+from test.support import EnvironmentVarGuard
+
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import resolve
 from orders import views
-from orders.models import Order, Product, Team, Vendor
+from orders.models import Event, Order, Product, Team, Vendor
 
 
 class RoutingTests(TestCase):
@@ -124,6 +126,7 @@ class OrderViewTests(TestCase):
         self.product = Product.objects.create(name="Dr. Cave Johnson", unit_price=23.42)
 
         user = User.objects.create_user("team_member", password="team_member")
+        user.user_permissions.add(add_permission)
         self.team.members.add(user)
 
     def test_view_login_required(self):
@@ -246,6 +249,42 @@ class OrderViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/orders")
         self.assertEqual(Order.objects.all().count(), 0)
+
+    def test_event_preset_by_setting(self):
+        env = EnvironmentVarGuard()
+        env.set("DEFAULT_ORDER_EVENT", "42c3")
+        Event.objects.create(name="12c3")
+        Event.objects.create(name="42c3")
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.get("/orders/new")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, '<option value="2" selected>42c3</option>', html=True
+        )
+
+    def test_event_no_event_defined(self):
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.get("/orders/new")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, '<option value="" selected>---------</option>', html=True
+        )
+
+    def test_event_use_last(self):
+        Event.objects.create(name="12c3")
+        Event.objects.create(name="42c3")
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.get("/orders/new")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, '<option value="2" selected>42c3</option>', html=True
+        )
+
+    def test_single_team_preset(self):
+        self.client.login(username="team_member", password="team_member")
+        response = self.client.get("/orders/new")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<option value="1" selected>')
 
 
 class ProductViewTests(TestCase):

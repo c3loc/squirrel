@@ -1,6 +1,7 @@
+from decouple import UndefinedValueError, config
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
@@ -107,7 +108,17 @@ def order(request, order_id=None):
                 raise PermissionDenied
         else:
             if request.user.has_perm("orders.add_order"):
-                form = OrderForm(teams=my_teams)
+                try:
+                    my_event = Event.objects.get(name=config("DEFAULT_ORDER_EVENT"))
+                except (ObjectDoesNotExist, UndefinedValueError):
+                    my_event = Event.objects.last()
+                if my_teams.count() == 1:
+                    my_team = my_teams.first()
+                else:
+                    my_team = Team.objects.none()
+                form = OrderForm(
+                    initial={"event": my_event, "team": my_team}, teams=my_teams
+                )
             else:
                 raise PermissionDenied
 
