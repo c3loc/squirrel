@@ -64,9 +64,15 @@ class Order(models.Model):
 
     STATE_CHOICES = [
         ("REQ", "Requested"),  # User has requested Order
-        ("APP", "Approved"),  # Order was approved by purchase department
-        ("DEL", "Delivered"),  # Order has been delivered and commissioned
-        ("COM", "Completed"),  # Order has been picked up and
+        (
+            "APP",
+            "Approved",
+        ),  # Order was approved by purchase department and will be purchased
+        (
+            "REA",
+            "Ready for pick-up",
+        ),  # Order has been delivered (and commissioned if necessary)
+        ("COM", "Completed"),  # Order has been picked up by the team
     ]
 
     amount = models.PositiveIntegerField(default=1)
