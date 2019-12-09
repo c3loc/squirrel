@@ -63,6 +63,34 @@ class BudgetListView(LoginRequiredMixin, SingleTableView):
             return Team.objects.filter(members=self.request.user)
 
 
+# Not a View.
+def _state_helper(request, order_object):
+    if order_object.state == "REQ":
+        if request.user.has_perm("orders.change_order") or request.user.has_perm(
+            "orders.approve_order"
+        ):
+            my_states = [("REQ", "Requested"), ("APP", "Approved")]
+        else:
+            my_states = [("REQ", "Requested")]
+    elif order_object.state == "APP":
+        if request.user.has_perm("orders.change_order") or request.user.has_perm(
+            "orders.receive_order"
+        ):
+            my_states = [("APP", "Approved"), ("REA", "Ready for pick-up")]
+        else:
+            my_states = [("APP", "Approved")]
+    elif order_object.state == "REA":
+        if request.user.has_perm("orders.change_order") or request.user.has_perm(
+            "orders.complete_order"
+        ):
+            my_states = [("REA", "Ready for pick-up"), ("COM", "Completed")]
+        else:
+            my_states = [("REA", "Ready for pick-up")]
+    else:  # order_object.state is COM
+        my_states = [("COM", "Completed")]
+    return my_states
+
+
 @login_required
 def order(request, order_id=None):
     if order_id:
@@ -70,6 +98,7 @@ def order(request, order_id=None):
     else:
         order_object = None
 
+    # limit team field
     if request.user.has_perm("orders.view_team"):
         my_teams = Team.objects.all()
     else:
@@ -77,16 +106,55 @@ def order(request, order_id=None):
 
     if request.method == "POST":
         if order_object:
-            if (
-                request.user.has_perm("orders.change_order")
-                or request.user in order_object.team.members.all()
+            if request.user.has_perm("orders.change_order"):
+                # can do almost anything
+                form = OrderForm(
+                    request.POST,
+                    instance=order_object,
+                    teams=my_teams,
+                    states=Order.STATE_CHOICES,
+                )
+            elif (
+                (
+                    request.user.has_perm("orders.approve_order")
+                    and order_object.state == "REQ"
+                )
+                or (
+                    request.user.has_perm("orders.receive_order")
+                    and order_object.state == "APP"
+                )
+                or (
+                    request.user.has_perm("orders.complete_order")
+                    and order_object.state == "REA"
+                )
             ):
-                form = OrderForm(request.POST, instance=order_object, teams=my_teams)
+                form = OrderForm(
+                    request.POST,
+                    instance=order_object,
+                    teams=my_teams,
+                    states=_state_helper(request, order_object),
+                )
+            elif (
+                request.user in order_object.team.members.all()
+                and order_object.state == "REQ"
+            ):
+                form = OrderForm(
+                    request.POST,
+                    instance=order_object,
+                    teams=my_teams,
+                    states=[("REQ", "Requested")],
+                )
             else:
                 raise PermissionDenied
         else:
             if request.user.has_perm("orders.add_order"):
-                form = OrderForm(request.POST, teams=my_teams)
+                form = OrderForm(
+                    request.POST, teams=my_teams, states=Order.STATE_CHOICES
+                )
+            elif request.user.has_perm("orders.request_order"):
+                form = OrderForm(
+                    request.POST, teams=my_teams, states=[("REQ", "Requested")]
+                )
             else:
                 raise PermissionDenied
 
@@ -99,28 +167,56 @@ def order(request, order_id=None):
             return redirect("orders")
     else:
         if order_object:
+            # view a existing order
+
             if (
                 request.user.has_perm("orders.view_order")
                 or request.user in order_object.team.members.all()
             ):
-                form = OrderForm(instance=order_object, teams=my_teams)
+                # limit the states
+                my_states = _state_helper(request, order_object)
+
+                if request.user.has_perm("orders.add_order"):
+                    form = OrderForm(
+                        instance=order_object, teams=my_teams, states=my_states
+                    )
             else:
                 raise PermissionDenied
         else:
+            # new order form
+
+            # preset the event field
+            try:
+                my_event = Event.objects.get(name=config("DEFAULT_ORDER_EVENT"))
+            except (ObjectDoesNotExist, UndefinedValueError):
+                # if nothing is set we use the latest Event object
+                my_event = Event.objects.last()
+
+            # preset the team field if we only have a singel team
+            if my_teams.count() == 1:
+                my_team = my_teams.first()
+            else:
+                my_team = Team.objects.none()
+
+            # if we have the add_order perm, we can add in any state (admins)
             if request.user.has_perm("orders.add_order"):
-                try:
-                    my_event = Event.objects.get(name=config("DEFAULT_ORDER_EVENT"))
-                except (ObjectDoesNotExist, UndefinedValueError):
-                    my_event = Event.objects.last()
-                if my_teams.count() == 1:
-                    my_team = my_teams.first()
-                else:
-                    my_team = Team.objects.none()
-                form = OrderForm(
-                    initial={"event": my_event, "team": my_team}, teams=my_teams
-                )
+                my_states = Order.STATE_CHOICES
+            # if we have the request_order, we can only REQuest new orders
+            elif request.user.has_perm("orders.request_order"):
+                my_states = [("REQ", "Requested")]
+            # we are not allowed to add a order
             else:
                 raise PermissionDenied
+
+            form = OrderForm(
+                initial={
+                    "event": my_event,
+                    "state": ("REQ", "Requested"),
+                    "team": my_team,
+                },
+                teams=my_teams,
+                states=my_states,
+            )
 
     return render(request, "order.html", {"form": form, "events": Event.objects.all()},)
 

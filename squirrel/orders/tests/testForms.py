@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from orders.forms import OrderForm, ProductForm
-from orders.models import Event, Product, Team, Vendor
+from orders.models import Event, Order, Product, Team, Vendor
 
 
 class OrderFormTests(TestCase):
@@ -32,7 +32,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_teams(self):
         """Teams are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all())
+        form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
 
         self.assertEqual(form.fields["team"].queryset[0], self.teamA)
         self.assertEqual(form.fields["team"].queryset[1], self.teamB)
@@ -41,7 +41,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_events(self):
         """Events are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all())
+        form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
 
         self.assertEqual(form.fields["event"].queryset[0], self.eventA)
         self.assertEqual(form.fields["event"].queryset[1], self.eventB)
@@ -50,7 +50,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_products(self):
         """Products are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all())
+        form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
 
         self.assertEqual(form.fields["product"].queryset[0], self.productA)
         self.assertEqual(form.fields["product"].queryset[1], self.productB)
@@ -64,10 +64,14 @@ class OrderFormTests(TestCase):
             "state": "REQ",
             "unit_price": 10.00,
         }
-        form = OrderForm(data=form_data, teams=Team.objects.all())
+        form = OrderForm(
+            data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
+        )
         self.assertFalse(form.is_valid())
         form_data["amount"] = 1
-        form = OrderForm(data=form_data, teams=Team.objects.all())
+        form = OrderForm(
+            data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
+        )
         self.assertTrue(form.is_valid())
 
     def test_require_state(self):
@@ -115,7 +119,11 @@ class OrderFormTests(TestCase):
             "state": "REQ",
             "unit_price": 10.00,
         }
-        form = OrderForm(data=form_data, teams=Team.objects.filter(id=self.teamB.id))
+        form = OrderForm(
+            data=form_data,
+            teams=Team.objects.filter(id=self.teamB.id),
+            states=Order.STATE_CHOICES,
+        )
         self.assertTrue(form.is_valid())
 
     def test_non_team_members_can_not_set_team(self):
@@ -126,7 +134,9 @@ class OrderFormTests(TestCase):
             "state": "REQ",
             "unit_price": 10.00,
         }
-        form = OrderForm(data=form_data, teams=Team.objects.none())
+        form = OrderForm(
+            data=form_data, teams=Team.objects.none(), states=Order.STATE_CHOICES
+        )
         self.assertFalse(form.is_valid())
 
     def test_valid_permission_can_set_team(self):
@@ -137,7 +147,9 @@ class OrderFormTests(TestCase):
             "state": "REQ",
             "unit_price": 10.00,
         }
-        form = OrderForm(data=form_data, teams=Team.objects.all())
+        form = OrderForm(
+            data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
+        )
         self.assertTrue(form.is_valid())
 
 

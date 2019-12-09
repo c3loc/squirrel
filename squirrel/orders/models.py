@@ -18,14 +18,14 @@ class Event(models.Model):
 class Team(models.Model):
     """A team or similar group that orders things"""
 
+    class Meta:
+        permissions = [("view_budget", "Can view budget")]
+
     name = models.CharField(max_length=50, unique=True, default=None)
     members = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        permissions = [("view_budget", "Can view budget")]
 
 
 class Vendor(models.Model):
@@ -65,6 +65,14 @@ class Product(models.Model):
 
 class Order(models.Model):
     """A single order. Orders are always referenced to a team"""
+
+    class Meta:
+        permissions = [
+            ("request_order", "Can request a order"),
+            ("approve_order", "Can approve a order"),
+            ("receive_order", "Can receive order"),
+            ("complete_order", "Can compelete order"),
+        ]
 
     __old_state = None
 
