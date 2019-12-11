@@ -107,7 +107,7 @@ class OrderFormTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<input type="number" name="unit_price" step="0.01" class="numberinput form-control is-invalid" required id="id_unit_price">',
+            '<input type="number" name="unit_price" step="0.0001" class="numberinput form-control is-invalid" required id="id_unit_price">',
             html=True,
         )
 
