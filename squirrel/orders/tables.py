@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_tables2 import Column, TemplateColumn, tables
 from orders.models import Order, Product, Team, Vendor
 
@@ -72,13 +73,25 @@ class ProductTable(tables.Table):
     class Meta:
         model = Product
         attrs = {"class": "table table-sm"}
-        fields = ["name", "unit", "unit_price", "vendor", "url"]
+        fields = ["name", "unit", "unit_price", "vendor", "ordered_amount", "url"]
 
     edit = TemplateColumn(template_name="tables/product_button_column.html")
+    ordered_amount = Column(
+        empty_values=(), verbose_name="Ordered amount not yet on site"
+    )
 
     @staticmethod
     def render_unit_price(value):
         return f"{value} €"
+
+    @staticmethod
+    def render_ordered_amount(record):
+        """We get all orders for our product that are NOT ready to pick up AND NOT completed"""
+        orders = Order.objects.filter(
+            Q(product=record), ~Q(state="REA"), ~Q(state="COM"),
+        )
+
+        return sum(order.amount for order in orders)
 
 
 class BudgetTable(tables.Table):
