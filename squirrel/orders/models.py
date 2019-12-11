@@ -51,6 +51,11 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         """Set the unit_price for all non-completed orders to the new product price"""
+
+        # CAVEAT: We need to save the product first! If we don’t, the order query below will return all orders without
+        # a product when we’re creating a new product
+        super().save(*args, **kwargs)
+
         orders = Order.objects.filter(product=self)
 
         # We exclude completed orders
@@ -59,8 +64,6 @@ class Product(models.Model):
         for order in orders:
             order.unit_price = self.unit_price
             order.save()
-
-        super().save(*args, **kwargs)
 
 
 class Order(models.Model):
