@@ -228,7 +228,14 @@ def order(request, order_id=None):
 @permission_required("orders.delete_order", raise_exception=True)
 def delete_order(request, order_id=None):
     order_object = get_object_or_404(Order, id=order_id)
-    order_object.delete()
+    if (
+        request.user.has_perm("orders.delete_order")
+        and request.user in order_object.team.members.all()
+        and order_object.state == "REQ"
+    ) or request.user.has_perm("orders.delete_order_all_teams"):
+        order_object.delete()
+    else:
+        raise PermissionDenied
 
     return redirect("orders")
 
