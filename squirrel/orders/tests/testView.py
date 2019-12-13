@@ -306,23 +306,53 @@ class OrderViewTests(TestCase):
         # we can no longer change this order
         response = self.post_order(order.id, "REQ")
 
-    def test_require_delete_permission_fails(self):
+    def test_require_no_delete_permission_fails(self):
+        """Has to fail because the user has no delete permission and is
+           not in the team we’re trying to delete the order from"""
         order = Order.objects.create(product=self.product, team=self.team_a)
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.post("/orders/delete/{}".format(order.id))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Order.objects.all().count(), 1)
 
-    def test_require_delete_permission_ok(self):
+    def test_require_only_delete_permission_fails(self):
+        """Has to fail because the user is not in the team we’re trying to delete the order from"""
         order = Order.objects.create(product=self.product, team=self.team_a)
         self.view_user.user_permissions.add(self.delete_permission)
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.post("/orders/delete/{}".format(order.id))
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Order.objects.all().count(), 1)
+
+    def test_require_delete_all_teams_permission_ok(self):
+        """Has to succeed because the user has the delete_order_all_teams permission"""
+        order = Order.objects.create(product=self.product, team=self.team_a)
+        self.view_user.user_permissions.add(self.delete_all_teams_permission)
+        self.view_user.user_permissions.add(self.delete_permission)
+
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.post("/orders/delete/{}".format(order.id))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/orders")
         self.assertEqual(Order.objects.all().count(), 0)
 
-    # TODO: shall team member be allowed to delete orders in REQ state?
+    def test_team_members_can_delete_orders(self):
+        """Has to succeed because the user has the delete_order permission and is member of the team"""
+        self.team_a.members.add(self.user)
+        my_order = Order.objects.create(product=self.product, team=self.team_a)
+        my_approved_order = Order.objects.create(
+            product=self.product, team=self.team_a, state="APP"
+        )
+        order = Order.objects.create(product=self.product, team=self.team_b)
+        self.user.user_permissions.add(self.delete_permission)
+        self.client.login(username="engel", password="engel")
+        response = self.client.post("/orders/delete/{}".format(my_order.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/orders")
+        response = self.client.post("/orders/delete/{}".format(order.id))
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post("/orders/delete/{}".format(my_approved_order.id))
+        self.assertEqual(response.status_code, 403)
 
     def test_event_preset_by_setting(self):
         env = EnvironmentVarGuard()
