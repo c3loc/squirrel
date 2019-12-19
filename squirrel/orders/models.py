@@ -136,11 +136,6 @@ class Order(models.Model):
         if not self.unit_price and self.product:
             self.unit_price = self.product.unit_price
 
-        # If the old state was COM, the order can’t be changed anymore
-        # An order can however be created in the „completed“ state, therefore the (and self.id)
-        if self.__old_state == "COM" and self.id:
-            raise PermissionDenied("Completed orders can’t be changed.")
-
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

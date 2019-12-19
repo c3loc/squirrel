@@ -68,8 +68,6 @@ class OrderModelTests(TestCase):
         order = Order.objects.create(product=self.product, team=self.team)
         self.assertEqual(order.unit_price, 23.42)
 
-    def test_forbid_completed_order_deletion_or_update(self):
+    def test_forbid_completed_order_deletion(self):
         order = Order.objects.create(product=self.product, team=self.team, state="COM")
         self.assertRaises(PermissionDenied, order.delete)
-        order.amount = 1337
-        self.assertRaises(PermissionDenied, order.save)
