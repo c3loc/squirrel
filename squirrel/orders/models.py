@@ -42,28 +42,9 @@ class Product(models.Model):
 
     name = models.CharField(max_length=250, default=None)
     unit = models.CharField(max_length=20, default="pieces")
-    unit_price = models.DecimalField(max_digits=12, decimal_places=4, default=0)
-    url = models.URLField(blank=True)
-    vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        """Set the unit_price for all non-completed orders to the new product price"""
-
-        # CAVEAT: We need to save the product first! If we don’t, the order query below will return all orders without
-        # a product when we’re creating a new product
-        super().save(*args, **kwargs)
-
-        orders = Order.objects.filter(product=self)
-
-        # We exclude completed orders
-        orders = orders.exclude(state="COM")
-
-        for order in orders:
-            order.unit_price = self.unit_price
-            order.save()
 
 
 class Order(models.Model):
@@ -128,15 +109,6 @@ class Order(models.Model):
             raise ValidationError("An order must have either a product or an item set")
         elif self.product and self.product_suggestion:
             raise ValidationError("An order must not have a product and an item set")
-
-    def save(self, *args, **kwargs):
-        """Orders have some special behavior on saving"""
-
-        # If no unit_price was set, set the price to the price of the product if one is set
-        if not self.unit_price and self.product:
-            self.unit_price = self.product.unit_price
-
-        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """Orders have some special behavior on deletion"""

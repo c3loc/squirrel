@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from orders.forms import OrderForm, ProductForm
-from orders.models import Event, Order, Product, Team, Vendor
+from orders.forms import OrderForm
+from orders.models import Event, Order, Product, Team
 
 
 class OrderFormTests(TestCase):
@@ -21,10 +21,10 @@ class OrderFormTests(TestCase):
         helpdesk.user_permissions.add(Permission.objects.get(codename="view_team"))
         helpdesk.user_permissions.add(Permission.objects.get(codename="add_order"))
 
-        self.productB = Product.objects.create(name="Tardis", unit_price=17.00)
+        self.productB = Product.objects.create(name="Tardis")
 
-        self.productA = Product.objects.create(name="Apple", unit_price=3.14)
-        self.productZ = Product.objects.create(name="Zotz", unit_price=23.42)
+        self.productA = Product.objects.create(name="Apple")
+        self.productZ = Product.objects.create(name="Zotz")
 
         self.eventA = Event.objects.create(name="36C3")
         self.eventB = Event.objects.create(name="Another event")
@@ -151,19 +151,3 @@ class OrderFormTests(TestCase):
             data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
         )
         self.assertTrue(form.is_valid())
-
-
-class ProductFormTests(TestCase):
-    def setUp(self) -> None:
-        self.vendorA = Vendor.objects.create(name="36C3")
-        self.vendorB = Vendor.objects.create(name="Another vendor")
-        self.vendorC = Vendor.objects.create(name="Test Event 3")
-
-    def test_sorted_vendors(self):
-        """Vendors are sorted alphabetically"""
-        form = ProductForm()
-
-        self.assertEqual(form.fields["vendor"].queryset[0], self.vendorA)
-        self.assertEqual(form.fields["vendor"].queryset[1], self.vendorB)
-        self.assertEqual(form.fields["vendor"].queryset[2], self.vendorC)
-        self.assertEqual(len(form.fields["vendor"].queryset), 3)

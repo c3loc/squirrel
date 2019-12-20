@@ -32,13 +32,9 @@ class OrderForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(ProductForm, self).__init__(*args, **kwargs)
-        self.fields["vendor"].queryset = self.fields["vendor"].queryset.order_by("name")
-
     class Meta:
         model = Product
-        fields = ["name", "unit", "unit_price", "url", "vendor"]
+        fields = ["name", "unit"]
 
 
 class TeamForm(forms.ModelForm):

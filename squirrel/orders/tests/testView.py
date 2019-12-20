@@ -108,7 +108,7 @@ class OrderViewTests(TestCase):
         #
         self.team_a = Team.objects.create(name="The A-Team")
         self.team_b = Team.objects.create(name="Not the A-Team")
-        self.product = Product.objects.create(name="Dr. Cave Johnson", unit_price=23.42)
+        self.product = Product.objects.create(name="Dr. Cave Johnson")
 
         # a user without any permission
         self.user = User.objects.create_user("engel", password="engel")
@@ -407,16 +407,9 @@ class ProductViewTests(TestCase):
 
     def test_require_add_permission_ok(self):
         self.client.login(username="order_engel", password="order_engel")
-        vendor = Vendor.objects.get(name="ACME Inc.")
 
         response = self.client.post(
-            "/products/new",
-            {
-                "name": "Awesome Beer",
-                "unit": "Hectoliter",
-                "unit_price": "5",
-                "vendor": vendor.id,
-            },
+            "/products/new", {"name": "Awesome Beer", "unit": "Hectoliter"},
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/products")
@@ -441,17 +434,11 @@ class ProductViewTests(TestCase):
 
     def test_require_change_permission_ok(self):
         product = Product.objects.create(name="Bad Beer")
-        vendor = Vendor.objects.get(name="ACME Inc.")
 
         self.client.login(username="order_admin", password="order_admin")
         response = self.client.post(
             "/products/{}".format(product.id),
-            {
-                "name": "Awesome Beer",
-                "unit": "Hectoliter",
-                "unit_price": "5",
-                "vendor": vendor.id,
-            },
+            {"name": "Awesome Beer", "unit": "Hectoliter"},
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/products")
@@ -474,7 +461,7 @@ class ProductViewTests(TestCase):
 
     def test_show_correct_ordered_sum(self):
         """Checks that the calculated „ordered but not yet on site“ amount is correct"""
-        product = Product.objects.create(name="Mor(r)e Mate", vendor=self.vendor)
+        product = Product.objects.create(name="Mor(r)e Mate")
         team = Team.objects.create(name="Matebar")
         order = Order.objects.create(amount=5, team=team, state="APP", product=product)
 

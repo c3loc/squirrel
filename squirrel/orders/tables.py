@@ -73,16 +73,12 @@ class ProductTable(tables.Table):
     class Meta:
         model = Product
         attrs = {"class": "table table-sm"}
-        fields = ["name", "unit", "unit_price", "vendor", "ordered_amount", "url"]
+        fields = ["name", "unit", "ordered_amount"]
 
     edit = TemplateColumn(template_name="tables/product_button_column.html")
     ordered_amount = Column(
         empty_values=(), verbose_name="Ordered amount not yet on site"
     )
-
-    @staticmethod
-    def render_unit_price(value):
-        return f"{value} €"
 
     @staticmethod
     def render_ordered_amount(record):
