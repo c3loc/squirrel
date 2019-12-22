@@ -117,7 +117,7 @@ class OrderViewTests(TestCase):
         self.view_user.user_permissions.add(self.view_permission)
         self.view_user.user_permissions.add(self.team_permission)
 
-    def post_order(self, id="new", state="REQ", amount=1, unit_price=1):
+    def post_order(self, id="new", state="REQ", amount=1, unit_price=1, comment=""):
         return self.client.post(
             "/orders/{}".format(id),
             {
@@ -126,6 +126,7 @@ class OrderViewTests(TestCase):
                 "team": self.team_a.id,
                 "unit_price": unit_price,
                 "state": state,
+                "comment": comment,
             },
         )
 
@@ -187,6 +188,18 @@ class OrderViewTests(TestCase):
         response = self.post_order("new", "COM")
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Order.objects.all().count(), 0)
+
+    def test_new_order_has_comment_field(self):
+        self.view_user.user_permissions.add(self.add_permission)
+        self.client.login(username="loc_engel", password="loc_engel")
+        response = self.client.get("/orders/new")
+
+        print(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            '<textarea name="comment" cols="15" rows="4" maxlength="1000" class="textarea form-control" id="id_comment">',
+        )
 
     def test_add_permission_can_add_anything(self):
         self.view_user.user_permissions.add(self.add_permission)

@@ -94,6 +94,8 @@ class Order(models.Model):
     )
     team = models.ForeignKey(Team, on_delete=models.PROTECT, related_name="orders")
 
+    comment = models.CharField(max_length=1000, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, auto_now=True)
     created_by = models.ForeignKey(

@@ -28,6 +28,7 @@ class OrderTable(tables.Table):
         fields = [
             "amount",
             "item",
+            "comment",
             "state",
             "event",
             "team",
@@ -39,6 +40,10 @@ class OrderTable(tables.Table):
     item = Column(empty_values=())
     edit = TemplateColumn(template_name="tables/order_button_column.html")
     price = Column(empty_values=(), verbose_name="Order sum")
+
+    comment = TemplateColumn(
+        '<data-toggle="tooltip" title="{{record.comment}}">{{record.comment|truncatechars:50}}'
+    )
 
     @staticmethod
     def render_amount(record):

@@ -24,11 +24,16 @@ class OrderForm(forms.ModelForm):
             "product",
             "product_suggestion",
             "url",
+            "comment",
             "state",
             "unit_price",
             "event",
             "team",
         ]
+
+        widgets = {
+            "comment": forms.Textarea(attrs={"rows": 4, "cols": 15}),
+        }
 
 
 class ProductForm(forms.ModelForm):
