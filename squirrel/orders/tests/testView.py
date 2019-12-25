@@ -387,6 +387,11 @@ class ProductViewTests(TestCase):
         user.user_permissions.add(view_permission)
         user.user_permissions.add(delete_permission)
 
+    def test_view_new_product_status_ok(self):
+        self.client.login(username="order_engel", password="order_engel")
+        response = self.client.get("/products/new")
+        self.assertEqual(response.status_code, 200)
+
     def test_view_login_required(self):
         response = self.client.get("/products")
         self.assertEqual(response.status_code, 302)
