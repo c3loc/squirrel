@@ -1,6 +1,6 @@
 # Orders
 
-This document explains the details of orders.
+Squirrel makes some assumptions about workflows, which are put into code in the order state.
 
 ## Order states
 

@@ -1,12 +1,19 @@
 """
 The URL routing for our project
 """
+from django.conf.urls import include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from orders import views
+from orders.api import resources
+from tastypie.api import Api
+
+v1_api = Api(api_name="v1")
+v1_api.register(resources.ProductResource())
 
 urlpatterns = [
+    path("api/", include(v1_api.urls)),
     path("", views.overview, name="overview"),
     path("logout", auth_views.LogoutView.as_view(), name="logout"),
     path(
