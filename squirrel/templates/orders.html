@@ -5,6 +5,9 @@
 
 {% block content %}
   <h1>Orders</h1>
-  <p><a href="{% url 'new_order' %}" role="button" class="btn btn-primary">New Order</a></p>
+  <p>
+    <a href="{% url 'new_order' %}" role="button" class="btn btn-primary">New Order</a>
+    <a href="{% url 'export_orders_csv' %}" role="button" class="btn btn-secondary">Export as CSV</a>
+  </p>
   {% render_table table %}
 {% endblock %}

@@ -1,7 +1,10 @@
+import csv
+
 from decouple import UndefinedValueError, config
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
@@ -356,3 +359,58 @@ def delete_team(request, team_id=None):
     team_object.delete()
 
     return redirect("teams")
+
+
+@login_required
+@permission_required("orders.export_csv", raise_exception=True)
+def export_orders_csv(request):
+    # TODO: This whole view needs to be reworked once we have updated the product/product suggestion thing
+    if request.user.has_perm("orders.view_order"):
+        orders = Order.objects.all()
+    else:
+        orders = Order.objects.filter(team__members=request.user)
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="squirrel-export.csv"'
+
+    # Get the names of the model fields
+    field_names = [
+        "Amount",
+        "Item",
+        "URL",
+        "State",
+        "Unit price",
+        "Total price",
+        "Event",
+        "Team",
+    ]
+
+    lines = [field_names]
+
+    for order_instance in orders:
+        if order_instance.product:
+            item = order_instance.product
+        else:
+            item = order_instance.product_suggestion
+
+        total_price = order_instance.unit_price * order_instance.amount
+
+        lines.append(
+            [
+                order_instance.amount,
+                item,
+                order_instance.url,
+                order_instance.get_state_display(),
+                order_instance.unit_price,
+                total_price,
+                order_instance.event,
+                order_instance.team,
+            ]
+        )
+
+    writer = csv.writer(response)
+    for line in lines:
+        writer.writerow(line)
+
+    return response

@@ -42,6 +42,7 @@ urlpatterns = [
     path("orders/new", views.order, name="new_order"),
     path("orders/<int:order_id>", views.order, name="edit_order"),
     path("orders/delete/<int:order_id>", views.delete_order, name="delete_order"),
+    path("orders/export", views.export_orders_csv, name="export_orders_csv"),
     path("products", views.ProductListView.as_view(), name="products"),
     path("products/new", views.product, name="new_product"),
     path("products/<int:product_id>", views.product, name="edit_product"),

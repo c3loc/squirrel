@@ -56,6 +56,7 @@ class Order(models.Model):
             ("approve_order", "Can approve a order"),
             ("receive_order", "Can receive order"),
             ("complete_order", "Can compelete order"),
+            ("export_csv", "Can export all orders as CSV"),
         ]
 
     __old_state = None

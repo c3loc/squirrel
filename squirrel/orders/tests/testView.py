@@ -363,6 +363,34 @@ class OrderViewTests(TestCase):
         self.assertContains(response, '<option value="1" selected>')
 
 
+class OrderExportViewTests(TestCase):
+    def setUp(self) -> None:
+        # Various permission objects for convinience use
+        self.export_permission = Permission.objects.get(codename="export_csv")
+
+        # User without rights
+        self.user = User.objects.create_user("engel", password="engel")
+
+        # a user with view permission, can export CSV
+        self.view_user = User.objects.create_user("exporter", password="exporter")
+        self.view_user.user_permissions.add(self.export_permission)
+
+    def test_view_login_required(self):
+        response = self.client.get("/orders/export")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/login/?next=/orders/export")
+
+    def test_non_privileged_can_not_export(self):
+        self.client.login(username="engel", password="engel")
+        response = self.client.get("/orders/export")
+        self.assertEqual(response.status_code, 403)
+
+    def test_privileged_can_export(self):
+        self.client.login(username="exporter", password="exporter")
+        response = self.client.get("/orders/export")
+        self.assertEqual(response.status_code, 200)
+
+
 class ProductViewTests(TestCase):
     def setUp(self) -> None:
         User.objects.create_user("engel", password="engel")
