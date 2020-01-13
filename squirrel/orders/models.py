@@ -57,6 +57,10 @@ class Order(models.Model):
             ("receive_order", "Can receive order"),
             ("complete_order", "Can compelete order"),
             ("export_csv", "Can export all orders as CSV"),
+            ("view_order_all_teams", "Can view orders for all teams"),
+            ("add_order_all_teams", "Can add orders for all teams"),
+            ("change_order_all_teams", "Can change orders for all teams"),
+            ("delete_order_all_teams", "Can delete orders for all teams"),
         ]
 
     __old_state = None

@@ -96,16 +96,31 @@ class OrderViewTests(TestCase):
     def setUp(self) -> None:
         # Various permission objects for convinience use
         self.team_permission = Permission.objects.get(codename="view_team")
-        self.view_permission = Permission.objects.get(codename="view_order")
-        self.add_permission = Permission.objects.get(codename="add_order")
         self.request_permission = Permission.objects.get(codename="request_order")
         self.approve_permission = Permission.objects.get(codename="approve_order")
         self.receive_permission = Permission.objects.get(codename="receive_order")
         self.complete_permission = Permission.objects.get(codename="complete_order")
-        self.change_permission = Permission.objects.get(codename="change_order")
-        self.delete_permission = Permission.objects.get(codename="delete_order")
 
-        #
+        self.view_permission = Permission.objects.get(codename="view_order")
+        self.view_all_teams_permission = Permission.objects.get(
+            codename="view_order_all_teams"
+        )
+
+        self.add_permission = Permission.objects.get(codename="add_order")
+        self.add_all_teams_permission = Permission.objects.get(
+            codename="add_order_all_teams"
+        )
+
+        self.change_permission = Permission.objects.get(codename="change_order")
+        self.change_all_teams_permission = Permission.objects.get(
+            codename="change_order_all_teams"
+        )
+
+        self.delete_permission = Permission.objects.get(codename="delete_order")
+        self.delete_all_teams_permission = Permission.objects.get(
+            codename="delete_order_all_teams"
+        )
+
         self.team_a = Team.objects.create(name="The A-Team")
         self.team_b = Team.objects.create(name="Not the A-Team")
         self.product = Product.objects.create(name="Dr. Cave Johnson")
