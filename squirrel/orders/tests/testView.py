@@ -145,34 +145,22 @@ class OrderViewTests(TestCase):
 
     def test_members_can_view_team_orders(self):
         self.team_a.members.add(self.user)
-        my_order = Order.objects.create(product=self.product, team=self.team_a)
-        order = Order.objects.create(product=self.product, team=self.team_b)
+        Order.objects.create(product=self.product, team=self.team_a)
+        Order.objects.create(product=self.product, team=self.team_b)
         self.client.login(username="engel", password="engel")
         response = self.client.get("/orders")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(my_order.id),
-        )
-        self.assertNotContains(
-            response,
-            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(order.id),
-        )
+        self.assertContains(response, "The A-Team")
+        self.assertNotContains(response, "Not the A-Team")
 
     def test_view_permission_can_see_all_orders(self):
-        my_order = Order.objects.create(product=self.product, team=self.team_a)
-        order = Order.objects.create(product=self.product, team=self.team_b)
+        Order.objects.create(product=self.product, team=self.team_a)
+        Order.objects.create(product=self.product, team=self.team_b)
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.get("/orders")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(my_order.id),
-        )
-        self.assertContains(
-            response,
-            '<a class="btn btn-primary btn-sm" href="/orders/{}">'.format(order.id),
-        )
+        self.assertContains(response, "The A-Team")
+        self.assertContains(response, "Not the A-Team")
 
     def test_non_privileged_can_not_add_order_in_any_state(self):
         self.client.login(username="loc_engel", password="loc_engel")

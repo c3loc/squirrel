@@ -5,6 +5,8 @@
 
 {% block content %}
   <h1>Products</h1>
+  {% if perms.orders.add_product %}
   <p><a href="{% url 'new_product' %}" role="button" class="btn btn-primary">New Product</a></p>
+  {% endif %}
   {% render_table table %}
 {% endblock %}

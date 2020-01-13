@@ -5,6 +5,8 @@
 
 {% block content %}
   <h1>Teams</h1>
+  {% if perms.orders.add_team %}
   <p><a href="{% url 'new_team' %}" role="button" class="btn btn-primary">New Team</a></p>
+  {% endif %}
   {% render_table table %}
 {% endblock %}

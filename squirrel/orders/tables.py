@@ -9,7 +9,24 @@ class VendorTable(tables.Table):
         attrs = {"class": "table table-sm"}
         fields = ["name"]
 
-    edit = TemplateColumn(template_name="tables/vendor_button_column.html")
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_vendor %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_vendor' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_vendor %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_vendor' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_vendor") or request.user.has_perm(
+            "orders.delete_vendor"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
 
 
 class TeamTable(tables.Table):
@@ -18,7 +35,24 @@ class TeamTable(tables.Table):
         attrs = {"class": "table table-sm"}
         fields = ["name"]
 
-    edit = TemplateColumn(template_name="tables/team_button_column.html")
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_team %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_team' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_team %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_team' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_team") or request.user.has_perm(
+            "orders.delete_team"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
 
 
 class OrderTable(tables.Table):
@@ -38,12 +72,31 @@ class OrderTable(tables.Table):
 
     # The item that is displayed to the user can either be the wish or the configured product
     item = Column(empty_values=())
-    edit = TemplateColumn(template_name="tables/order_button_column.html")
+
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_order %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_order' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_order %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_order' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
     price = Column(empty_values=(), verbose_name="Order sum")
 
     comment = TemplateColumn(
         '<data-toggle="tooltip" title="{{record.comment}}">{{record.comment|truncatechars:50}}'
     )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_order") or request.user.has_perm(
+            "orders.delete_order"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
 
     @staticmethod
     def render_amount(record):
@@ -80,10 +133,28 @@ class ProductTable(tables.Table):
         attrs = {"class": "table table-sm"}
         fields = ["name", "unit", "ordered_amount"]
 
-    edit = TemplateColumn(template_name="tables/product_button_column.html")
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_product %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_product' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_product %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_product' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
     ordered_amount = Column(
         empty_values=(), verbose_name="Ordered amount not yet on site"
     )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_product") or request.user.has_perm(
+            "orders.delete_product"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
 
     @staticmethod
     def render_ordered_amount(record):

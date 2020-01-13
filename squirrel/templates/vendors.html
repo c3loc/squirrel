@@ -5,6 +5,8 @@
 
 {% block content %}
   <h1>Vendors</h1>
+  {% if perms.orders.add_vendor %}
   <p><a href="{% url 'new_vendor' %}" role="button" class="btn btn-primary">New Vendor</a></p>
+  {% endif %}
   {% render_table table %}
 {% endblock %}
