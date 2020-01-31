@@ -1,4 +1,4 @@
-Django==2.2.8
+Django==2.2.9
 django-crispy-forms==1.8.0
 django-tables2==2.2.1
 django-tastypie==0.14.3
