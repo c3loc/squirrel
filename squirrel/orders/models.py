@@ -55,7 +55,7 @@ class Order(models.Model):
             ("request_order", "Can request a order"),
             ("approve_order", "Can approve a order"),
             ("receive_order", "Can receive order"),
-            ("complete_order", "Can compelete order"),
+            ("complete_order", "Can complete order"),
             ("export_csv", "Can export all orders as CSV"),
             ("view_order_all_teams", "Can view orders for all teams"),
             ("add_order_all_teams", "Can add orders for all teams"),
