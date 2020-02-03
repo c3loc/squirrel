@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "orders",
+    "squirrel.orders",
     "crispy_forms",
     "django_tables2",
 ]

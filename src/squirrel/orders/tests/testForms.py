@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from orders.forms import OrderForm
-from orders.models import Event, Order, Product, Team
+from squirrel.orders.forms import OrderForm
+from squirrel.orders.models import Event, Order, Product, Team
 
 
 class OrderFormTests(TestCase):

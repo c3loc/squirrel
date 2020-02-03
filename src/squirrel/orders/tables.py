@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django_tables2 import Column, TemplateColumn, tables
-from orders.models import Order, Product, Team, Vendor
+from squirrel.orders.models import Order, Product, Team, Vendor
 
 
 class VendorTable(tables.Table):

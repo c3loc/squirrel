@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
-from orders.models import Event, Good, Order, Product, Purchase, Team, Vendor
+from squirrel.orders.models import Event, Good, Order, Product, Purchase, Team, Vendor
 
 
 class EventModelTests(TestCase):

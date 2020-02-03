@@ -1,5 +1,5 @@
 from django.test import TestCase
-from orders.models import Team, Vendor
+from squirrel.orders.models import Team, Vendor
 
 
 class ProductRegressionTests(TestCase):

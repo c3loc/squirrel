@@ -3,8 +3,8 @@ from test.support import EnvironmentVarGuard
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import resolve
-from orders import views
-from orders.models import Event, Order, Product, Team, Vendor
+from squirrel.orders import views
+from squirrel.orders.models import Event, Order, Product, Team, Vendor
 
 
 class RoutingTests(TestCase):
