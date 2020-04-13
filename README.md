@@ -26,10 +26,10 @@ pip install -r requirements-dev.txt
 
 ### Configure squirrel
 
-For squirrel to run, you need to configure it. The supplied [`settings.example.ini`](squirrel/settings.example.ini) lists
+For squirrel to run, you need to configure it. The supplied [`settings.example.ini`](src/settings.example.ini) lists
 all possible settings.
 
-Put your configuration file at `squirrel/settings.ini`.
+Put your configuration file at `src/settings.ini`.
 
 You need to set at least a `SECRET_KEY` or squirrel will not start.
 
@@ -45,7 +45,7 @@ Example for nginx:
 
 ```
 location /public {
-    root /var/www/squirrel/squirrel;
+    root /var/www/squirrel/src;
 }
 ```
 
@@ -92,7 +92,7 @@ will run.
 
 * `isort` for include sorting
 * `black` for code formatting
-* `flak8` for syntax checking
+* `flake8` for syntax checking
 
 If any of those fail, you need to fix all problems before you can commit
 your change. If you need help with any of it, please open an issue.
