@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "squirrel.orders",
     "crispy_forms",
     "django_tables2",
+    "rest_framework",
 ]
 
 # Which templates to use for crispy_forms
@@ -163,3 +164,8 @@ NOSE_ARGS = [
     "--with-coverage",
     "--cover-package=orders,squirrel",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 100,
+}

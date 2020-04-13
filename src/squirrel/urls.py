@@ -3,11 +3,11 @@ The URL routing for our project
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path
-
-from .orders import views
+from django.urls import include, path
+from squirrel.orders import views
 
 urlpatterns = [
+    path("api/", include("squirrel.api.urls")),
     path("", views.overview, name="overview"),
     path("logout", auth_views.LogoutView.as_view(), name="logout"),
     path(
