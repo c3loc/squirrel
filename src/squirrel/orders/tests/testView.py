@@ -81,10 +81,6 @@ class RoutingTests(TestCase):
         self.assertEqual(view.args, ())
         self.assertEqual(view.kwargs, {"team_id": 12})
 
-    def test_budgets_resolves_budgets(self):
-        view = resolve("/budgets")
-        self.assertEqual(view.url_name, "budgets")
-
 
 class OverviewViewTest(TestCase):
     def test_static_overview(self):

@@ -10,7 +10,7 @@ from django_tables2 import SingleTableView
 
 from .forms import OrderForm, ProductForm, TeamForm, VendorForm
 from .models import Event, Order, Product, Team, Vendor
-from .tables import BudgetTable, OrderTable, ProductTable, TeamTable, VendorTable
+from .tables import OrderTable, ProductTable, TeamTable, VendorTable
 
 
 def login_redirect(request):
@@ -52,18 +52,6 @@ class TeamListView(PermissionRequiredMixin, SingleTableView):
     model = Team
     table_class = TeamTable
     template_name = "teams.html"
-
-
-class BudgetListView(LoginRequiredMixin, SingleTableView):
-    model = Team
-    table_class = BudgetTable
-    template_name = "budgets.html"
-
-    def get_table_data(self):
-        if self.request.user.has_perm("orders.view_budget"):
-            return Team.objects.all()
-        else:
-            return Team.objects.filter(members=self.request.user)
 
 
 # Not a View.

@@ -154,19 +154,3 @@ class ProductTable(tables.Table):
         )
 
         return sum(order.amount for order in orders)
-
-
-class BudgetTable(tables.Table):
-    class Meta:
-        model = Team
-        attrs = {"class": "table table-sm"}
-        fields = ["name", "orders_sum"]
-
-    orders_sum = Column(empty_values=(), verbose_name="Orders sum")
-
-    @staticmethod
-    def render_orders_sum(record):
-        orders = Order.objects.filter(team=record)
-        total = sum(order.unit_price * order.amount for order in orders)
-
-        return f"{total} €"
