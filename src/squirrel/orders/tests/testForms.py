@@ -59,7 +59,7 @@ class OrderFormTests(TestCase):
 
     def test_require_amount(self):
         form_data = {
-            "product": self.productB.id,
+            "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,
@@ -114,7 +114,7 @@ class OrderFormTests(TestCase):
     def test_team_members_can_set_team(self):
         form_data = {
             "amount": 1,
-            "product": self.productB.id,
+            "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,
@@ -129,7 +129,7 @@ class OrderFormTests(TestCase):
     def test_non_team_members_can_not_set_team(self):
         form_data = {
             "amount": 1,
-            "product": self.productB.id,
+            "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,
@@ -142,7 +142,7 @@ class OrderFormTests(TestCase):
     def test_valid_permission_can_set_team(self):
         form_data = {
             "amount": 1,
-            "product": self.productB.id,
+            "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,

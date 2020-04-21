@@ -161,6 +161,9 @@ def order(request, order_id=None):
             else:
                 raise PermissionDenied
 
+        # Create the product if it does not yet exist
+        Product.objects.get_or_create(name=request.POST["product"])
+
         if form.is_valid():
             order_object = form.save(commit=False)
             if not order_id:
