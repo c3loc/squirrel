@@ -33,7 +33,6 @@ class OrderForm(forms.ModelForm):
         fields = [
             "amount",
             "product",
-            "url",
             "comment",
             "state",
             "unit_price",

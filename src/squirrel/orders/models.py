@@ -170,7 +170,6 @@ class Order(models.Model):
     amount = models.PositiveIntegerField(default=1)
 
     product = models.ForeignKey(Product, on_delete=models.PROTECT, to_field="name", null=True)
-    url = models.URLField(blank=True)
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
     unit_price = models.DecimalField(max_digits=12, decimal_places=4, default=0)
