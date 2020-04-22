@@ -2,7 +2,7 @@
 Models for our orders
 """
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils import timezone
 
@@ -66,71 +66,6 @@ class Purchase(models.Model):
     def __str__(self):
         return "Purchase with {} @ {}".format(self.vendor, self.ordered_at.date())
 
-    @property
-    def net(self):
-        return sum([good.net for good in Good.objects.filter(purchase=self)])
-
-    @property
-    def gross(self):
-        return sum([good.gross for good in Good.objects.filter(purchase=self)])
-
-    @property
-    def state(self):
-        raise AssertionError(
-            "A purchase_net can only transitively set the state of its orders."
-        )
-
-    @state.setter
-    def state(self, state):
-        """Set the state of all orders related to this purchase_net"""
-        if state not in dict(Order.STATE_CHOICES):
-            raise ValueError("You have to specify an existing state.")
-
-        goods = Good.objects.filter(purchase=self)
-        for good in goods:
-            for order in Order.objects.filter(good=good):
-                order.state = state
-                order.save()
-
-
-class Good(models.Model):
-    name = models.CharField(max_length=255)
-    unit_price = models.PositiveIntegerField(verbose_name="Unit price in 100th cent")
-    unit = models.CharField(max_length=20, default="Stück")
-    tax_rate = models.PositiveIntegerField(verbose_name="Tax rate in %", default=19)
-    amount = models.IntegerField()
-    purchase = models.ForeignKey(
-        Purchase, on_delete=models.PROTECT, related_name="goods"
-    )
-
-    @property
-    def net(self):
-        if self.purchase.is_net:
-            return self.amount * self.unit_price
-        else:
-            return self.amount * self.unit_price / (1 + self.tax_rate / 100)
-
-    @property
-    def gross(self):
-        if self.purchase.is_net:
-            return self.amount * self.unit_price * (1 + self.tax_rate / 100)
-        else:
-            return self.amount * self.unit_price
-
-    def __str__(self):
-        return "{} {} of {}".format(self.amount, self.unit, self.name)
-
-    def clean(self):
-        """We check that the purchased amount is at least the sum of orders. By doing so, we ensure to buy enough"""
-        order_sum = sum([order.amount for order in Order.objects.filter(good=self.id)])
-
-        if self.amount < order_sum:
-            raise ValidationError(
-                "The purchased amount must be at least {}, the sum of orders!".format(
-                    order_sum
-                )
-            )
-
 
 class Order(models.Model):
     """A single order. Orders are always referenced to a team"""
@@ -173,10 +108,6 @@ class Order(models.Model):
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
     unit_price = models.DecimalField(max_digits=12, decimal_places=4, default=0)
-
-    good = models.ForeignKey(
-        Good, on_delete=models.PROTECT, related_name="orders", blank=True, null=True
-    )
 
     event = models.ForeignKey(
         Event, on_delete=models.PROTECT, related_name="orders", blank=True, null=True
