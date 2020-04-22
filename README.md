@@ -104,3 +104,7 @@ all django tests run automatically. Please try to add tests for everything
 you’re changing/adding.
 
 If you need help with that, you can always open an issue and ask for help.
+
+## Acknowledgements
+
+* The squirrel icon used as favicon was designed by [Max Gaines](https://thenounproject.com/icon/27067/)
