@@ -5,59 +5,52 @@
 {% block title %}Squirrel | Order{% endblock %}
 
 {% block content %}
+<div class="row m-3 justify-content-center">
   <form method="post">
     {% csrf_token %}
-    <div class="card mt-3">
-      <h5 class="card-header">Order Item</h5>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-6 col-md-4">
-              {{ form.amount|as_crispy_field }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-6 col-md-4">
-            {{ form.product|as_crispy_field }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-8">
-            {{ form.comment|as_crispy_field }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card mt-3">
-      <h5 class="card-header">Meta Info</h5>
-      <div class="card-body">
-        <p class="card-text">You must set a team. Setting the event is optional, though.</p>
-        <div class="row">
-          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="form-group">
-              {{ form.team|as_crispy_field }}
+    <div class="row mb-3">
+      <div class="col-md-7">
+        <div class="card mt-3">
+          <h5 class="card-header">Order Item</h5>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                  {{ form.amount|as_crispy_field }}
+              </div>
             </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="form-group">
-              {{ form.event|as_crispy_field }}
+            <div class="row">
+              <div class="col-12">
+                {{ form.product|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                {{ form.comment|as_crispy_field }}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="card mt-3 mb-3">
-      <h5 class="card-header">Einkauf Info</h5>
-      <div class="card-body">
-        <p class="card-text"><strong>Any change here will be overwritten by the Einkauf.</strong></p>
-        <div class="row">
-          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="form-group">
-              {{ form.unit_price|as_crispy_field }}
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="form-group">
-              {{ form.state|as_crispy_field }}
+      <div class="col-md-5">
+        <div class="card mt-3">
+          <h5 class="card-header">Meta Info</h5>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group">
+                  {{ form.state|as_crispy_field }}
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group">
+                  {{ form.team|as_crispy_field }}
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group">
+                  {{ form.event|as_crispy_field }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -65,5 +58,6 @@
     </div>
     <button type="submit" class="btn btn-success">Save order</button>
   </form>
+</div>
 {% endblock %}
 

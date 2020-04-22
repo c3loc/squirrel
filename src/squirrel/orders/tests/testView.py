@@ -197,7 +197,7 @@ class OrderViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<textarea name="comment" cols="15" rows="4" maxlength="1000" class="textarea form-control" id="id_comment">',
+            '<textarea name="comment" cols="30" rows="3" maxlength="1000" class="textarea form-control" id="id_comment">',
         )
 
     def test_add_permission_can_add_anything(self):

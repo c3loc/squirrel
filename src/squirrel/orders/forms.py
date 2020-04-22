@@ -11,7 +11,6 @@ class OrderForm(forms.ModelForm):
         my_states = kwargs.pop("states")
         super(OrderForm, self).__init__(*args, **kwargs)
 
-        self.fields["team"] = ModelChoiceField(queryset=my_teams.order_by("name"))
         self.fields["product"] = ModelChoiceField(
             to_field_name="name",
             queryset=Product.objects.all().order_by("name"),
@@ -25,8 +24,10 @@ class OrderForm(forms.ModelForm):
         ].help_text = (
             "If you have more specific requirements, please add them as a comment."
         )
-        self.fields["event"].queryset = self.fields["event"].queryset.order_by("name")
+
         self.fields["state"] = ChoiceField(choices=my_states)
+        self.fields["team"] = ModelChoiceField(queryset=my_teams.order_by("name"))
+        self.fields["event"].queryset = self.fields["event"].queryset.order_by("name")
 
     class Meta:
         model = Order
@@ -35,13 +36,12 @@ class OrderForm(forms.ModelForm):
             "product",
             "comment",
             "state",
-            "unit_price",
-            "event",
             "team",
+            "event",
         ]
 
         widgets = {
-            "comment": forms.Textarea(attrs={"rows": 4, "cols": 15}),
+            "comment": forms.Textarea(attrs={"rows": 3, "cols": 30}),
         }
 
 

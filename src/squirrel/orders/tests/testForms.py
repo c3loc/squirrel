@@ -93,24 +93,6 @@ class OrderFormTests(TestCase):
             b'<select name="state" class="select form-control is-invalid" id="id_state">',
         )
 
-    def test_require_unit_price(self):
-        self.client.login(username="helpdesk", password="test123")
-        response = self.client.post(
-            "/orders/new",
-            {
-                "amount": 1,
-                "product": self.productB.id,
-                "team": self.teamB.id,
-                "state": "REQ",
-            },
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            '<input type="number" name="unit_price" step="0.0001" class="numberinput form-control is-invalid" required id="id_unit_price">',
-            html=True,
-        )
-
     def test_team_members_can_set_team(self):
         form_data = {
             "amount": 1,
