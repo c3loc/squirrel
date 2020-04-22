@@ -186,7 +186,7 @@ def order(request, order_id=None):
                 # if nothing is set we use the latest Event object
                 my_event = Event.objects.last()
 
-            # preset the team field if we only have a singel team
+            # preset the team field if we only have a single team
             if my_teams.count() == 1:
                 my_team = my_teams.first()
             else:
@@ -212,7 +212,7 @@ def order(request, order_id=None):
                 states=my_states,
             )
 
-    return render(request, "order.html", {"form": form, "events": Event.objects.all()},)
+    return render(request, "order.html", {"form": form, "events": Event.objects.all()})
 
 
 @login_required
