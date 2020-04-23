@@ -391,6 +391,17 @@ class OrderViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="1" selected>')
 
+    def test_status_can_view_only(self):
+        """
+        Tests if a user having only view rights can load the order view for an existing order
+        """
+        Order.objects.create(product=self.product, team=self.team_a)
+
+        self.client.login(username="loc_engel", password="loc_engel")
+
+        response = self.client.get("/orders/1")
+        self.assertEqual(response.status_code, 200)
+
 
 class OrderExportViewTests(TestCase):
     def setUp(self) -> None:

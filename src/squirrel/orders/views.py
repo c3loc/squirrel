@@ -170,10 +170,9 @@ def order(request, order_id=None):
                 # limit the states
                 my_states = _state_helper(request, order_object)
 
-                if request.user.has_perm("orders.add_order"):
-                    form = OrderForm(
-                        instance=order_object, teams=my_teams, states=my_states
-                    )
+                form = OrderForm(
+                    instance=order_object, teams=my_teams, states=my_states
+                )
             else:
                 raise PermissionDenied
         else:
