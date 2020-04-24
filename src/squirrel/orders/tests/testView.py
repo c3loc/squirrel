@@ -359,18 +359,14 @@ class OrderViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.get("/orders/new")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, '<option value="2" selected>42c3</option>', html=True
-        )
+        self.assertContains(response, '<option value="2" selected>42c3</option>')
 
     def test_event_no_event_defined(self):
         self.view_user.user_permissions.add(self.add_permission)
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.get("/orders/new")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, '<option value="" selected>---------</option>', html=True
-        )
+        self.assertContains(response, '<option value="" selected>---------</option>')
 
     def test_event_use_last(self):
         self.view_user.user_permissions.add(self.add_permission)
@@ -379,9 +375,7 @@ class OrderViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.get("/orders/new")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, '<option value="2" selected>42c3</option>', html=True
-        )
+        self.assertContains(response, '<option value="2" selected>42c3</option>')
 
     def test_single_team_preset(self):
         self.team_a.members.add(self.user)
