@@ -1,8 +1,11 @@
 """
 Models for our orders
 """
+from decimal import Decimal
+
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -43,6 +46,13 @@ class Product(models.Model):
 
     name = models.CharField(max_length=250, default=None, unique=True)
     unit = models.CharField(max_length=20, null=True)
+    default_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=4,
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(Decimal("0.0000"))],
+    )
 
     def __str__(self):
         return self.name

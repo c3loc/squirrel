@@ -1,7 +1,17 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from squirrel.orders.forms import OrderForm
+from squirrel.orders.forms import OrderForm, ProductForm
 from squirrel.orders.models import Event, Order, Product, Team
+
+
+class ProductFormTests(TestCase):
+    def test_default_price_positive(self):
+        form_data = {
+            "name": "Testprodukt",
+            "default_price": -10.00,
+        }
+        form = ProductForm(data=form_data)
+        self.assertFalse(form.is_valid())
 
 
 class OrderFormTests(TestCase):

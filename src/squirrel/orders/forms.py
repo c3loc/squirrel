@@ -47,7 +47,7 @@ class OrderForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["name", "unit"]
+        fields = ["name", "unit", "default_price"]
 
 
 class TeamForm(forms.ModelForm):

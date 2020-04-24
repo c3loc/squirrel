@@ -99,7 +99,7 @@ class ProductTable(tables.Table):
     class Meta:
         model = Product
         attrs = {"class": "table table-sm"}
-        fields = ["name", "unit"]
+        fields = ["name", "unit", "default_price"]
 
     edit = TemplateColumn(
         """
