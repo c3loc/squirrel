@@ -396,17 +396,12 @@ def export_orders_csv(request):
     lines = [field_names]
 
     for order_instance in orders:
-        if order_instance.product:
-            item = order_instance.product
-        else:
-            item = order_instance.product_suggestion
-
         total_price = order_instance.unit_price * order_instance.amount
 
         lines.append(
             [
                 order_instance.amount,
-                item,
+                order_instance.product,
                 order_instance.url,
                 order_instance.get_state_display(),
                 order_instance.unit_price,

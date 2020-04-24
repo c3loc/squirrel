@@ -61,7 +61,7 @@ class OrderTable(tables.Table):
         attrs = {"class": "table table-sm"}
         fields = [
             "amount",
-            "item",
+            "product",
             "comment",
             "state",
             "event",
@@ -69,9 +69,6 @@ class OrderTable(tables.Table):
             "unit_price",
             "price",
         ]
-
-    # The item that is displayed to the user can either be the wish or the configured product
-    item = Column(empty_values=())
 
     edit = TemplateColumn(
         """
@@ -106,13 +103,6 @@ class OrderTable(tables.Table):
             return f"{record.amount} {record.product.unit}"
         else:
             return record.amount
-
-    @staticmethod
-    def render_item(record):
-        if record.product:
-            return record.product
-        else:
-            return record.product_suggestion
 
     @staticmethod
     def render_price(record):

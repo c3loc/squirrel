@@ -169,11 +169,7 @@ class Order(models.Model):
 
     amount = models.PositiveIntegerField(default=1)
 
-    # Either a product or a free form item have to be specified
-    product = models.ForeignKey(
-        Product, on_delete=models.PROTECT, null=True, blank=True
-    )
-    product_suggestion = models.CharField(max_length=255, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=True)
     url = models.URLField(blank=True)
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
@@ -199,13 +195,6 @@ class Order(models.Model):
         User, null=True, related_name="orders_updates", on_delete=models.SET_NULL
     )
 
-    def clean(self):
-        """We need to check if either a product or a free form text are set"""
-        if not self.product and not self.product_suggestion:
-            raise ValidationError("An order must have either a product or an item set")
-        elif self.product and self.product_suggestion:
-            raise ValidationError("An order must not have a product and an item set")
-
     def delete(self, *args, **kwargs):
         """Orders have some special behavior on deletion"""
 
@@ -216,7 +205,4 @@ class Order(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        if self.product:
-            return "{} {} of {}".format(self.amount, self.product.unit, self.product)
-        else:
-            return "{} of {}".format(self.amount, self.product_suggestion)
+        return "{} {} of {}".format(self.amount, self.product.unit, self.product)

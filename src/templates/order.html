@@ -10,7 +10,6 @@
     <div class="card mt-3">
       <h5 class="card-header">Order Item</h5>
       <div class="card-body">
-        <p class="card-text"><strong>You need to either choose a product or submit a wish.</strong> If you submit a wish, you can add a URL to the product.</p>
         <div class="row">
           <div class="col-sm-6 col-md-4">
               {{ form.amount|as_crispy_field }}
@@ -22,9 +21,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-6 col-md-4">
-            {{ form.product_suggestion|as_crispy_field }}
-          </div>
           <div class="col-sm-6 col-md-4">
             {{ form.url|as_crispy_field }}
           </div>

@@ -38,14 +38,8 @@ class OrderModelTests(TestCase):
         order.amount = -1
         self.assertRaises(IntegrityError, order.save)
 
-    def test_product_or_suggestion_must_be_given(self):
+    def test_product_must_be_given(self):
         order = Order(team=self.team)
-        self.assertRaises(ValidationError, order.full_clean)
-
-    def test_product_and_suggestion_not_allowed(self):
-        order = Order(
-            product=self.product, product_suggestion="Antonov An-225 ", team=self.team
-        )
         self.assertRaises(ValidationError, order.full_clean)
 
     def test_forbid_completed_order_deletion(self):

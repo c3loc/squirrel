@@ -22,7 +22,6 @@ class OrderForm(forms.ModelForm):
         fields = [
             "amount",
             "product",
-            "product_suggestion",
             "url",
             "comment",
             "state",
