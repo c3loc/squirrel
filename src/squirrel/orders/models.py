@@ -4,7 +4,6 @@ Models for our orders
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
@@ -93,12 +92,6 @@ class Order(models.Model):
             ("delete_order_all_teams", "Can delete orders for all teams"),
         ]
 
-    __old_state = None
-
-    def __init__(self, *args, **kwargs):
-        super(Order, self).__init__(*args, **kwargs)
-        self.__old_state = self.state
-
     STATE_CHOICES = [
         ("REQ", "Requested"),  # User has requested Order
         (
@@ -138,15 +131,6 @@ class Order(models.Model):
     updated_by = models.ForeignKey(
         User, null=True, related_name="orders_updates", on_delete=models.SET_NULL
     )
-
-    def delete(self, *args, **kwargs):
-        """Orders have some special behavior on deletion"""
-
-        # If the order is completed, it must not be deleted
-        if self.__old_state == "COM":
-            raise PermissionDenied("Completed orders can’t be deleted.")
-
-        super().delete(*args, **kwargs)
 
     def __str__(self):
         return "{} {} of {}".format(self.amount, self.product.unit, self.product)

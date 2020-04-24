@@ -1,4 +1,4 @@
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from squirrel.orders.models import Event, Order, Product, Purchase, Team, Vendor
@@ -41,10 +41,6 @@ class OrderModelTests(TestCase):
     def test_product_must_be_given(self):
         order = Order(team=self.team)
         self.assertRaises(ValidationError, order.full_clean)
-
-    def test_forbid_completed_order_deletion(self):
-        order = Order.objects.create(product=self.product, team=self.team, state="COM")
-        self.assertRaises(PermissionDenied, order.delete)
 
 
 class PurchaseModelTests(TestCase):
