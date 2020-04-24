@@ -92,7 +92,8 @@ class OrderTable(tables.Table):
 
     @staticmethod
     def render_amount(record):
-        return f"{record.amount} {record.product.unit}"
+        unit = f"{record.product.unit} " if record.product.unit else ""
+        return f"{record.amount} {unit}"
 
 
 class ProductTable(tables.Table):
