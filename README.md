@@ -6,7 +6,7 @@ We believe strongly in the credo that **all creatures are welcome**. However, as
 
 ## Usage
 
-For usage, see the [docs directory](docs):
+For usage, see the [docs directory](docs).
 
 ## Setup
 
