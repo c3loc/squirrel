@@ -1,6 +1,14 @@
 from django import forms
-from django.forms import ChoiceField, ModelChoiceField
-from squirrel.orders.models import Event, Order, Product, Team, Vendor
+from django.forms import ChoiceField, ModelChoiceField, inlineformset_factory
+from squirrel.orders.models import (
+    Event,
+    Order,
+    Product,
+    Purchase,
+    Stockpile,
+    Team,
+    Vendor,
+)
 from squirrel.orders.widgets import TextInput
 
 
@@ -66,3 +74,22 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ["name"]
+
+
+class PurchaseForm(forms.ModelForm):
+    class Meta:
+        model = Purchase
+        fields = [
+            "is_net",
+            "paid",
+            "payment_method",
+            "payer",
+            "vendor",
+            "ordered_at",
+            "paid_at",
+        ]
+
+
+StockpileFormSet = inlineformset_factory(
+    Purchase, Stockpile, fields=["product", "amount", "unit_price", "id"], extra=1
+)

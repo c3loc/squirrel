@@ -2,7 +2,9 @@
 Models for our orders
 """
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Sum
 from django.utils import timezone
 
 
@@ -100,9 +102,7 @@ class Order(models.Model):
 
     amount = models.PositiveIntegerField(default=1)
 
-    product = models.ForeignKey(
-        Product, on_delete=models.PROTECT, to_field="name", null=True
-    )
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=True)
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
     event = models.ForeignKey(
@@ -124,3 +124,86 @@ class Order(models.Model):
     def __str__(self):
         unit = f"{self.product.unit} " if self.product.unit else ""
         return "{} {} of {}".format(self.amount, unit, self.product)
+
+
+class Stockpile(models.Model):
+    """
+    A stockpile is a specific amount of a product that has been bought at a certain price.
+    It can then be pillaged by orders.
+    """
+
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    amount = models.PositiveIntegerField()
+
+    # Unit price in 10th cents
+    unit_price = models.PositiveIntegerField()
+
+    """
+    A stockpile may belong to a purchase, but does not have to be. Surprisingly often, you will just find things in
+    your storage.
+    """
+    purchase = models.ForeignKey(
+        Purchase, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    @property
+    def stock(self):
+        """
+        The stock is calculated by taking the total amount bought and subtracting the sum of pillages.
+        :return: the number left in stock
+        """
+
+        pillages = self.pillage_set.all().aggregate(Sum("amount"))["amount__sum"]
+        if pillages is None:
+            pillages = 0
+
+        return self.amount - pillages
+
+    def __str__(self):
+        return f"Stockpile of {self.product} ({self.stock}/{self.amount})"
+
+
+class Pillage(models.Model):
+    """
+    A pillage is the connection between an order and a stockpile.
+
+    It specifies how much an order has taken from a stockpile
+    """
+
+    amount = models.PositiveIntegerField()
+    stockpile = models.ForeignKey(Stockpile, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    def clean(self):
+        """
+        We need to ensure that a pillage does not take more stock than available from our stockpile and that
+        the order does not get more items than requested
+        """
+
+        # Get how much is already pillaged for the order
+        pillaged = (
+            self.order.pillage_set.all().aggregate(Sum("amount"))["amount__sum"] or 0
+        )
+
+        if self.amount + pillaged > self.order.amount:
+            raise ValidationError(
+                f"The order only is for {self.order.amount}. With this pillage of {self.amount}, "
+                f"it would go to {self.amount + pillaged}."
+            )
+
+        if self.amount > self.stockpile.stock:
+            raise ValidationError(
+                f"The stockpile has {self.stockpile.stock} available, you requested {self.amount}."
+            )
+
+        super().clean()
+
+    def save(self, *args, **kwargs):
+        """
+        As save does not call full_clean, we call clean explicitly
+        """
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Pillage of {self.amount} for {self.order} from {self.stockpile}"
