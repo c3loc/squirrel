@@ -450,7 +450,7 @@ def export_orders_csv(request):
     lines = [field_names]
 
     for order_instance in orders:
-        total_price = order_instance.unit_price * order_instance.amount
+        # TODO: Add prices back
 
         lines.append(
             [
@@ -458,8 +458,6 @@ def export_orders_csv(request):
                 order_instance.product,
                 order_instance.url,
                 order_instance.get_state_display(),
-                order_instance.unit_price,
-                total_price,
                 order_instance.event,
                 order_instance.team,
             ]

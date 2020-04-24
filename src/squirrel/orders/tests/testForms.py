@@ -72,7 +72,6 @@ class OrderFormTests(TestCase):
             "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
-            "unit_price": 10.00,
             "event": self.eventA,
         }
         form = OrderForm(
@@ -89,12 +88,7 @@ class OrderFormTests(TestCase):
         self.client.login(username="helpdesk", password="test123")
         response = self.client.post(
             "/orders/new",
-            {
-                "amount": 1,
-                "product": self.productB.id,
-                "team": self.teamB.id,
-                "unit_price": 10.00,
-            },
+            {"amount": 1, "product": self.productB.id, "team": self.teamB.id},
         )
         self.assertEqual(response.status_code, 200)
         # TODO: why does this fail, but not the one below? something about the select?
@@ -110,7 +104,6 @@ class OrderFormTests(TestCase):
             "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
-            "unit_price": 10.00,
             "event": self.eventA,
         }
         form = OrderForm(
@@ -126,7 +119,6 @@ class OrderFormTests(TestCase):
             "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
-            "unit_price": 10.00,
         }
         form = OrderForm(
             data=form_data, teams=Team.objects.none(), states=Order.STATE_CHOICES
@@ -139,7 +131,6 @@ class OrderFormTests(TestCase):
             "product": self.productB.name,
             "team": self.teamB.id,
             "state": "REQ",
-            "unit_price": 10.00,
             "event": self.eventA,
         }
         form = OrderForm(

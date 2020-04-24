@@ -137,16 +137,13 @@ class OrderViewTests(TestCase):
 
         self.eventA = Event.objects.create(name="Required Event")
 
-    def post_order(
-        self, id="new", state="REQ", amount=1, unit_price=1, comment="", event=1
-    ):
+    def post_order(self, id="new", state="REQ", amount=1, comment="", event=1):
         return self.client.post(
             "/orders/{}".format(id),
             {
                 "amount": amount,
                 "product": self.product.id,
                 "team": self.team_a.id,
-                "unit_price": unit_price,
                 "state": state,
                 "comment": comment,
                 "event": event,
@@ -291,9 +288,6 @@ class OrderViewTests(TestCase):
         response = self.post_order(my_order.id, "REQ", 2)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/orders")
-        # we can not change the unit_price
-        # response = self.post_order(my_order.id,"REQ",2,17.00)
-        # self.assertEqual(response.status_code, 403)
         # we can not change other teams objects
         response = self.post_order(order.id, "REQ", 2)
         self.assertEqual(response.status_code, 403)
@@ -493,12 +487,7 @@ class ProductViewTests(TestCase):
 
         response = self.client.post(
             "/products/new",
-            {
-                "name": "Awesome Beer",
-                "unit": "Hectoliter",
-                "unit_price": "5",
-                "vendor": vendor.id,
-            },
+            {"name": "Awesome Beer", "unit": "Hectoliter", "vendor": vendor.id},
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.all().count(), 0)
@@ -520,12 +509,7 @@ class ProductViewTests(TestCase):
         self.client.login(username="order_engel", password="order_engel")
         response = self.client.post(
             "/products/{}".format(product.id),
-            {
-                "name": "Awesome Beer",
-                "unit": "Hectoliter",
-                "unit_price": "5",
-                "vendor": vendor.id,
-            },
+            {"name": "Awesome Beer", "unit": "Hectoliter", "vendor": vendor.id},
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.get(id=product.id).name, "Bad Beer")
