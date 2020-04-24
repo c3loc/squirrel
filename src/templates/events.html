@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block title %}Squirrel | Events{% endblock %}
+
+{% block content %}
+  <h1>Events</h1>
+  <p>
+    {% if perms.orders.add_event %}
+    <a href="{% url 'new_event' %}" role="button" class="btn btn-primary">New Event</a>
+    {% endif %}
+  </p>
+  {% render_table table %}
+{% endblock %}

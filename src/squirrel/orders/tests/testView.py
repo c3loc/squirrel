@@ -32,6 +32,24 @@ class RoutingTests(TestCase):
         self.assertEqual(view.args, ())
         self.assertEqual(view.kwargs, {"order_id": 19})
 
+    def test_new_event_resolves_new_event(self):
+        view = resolve("/events/new")
+        self.assertEqual(view.func, views.event)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
+
+    def test_event_resolves_event(self):
+        view = resolve("/events/23")
+        self.assertEqual(view.func, views.event)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"event_id": 23})
+
+    def test_delete_event_resolves_delete_event(self):
+        view = resolve("/events/delete/19")
+        self.assertEqual(view.func, views.delete_event)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"event_id": 19})
+
     def test_products_resolves_products(self):
         view = resolve("/products")
         self.assertEqual(view.url_name, "products")

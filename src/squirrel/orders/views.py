@@ -8,9 +8,9 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 
-from .forms import OrderForm, ProductForm, TeamForm, VendorForm
+from .forms import EventForm, OrderForm, ProductForm, TeamForm, VendorForm
 from .models import Event, Order, Product, Team, Vendor
-from .tables import OrderTable, ProductTable, TeamTable, VendorTable
+from .tables import EventTable, OrderTable, ProductTable, TeamTable, VendorTable
 
 
 def login_redirect(request):
@@ -52,6 +52,13 @@ class TeamListView(PermissionRequiredMixin, SingleTableView):
     model = Team
     table_class = TeamTable
     template_name = "teams.html"
+
+
+class EventListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_event"
+    model = Event
+    table_class = EventTable
+    template_name = "events.html"
 
 
 # Not a View.
@@ -274,6 +281,52 @@ def delete_vendor(request, vendor_id=None):
     vendor_object.delete()
 
     return redirect("vendors")
+
+
+@login_required
+def event(request, event_id=None):
+    if event_id:
+        event_object = get_object_or_404(Event, id=event_id)
+    else:
+        event_object = None
+
+    if request.method == "POST":
+        if event_object:
+            if request.user.has_perm("orders.change_event"):
+                form = EventForm(request.POST, instance=event_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_event"):
+                form = EventForm(request.POST)
+            else:
+                raise PermissionDenied
+
+        if form.is_valid():
+            form.save()
+            return redirect("events")
+    else:
+        if event_object:
+            if request.user.has_perm("orders.view_event"):
+                form = EventForm(instance=event_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_event"):
+                form = EventForm()
+            else:
+                raise PermissionDenied
+
+    return render(request, "event.html", {"form": form})
+
+
+@login_required
+@permission_required("orders.delete_vendor", raise_exception=True)
+def delete_event(request, event_id=None):
+    event_object = get_object_or_404(Event, id=event_id)
+    event_object.delete()
+
+    return redirect("events")
 
 
 @login_required

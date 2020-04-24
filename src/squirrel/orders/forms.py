@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ChoiceField, ModelChoiceField
 from squirrel.orders.widgets import TextInput
 
-from .models import Order, Product, Team, Vendor
+from .models import Event, Order, Product, Team, Vendor
 
 
 class OrderForm(forms.ModelForm):
@@ -60,4 +60,10 @@ class TeamForm(forms.ModelForm):
 class VendorForm(forms.ModelForm):
     class Meta:
         model = Vendor
+        fields = ["name"]
+
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
         fields = ["name"]

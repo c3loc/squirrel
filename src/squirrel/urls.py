@@ -58,6 +58,10 @@ urlpatterns = [
     path("teams/new", views.team, name="new_team"),
     path("teams/<int:team_id>", views.team, name="edit_team"),
     path("teams/delete/<int:team_id>", views.delete_team, name="delete_team"),
+    path("events", views.EventListView.as_view(), name="events"),
+    path("events/new", views.event, name="new_event"),
+    path("events/<int:event_id>", views.event, name="edit_event"),
+    path("events/delete/<int:event_id>", views.delete_event, name="delete_event"),
     path("admin/", admin.site.urls),
     path("accounts/login/", views.login_redirect),
 ]
