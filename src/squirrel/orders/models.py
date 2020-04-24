@@ -42,7 +42,7 @@ class Product(models.Model):
     """A product that can be ordered"""
 
     name = models.CharField(max_length=250, default=None, unique=True)
-    unit = models.CharField(max_length=20, default="Stück")
+    unit = models.CharField(max_length=20, null=True)
 
     def __str__(self):
         return self.name
