@@ -545,30 +545,6 @@ class ProductViewTests(TestCase):
         self.assertEqual(response.url, "/products")
         self.assertEqual(Product.objects.all().count(), 0)
 
-    def test_show_correct_ordered_sum(self):
-        """Checks that the calculated „ordered but not yet on site“ amount is correct"""
-        product = Product.objects.create(name="Mor(r)e Mate")
-        team = Team.objects.create(name="Matebar")
-        order = Order.objects.create(amount=5, team=team, state="APP", product=product)
-
-        self.client.login(username="order_admin", password="order_admin")
-
-        response = self.client.get("/products")
-        self.assertEqual(response.status_code, 200)
-
-        # TODO: I would like to check the whole line, but there are weird newlines in it and never matches then
-        self.assertContains(response, "<td>5</td>", html=True)
-
-        order.state = "REA"
-        order.save()
-
-        # Once the order is ready to pick up, the amount needs to be 0
-        response = self.client.get("/products")
-        self.assertEqual(response.status_code, 200)
-
-        # TODO: I would like to check the whole line, but there are weird newlines in it and never matches then
-        self.assertContains(response, "<td>0</td>", html=True)
-
 
 class VendorViewTests(TestCase):
     def setUp(self) -> None:

@@ -1,5 +1,4 @@
-from django.db.models import Q
-from django_tables2 import Column, TemplateColumn, tables
+from django_tables2 import TemplateColumn, tables
 from squirrel.orders.models import Order, Product, Team, Vendor
 
 
@@ -100,7 +99,7 @@ class ProductTable(tables.Table):
     class Meta:
         model = Product
         attrs = {"class": "table table-sm"}
-        fields = ["name", "unit", "ordered_amount"]
+        fields = ["name", "unit"]
 
     edit = TemplateColumn(
         """
@@ -113,10 +112,6 @@ class ProductTable(tables.Table):
     """
     )
 
-    ordered_amount = Column(
-        empty_values=(), verbose_name="Ordered amount not yet on site"
-    )
-
     def before_render(self, request):
         if request.user.has_perm("orders.change_product") or request.user.has_perm(
             "orders.delete_product"
@@ -124,12 +119,3 @@ class ProductTable(tables.Table):
             self.columns.show("edit")
         else:
             self.columns.hide("edit")
-
-    @staticmethod
-    def render_ordered_amount(record):
-        """We get all orders for our product that are NOT ready to pick up AND NOT completed"""
-        orders = Order.objects.filter(
-            Q(product=record), ~Q(state="REA"), ~Q(state="COM"),
-        )
-
-        return sum(order.amount for order in orders)
