@@ -66,8 +66,6 @@ class OrderTable(tables.Table):
             "state",
             "event",
             "team",
-            "unit_price",
-            "price",
         ]
 
     edit = TemplateColumn(
@@ -80,8 +78,6 @@ class OrderTable(tables.Table):
         {% endif %}
     """
     )
-
-    price = Column(empty_values=(), verbose_name="Order sum")
 
     comment = TemplateColumn(
         '<data-toggle="tooltip" title="{{record.comment}}">{{record.comment|truncatechars:50}}'
@@ -97,24 +93,7 @@ class OrderTable(tables.Table):
 
     @staticmethod
     def render_amount(record):
-
-        # A product always has a unit
-        if record.product:
-            return f"{record.amount} {record.product.unit}"
-        else:
-            return record.amount
-
-    @staticmethod
-    def render_price(record):
-        if record.amount and record.unit_price:
-            order_sum = record.amount * record.unit_price
-
-            return f"{order_sum} €"
-        return "—"
-
-    @staticmethod
-    def render_unit_price(value):
-        return f"{value} €"
+        return f"{record.amount} {record.product.unit}"
 
 
 class ProductTable(tables.Table):
