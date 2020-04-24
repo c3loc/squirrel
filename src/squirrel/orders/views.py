@@ -7,10 +7,21 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
-
-from .forms import EventForm, OrderForm, ProductForm, TeamForm, VendorForm
-from .models import Event, Order, Product, Team, Vendor
-from .tables import EventTable, OrderTable, ProductTable, TeamTable, VendorTable
+from squirrel.orders.forms import (
+    EventForm,
+    OrderForm,
+    ProductForm,
+    TeamForm,
+    VendorForm,
+)
+from squirrel.orders.models import Event, Order, Product, Team, Vendor
+from squirrel.orders.tables import (
+    EventTable,
+    OrderTable,
+    ProductTable,
+    TeamTable,
+    VendorTable,
+)
 
 
 def login_redirect(request):

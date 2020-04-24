@@ -1,8 +1,7 @@
 from django import forms
 from django.forms import ChoiceField, ModelChoiceField
+from squirrel.orders.models import Event, Order, Product, Team, Vendor
 from squirrel.orders.widgets import TextInput
-
-from .models import Event, Order, Product, Team, Vendor
 
 
 class OrderForm(forms.ModelForm):

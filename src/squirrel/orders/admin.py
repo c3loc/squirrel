@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-from .models import Event, Order, Product, Purchase, Team
+from squirrel.orders.models import Event, Order, Product, Purchase, Team
 
 admin.site.register(Event)
 admin.site.register(Team)
