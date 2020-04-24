@@ -50,12 +50,12 @@ class OrderFormTests(TestCase):
         self.assertEqual(len(form.fields["team"].queryset), 3)
 
     def test_sorted_events(self):
-        """Events are sorted alphabetically"""
+        """Events are sorted by id"""
         form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
 
-        self.assertEqual(form.fields["event"].queryset[0], self.eventA)
+        self.assertEqual(form.fields["event"].queryset[0], self.eventC)
         self.assertEqual(form.fields["event"].queryset[1], self.eventB)
-        self.assertEqual(form.fields["event"].queryset[2], self.eventC)
+        self.assertEqual(form.fields["event"].queryset[2], self.eventA)
         self.assertEqual(len(form.fields["event"].queryset), 3)
 
     def test_sorted_products(self):
@@ -73,6 +73,7 @@ class OrderFormTests(TestCase):
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,
+            "event": self.eventA,
         }
         form = OrderForm(
             data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
@@ -110,6 +111,7 @@ class OrderFormTests(TestCase):
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,
+            "event": self.eventA,
         }
         form = OrderForm(
             data=form_data,
@@ -138,6 +140,7 @@ class OrderFormTests(TestCase):
             "team": self.teamB.id,
             "state": "REQ",
             "unit_price": 10.00,
+            "event": self.eventA,
         }
         form = OrderForm(
             data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES

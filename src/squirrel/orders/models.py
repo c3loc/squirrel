@@ -117,7 +117,7 @@ class Order(models.Model):
     )
 
     event = models.ForeignKey(
-        Event, on_delete=models.PROTECT, related_name="orders", blank=True, null=True
+        Event, on_delete=models.PROTECT, related_name="orders", null=True
     )
     team = models.ForeignKey(Team, on_delete=models.PROTECT, related_name="orders")
 

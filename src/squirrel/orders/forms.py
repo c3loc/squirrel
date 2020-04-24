@@ -26,7 +26,7 @@ class OrderForm(forms.ModelForm):
 
         self.fields["state"] = ChoiceField(choices=my_states)
         self.fields["team"] = ModelChoiceField(queryset=my_teams.order_by("name"))
-        self.fields["event"].queryset = self.fields["event"].queryset.order_by("name")
+        self.fields["event"].queryset = Event.objects.all().order_by("-id")
 
     class Meta:
         model = Order
