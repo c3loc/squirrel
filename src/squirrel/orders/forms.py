@@ -1,6 +1,6 @@
-import floppyforms.__future__
 from django import forms
 from django.forms import ChoiceField, ModelChoiceField
+from squirrel.orders.widgets import TextInput
 
 from .models import Order, Product, Team, Vendor
 
@@ -14,7 +14,7 @@ class OrderForm(forms.ModelForm):
         self.fields["product"] = ModelChoiceField(
             to_field_name="name",
             queryset=Product.objects.all().order_by("name"),
-            widget=floppyforms.__future__.TextInput(
+            widget=TextInput(
                 datalist=[p.name for p in Product.objects.all().order_by("name")],
                 attrs={"autocomplete": "off"},
             ),

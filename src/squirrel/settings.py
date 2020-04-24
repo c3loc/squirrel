@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     "squirrel.orders",
     "crispy_forms",
     "django_tables2",
-    "floppyforms",
 ]
 
 # Which templates to use for crispy_forms
