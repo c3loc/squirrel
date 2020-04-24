@@ -17,8 +17,8 @@ def login_redirect(request):
     return redirect("login")
 
 
-def overview(request):
-    return render(request, "overview.html")
+def orders_redirect(request):
+    return redirect("orders")
 
 
 class OrderListView(LoginRequiredMixin, SingleTableView):

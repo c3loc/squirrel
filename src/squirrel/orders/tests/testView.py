@@ -10,11 +10,6 @@ from squirrel.orders.models import Event, Order, Product, Team, Vendor
 class RoutingTests(TestCase):
     """Test routing of all urlpatterns"""
 
-    def test_root_resolves_overview(self):
-        view = resolve("/")
-        self.assertEqual(view.func, views.overview)
-        self.assertEqual(view.url_name, "overview")
-
     def test_orders_resolves_orders(self):
         view = resolve("/orders")
         self.assertEqual(view.url_name, "orders")
@@ -80,12 +75,6 @@ class RoutingTests(TestCase):
         self.assertEqual(view.func, views.delete_team)
         self.assertEqual(view.args, ())
         self.assertEqual(view.kwargs, {"team_id": 12})
-
-
-class OverviewViewTest(TestCase):
-    def test_static_overview(self):
-        response = self.client.get("/")
-        self.assertContains(response, "Welcome to Squirrel")
 
 
 class OrderViewTests(TestCase):

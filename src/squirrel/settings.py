@@ -149,7 +149,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, "public")
 
 # Login and logout config
-LOGOUT_REDIRECT_URL = "overview"
+LOGOUT_REDIRECT_URL = "login"
 LOGIN_REDIRECT_URL = "orders"
 
 # django-tables2 config
