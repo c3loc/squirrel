@@ -4,7 +4,7 @@ Models for our orders
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.utils import timezone
 
 
@@ -177,9 +177,12 @@ class Pillage(models.Model):
         the order does not get more items than requested
         """
 
-        # Get how much is already pillaged for the order
+        # Get how much is already pillaged for the order in other pillages
         pillaged = (
-            self.order.pillage_set.all().aggregate(Sum("amount"))["amount__sum"] or 0
+            self.order.pillage_set.filter(~Q(id=self.id)).aggregate(Sum("amount"))[
+                "amount__sum"
+            ]
+            or 0
         )
 
         if self.amount + pillaged > self.order.amount:
