@@ -116,6 +116,50 @@ class RoutingTests(TestCase):
         self.assertEqual(view.args, ())
         self.assertEqual(view.kwargs, {"purchase_id": 12})
 
+    def test_stockpiles_resolves_stockpiles(self):
+        view = resolve("/stockpiles")
+        self.assertEqual(view.url_name, "stockpiles")
+
+    def test_new_stockpile_resolves_new_stockpile(self):
+        view = resolve("/stockpiles/new")
+        self.assertEqual(view.func, views.stockpile)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
+
+    def test_stockpile_resolves_stockpile(self):
+        view = resolve("/stockpiles/17")
+        self.assertEqual(view.func, views.stockpile)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"stockpile_id": 17})
+
+    def test_delete_stockpile_resolves_delete_stockpile(self):
+        view = resolve("/stockpiles/delete/12")
+        self.assertEqual(view.func, views.delete_stockpile)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"stockpile_id": 12})
+
+    def test_pillages_resolves_pillages(self):
+        view = resolve("/pillages")
+        self.assertEqual(view.url_name, "pillages")
+
+    def test_new_pillage_resolves_new_pillage(self):
+        view = resolve("/pillages/new")
+        self.assertEqual(view.func, views.pillage)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
+
+    def test_pillage_resolves_pillage(self):
+        view = resolve("/pillages/17")
+        self.assertEqual(view.func, views.pillage)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"pillage_id": 17})
+
+    def test_delete_pillage_resolves_delete_pillage(self):
+        view = resolve("/pillages/delete/12")
+        self.assertEqual(view.func, views.delete_pillage)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"pillage_id": 12})
+
 
 class OrderViewTests(TestCase):
     def setUp(self) -> None:

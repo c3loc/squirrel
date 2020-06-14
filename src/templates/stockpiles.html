@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block title %}Squirrel | Stockpile List{% endblock %}
+
+{% block content %}
+  <h1>Stockpiles</h1>
+  <p>
+    {% if perms.stockpiles.add_stockpile %}
+    <a href="{% url 'new_stockpile' %}" role="button" class="btn btn-primary">New Stockpile</a>
+    {% endif %}
+  </p>
+  {% render_table table %}
+{% endblock %}

@@ -10,18 +10,31 @@ from django_tables2 import SingleTableView
 from squirrel.orders.forms import (
     EventForm,
     OrderForm,
+    PillageForm,
     ProductForm,
     PurchaseForm,
+    StockpileForm,
     StockpileFormSet,
     TeamForm,
     VendorForm,
 )
-from squirrel.orders.models import Event, Order, Product, Purchase, Team, Vendor
+from squirrel.orders.models import (
+    Event,
+    Order,
+    Pillage,
+    Product,
+    Purchase,
+    Stockpile,
+    Team,
+    Vendor,
+)
 from squirrel.orders.tables import (
     EventTable,
     OrderTable,
+    PillageTable,
     ProductTable,
     PurchaseTable,
+    StockpileTable,
     TeamTable,
     VendorTable,
 )
@@ -80,6 +93,20 @@ class PurchaseListView(PermissionRequiredMixin, SingleTableView):
     model = Purchase
     table_class = PurchaseTable
     template_name = "purchases.html"
+
+
+class StockpileListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_stockpile"
+    model = Stockpile
+    table_class = StockpileTable
+    template_name = "stockpiles.html"
+
+
+class PillageListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_pillage"
+    model = Pillage
+    table_class = PillageTable
+    template_name = "pillages.html"
 
 
 # Not a View.
@@ -529,3 +556,99 @@ def delete_purchase(request, purchase_id=None):
     purchase_object.delete()
 
     return redirect("purchases")
+
+
+@login_required
+def stockpile(request, stockpile_id=None):
+    if stockpile_id:
+        stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
+    else:
+        stockpile_object = None
+
+    if request.method == "POST":
+        if stockpile_object:
+            if request.user.has_perm("orders.change_stockpile"):
+                form = StockpileForm(request.POST, instance=stockpile_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_stockpile"):
+                form = StockpileForm(request.POST)
+            else:
+                raise PermissionDenied
+
+        if form.is_valid():
+            stockpile_object = form.save()
+            return redirect("stockpiles")
+    else:
+        if stockpile_object:
+            if request.user.has_perm("orders.view_stockpile"):
+                form = StockpileForm(instance=stockpile_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_stockpile"):
+                form = StockpileForm()
+            else:
+                raise PermissionDenied
+
+    return render(
+        request, "stockpile.html", {"form": form, "events": Event.objects.all()}
+    )
+
+
+@login_required
+@permission_required("orders.delete_stockpile", raise_exception=True)
+def delete_stockpile(request, stockpile_id=None):
+    stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
+    stockpile_object.delete()
+
+    return redirect("stockpiles")
+
+
+@login_required
+def pillage(request, pillage_id=None):
+    if pillage_id:
+        pillage_object = get_object_or_404(Pillage, id=pillage_id)
+    else:
+        pillage_object = None
+
+    if request.method == "POST":
+        if pillage_object:
+            if request.user.has_perm("orders.change_pillage"):
+                form = PillageForm(request.POST, instance=pillage_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_pillage"):
+                form = PillageForm(request.POST)
+            else:
+                raise PermissionDenied
+
+        if form.is_valid():
+            pillage_object = form.save()
+            return redirect("pillages")
+    else:
+        if pillage_object:
+            if request.user.has_perm("orders.view_pillage"):
+                form = PillageForm(instance=pillage_object)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_pillage"):
+                form = PillageForm()
+            else:
+                raise PermissionDenied
+
+    return render(
+        request, "pillage.html", {"form": form, "events": Event.objects.all()}
+    )
+
+
+@login_required
+@permission_required("orders.delete_pillage", raise_exception=True)
+def delete_pillage(request, pillage_id=None):
+    pillage_object = get_object_or_404(Pillage, id=pillage_id)
+    pillage_object.delete()
+
+    return redirect("pillages")

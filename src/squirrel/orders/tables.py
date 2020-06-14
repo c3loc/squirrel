@@ -1,5 +1,14 @@
 from django_tables2 import TemplateColumn, tables
-from squirrel.orders.models import Event, Order, Product, Purchase, Team, Vendor
+from squirrel.orders.models import (
+    Event,
+    Order,
+    Pillage,
+    Product,
+    Purchase,
+    Stockpile,
+    Team,
+    Vendor,
+)
 
 
 class VendorTable(tables.Table):
@@ -167,6 +176,56 @@ class PurchaseTable(tables.Table):
     def before_render(self, request):
         if request.user.has_perm("orders.change_purchase") or request.user.has_perm(
             "orders.delete_purchase"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
+
+
+class StockpileTable(tables.Table):
+    class Meta:
+        model = Stockpile
+        attrs = {"class": "table table-sm"}
+
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_stockpile %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_stockpile' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_stockpile %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_stockpile' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_stockpile") or request.user.has_perm(
+            "orders.delete_stockpile"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
+
+
+class PillageTable(tables.Table):
+    class Meta:
+        model = Pillage
+        attrs = {"class": "table table-sm"}
+
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_pillage %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_pillage' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_pillage %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_pillage' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_pillage") or request.user.has_perm(
+            "orders.delete_pillage"
         ):
             self.columns.show("edit")
         else:

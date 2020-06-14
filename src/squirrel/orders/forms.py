@@ -3,6 +3,7 @@ from django.forms import ChoiceField, ModelChoiceField, inlineformset_factory
 from squirrel.orders.models import (
     Event,
     Order,
+    Pillage,
     Product,
     Purchase,
     Stockpile,
@@ -90,6 +91,18 @@ class PurchaseForm(forms.ModelForm):
         ]
 
 
+class StockpileForm(forms.ModelForm):
+    class Meta:
+        model = Stockpile
+        fields = ["product", "amount", "unit_price", "purchase"]
+
+
 StockpileFormSet = inlineformset_factory(
     Purchase, Stockpile, fields=["product", "amount", "unit_price", "id"], extra=1
 )
+
+
+class PillageForm(forms.ModelForm):
+    class Meta:
+        model = Pillage
+        fields = ["amount", "stockpile", "order"]

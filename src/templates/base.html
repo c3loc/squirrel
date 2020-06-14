@@ -47,6 +47,16 @@
             <a class="nav-link" href="{% url 'events' %}">Events</a>
           </li>
           {% endif %}
+          {% if perms.orders.view_stockpile %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'stockpiles' %}">Stockpiles</a>
+          </li>
+          {% endif %}
+          {% if perms.orders.view_pillage %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'pillages' %}">Pillages</a>
+          </li>
+          {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
