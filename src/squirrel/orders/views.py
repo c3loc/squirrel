@@ -11,14 +11,17 @@ from squirrel.orders.forms import (
     EventForm,
     OrderForm,
     ProductForm,
+    PurchaseForm,
+    StockpileFormSet,
     TeamForm,
     VendorForm,
 )
-from squirrel.orders.models import Event, Order, Product, Team, Vendor
+from squirrel.orders.models import Event, Order, Product, Purchase, Team, Vendor
 from squirrel.orders.tables import (
     EventTable,
     OrderTable,
     ProductTable,
+    PurchaseTable,
     TeamTable,
     VendorTable,
 )
@@ -70,6 +73,13 @@ class EventListView(PermissionRequiredMixin, SingleTableView):
     model = Event
     table_class = EventTable
     template_name = "events.html"
+
+
+class PurchaseListView(PermissionRequiredMixin, SingleTableView):
+    permission_required = "orders.view_purchase"
+    model = Purchase
+    table_class = PurchaseTable
+    template_name = "purchases.html"
 
 
 # Not a View.
@@ -468,3 +478,54 @@ def export_orders_csv(request):
         writer.writerow(line)
 
     return response
+
+
+@login_required
+@permission_required("orders.view_purchase", raise_exception=True)
+def purchase(request, purchase_id=None):
+    """
+    View of a purchase
+    """
+    if purchase_id:
+        purchase_object = get_object_or_404(Purchase, id=purchase_id)
+    else:
+        purchase_object = None
+
+    if request.method == "POST":
+        if purchase_object:
+            if request.user.has_perm("orders.change_purchase"):
+                form = PurchaseForm(request.POST, instance=purchase_object)
+                formset = StockpileFormSet(request.POST, instance=form.instance)
+            else:
+                raise PermissionDenied
+        else:
+            if request.user.has_perm("orders.add_purchase"):
+                form = PurchaseForm(request.POST)
+                formset = StockpileFormSet(request.POST, instance=form.instance)
+            else:
+                raise PermissionDenied
+
+        if form.is_valid() and formset.is_valid():
+            p = form.save()
+            formset.save()
+            return redirect(f"/purchases/{p.id}")
+
+    else:
+        if purchase_object:
+            form = PurchaseForm(instance=purchase_object)
+            formset = StockpileFormSet(instance=Purchase.objects.get(id=purchase_id))
+
+        else:
+            form = PurchaseForm()
+            formset = StockpileFormSet()
+
+    return render(request, "purchase.html", {"form": form, "formset": formset})
+
+
+@login_required
+@permission_required("orders.delete_purchase", raise_exception=True)
+def delete_purchase(request, purchase_id=None):
+    purchase_object = get_object_or_404(Purchase, id=purchase_id)
+    purchase_object.delete()
+
+    return redirect("purchases")

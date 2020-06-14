@@ -1,5 +1,5 @@
 from django_tables2 import TemplateColumn, tables
-from squirrel.orders.models import Event, Order, Product, Team, Vendor
+from squirrel.orders.models import Event, Order, Product, Purchase, Team, Vendor
 
 
 class VendorTable(tables.Table):
@@ -142,6 +142,31 @@ class EventTable(tables.Table):
     def before_render(self, request):
         if request.user.has_perm("orders.change_event") or request.user.has_perm(
             "orders.delete_event"
+        ):
+            self.columns.show("edit")
+        else:
+            self.columns.hide("edit")
+
+
+class PurchaseTable(tables.Table):
+    class Meta:
+        model = Purchase
+        attrs = {"class": "table table-sm"}
+
+    edit = TemplateColumn(
+        """
+        {% if perms.orders.change_purchase %}
+        <a class="btn btn-primary btn-sm" href="{% url 'edit_purchase' record.id %}">Edit</a>
+        {% endif %}
+        {% if perms.orders.delete_purchase %}
+        <a class="btn btn-danger btn-sm" href="{% url 'delete_purchase' record.id %}">Delete</a>
+        {% endif %}
+    """
+    )
+
+    def before_render(self, request):
+        if request.user.has_perm("orders.change_purchase") or request.user.has_perm(
+            "orders.delete_purchase"
         ):
             self.columns.show("edit")
         else:

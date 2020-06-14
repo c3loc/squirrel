@@ -53,14 +53,11 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
-    is_net = models.BooleanField(
-        verbose_name="Do items of this purchase show the net sum (and not the gross sum)?",
-        default=True,
-    )
-    paid = models.BooleanField(verbose_name="Is the purchase paid?", default=False)
+    is_net = models.BooleanField(verbose_name="Prices are net", default=True,)
+    paid = models.BooleanField(help_text="Is the purchase paid?", default=False)
     payment_method = models.CharField(max_length=255, blank=True)
     payer = models.CharField(
-        verbose_name="Person who paid the invoice", max_length=255, blank=True
+        help_text="Person who paid the invoice", max_length=255, blank=True
     )
     vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT)
 

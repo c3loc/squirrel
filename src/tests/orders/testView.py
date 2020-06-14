@@ -94,6 +94,28 @@ class RoutingTests(TestCase):
         self.assertEqual(view.args, ())
         self.assertEqual(view.kwargs, {"team_id": 12})
 
+    def test_purchases_resolves_purchases(self):
+        view = resolve("/purchases")
+        self.assertEqual(view.url_name, "purchases")
+
+    def test_new_purchase_resolves_new_purchase(self):
+        view = resolve("/purchases/new")
+        self.assertEqual(view.func, views.purchase)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {})
+
+    def test_purchase_resolves_purchase(self):
+        view = resolve("/purchases/17")
+        self.assertEqual(view.func, views.purchase)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"purchase_id": 17})
+
+    def test_delete_purchase_resolves_delete_purchase(self):
+        view = resolve("/purchases/delete/12")
+        self.assertEqual(view.func, views.delete_purchase)
+        self.assertEqual(view.args, ())
+        self.assertEqual(view.kwargs, {"purchase_id": 12})
+
 
 class OrderViewTests(TestCase):
     def setUp(self) -> None:

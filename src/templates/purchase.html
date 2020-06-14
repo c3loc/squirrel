@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Squirrel | Purchase{% endblock %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="card mb-3">
+        <h5 class="card-header">Items</h5>
+        <div class="card-body">
+          {{ formset.management_form }}
+          {% for f in formset %}
+          <div class="row">
+            <div class="col-4">
+              {{ f.product|as_crispy_field }}
+            </div>
+            <div class="col-4">
+              {{ f.amount|as_crispy_field }}
+            </div>
+            <div class="col-4">
+              {{ f.unit_price|as_crispy_field }}
+            </div>
+            {{ f.id|as_crispy_field }}
+            {{ f.purchase|as_crispy_field }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card mb-3">
+        <h5 class="card-header">Purchase</h5>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              {{ form.is_net|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.paid|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.payment_method|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.payer|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.ordered_at|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.paid_at|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.vendor|as_crispy_field }}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success">Save purchase</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-success">Save purchase</button>
+</form>
+{% endblock %}
+
