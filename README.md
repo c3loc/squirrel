@@ -15,7 +15,7 @@ You need to install all requirements from requirements.txt and have a config fil
 ### Setup the venv
 
 ```sh
-virtualenv -p python3.6 venv
+python3 -m venv venv
 source venv/bin/activate
 
 pip install -r requirements.txt
@@ -51,7 +51,7 @@ location /public {
 
 ### Initialize and update squirrel 
 
-When you first install squirrel and when you update it, you have to perform some extra steps. In the `squirrel` directory, run:
+When you first install squirrel and when you update it, you have to perform some extra steps. In the `src` directory, run:
 
 ``` 
 # Migrate the database
