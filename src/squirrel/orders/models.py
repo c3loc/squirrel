@@ -173,9 +173,17 @@ class Pillage(models.Model):
 
     def clean(self):
         """
-        We need to ensure that a pillage does not take more stock than available from our stockpile and that
-        the order does not get more items than requested
+        We need to ensure that the product of the stockpile and the order match
+
+        We also need to ensure that a pillage does not take more stock than available from our stockpile and that
+        the order does not get more items than requested.
         """
+
+        # Check that products of order and stockpile match
+        if self.stockpile.product != self.order.product:
+            raise ValidationError(
+                "The product of the order and the stockpile it is taken from have to match!"
+            )
 
         # Get how much is already pillaged for the order in other pillages
         pillaged = (

@@ -81,9 +81,25 @@ class StockpilePillageModelTests(TestCase):
     def setUp(self) -> None:
         self.team = Team.objects.create(name="Procurement")
         self.product = Product.objects.create(name="Dr. Cave Johnson")
+        self.wrong_product = Product.objects.create(name="Wrong product.")
         self.event = Event.objects.create(name="No Conference")
         self.stockpile = Stockpile.objects.create(
             amount=10, product=self.product, unit_price=13370
+        )
+        self.wrong_stockpile = Stockpile.objects.create(
+            amount=10, product=self.wrong_product, unit_price=23420
+        )
+
+    def test_product_is_checked(self):
+        order = Order.objects.create(
+            amount=7, product=self.product, event=self.event, team=self.team
+        )
+
+        pillage = Pillage(amount=5, order=order, stockpile=self.wrong_stockpile)
+        self.assertRaisesRegex(
+            ValidationError,
+            "The product of the order and the stockpile it is taken from have to match!",
+            pillage.save,
         )
 
     def test_stockpile_stock_calculation(self):
