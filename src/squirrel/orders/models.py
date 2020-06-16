@@ -3,6 +3,7 @@ Models for our orders
 """
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum
 from django.utils import timezone
@@ -167,7 +168,7 @@ class Pillage(models.Model):
     It specifies how much an order has taken from a stockpile
     """
 
-    amount = models.PositiveIntegerField()
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     stockpile = models.ForeignKey(Stockpile, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
