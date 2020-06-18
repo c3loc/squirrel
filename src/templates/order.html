@@ -6,58 +6,6 @@
 
 {% block content %}
 <div class="row m-3 justify-content-center">
-  <form method="post">
-    {% csrf_token %}
-    <div class="row mb-3">
-      <div class="col-md-7">
-        <div class="card mt-3">
-          <h5 class="card-header">Order Item</h5>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-12">
-                  {{ form.amount|as_crispy_field }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                {{ form.product|as_crispy_field }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                {{ form.comment|as_crispy_field }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-5">
-        <div class="card mt-3">
-          <h5 class="card-header">Meta Info</h5>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-12">
-                <div class="form-group">
-                  {{ form.state|as_crispy_field }}
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="form-group">
-                  {{ form.team|as_crispy_field }}
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="form-group">
-                  {{ form.event|as_crispy_field }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button type="submit" class="btn btn-success">Save order</button>
-  </form>
+  {% crispy form %}
 </div>
 {% endblock %}
-

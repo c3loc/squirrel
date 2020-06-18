@@ -1,3 +1,6 @@
+from crispy_forms.bootstrap import Field
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
 from django.forms import ChoiceField, ModelChoiceField, inlineformset_factory
 from squirrel.orders.models import (
@@ -19,14 +22,22 @@ class OrderForm(forms.ModelForm):
         my_states = kwargs.pop("states")
         super(OrderForm, self).__init__(*args, **kwargs)
 
+        # Cripsy form settings
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset("Item", "amount", Field("product", autocomplete="off"), "comment"),
+            Fieldset("Metadata", "state", "team", "event"),
+            Submit("submit", "Save order", css_class="btn-success"),
+        )
+
         self.fields["product"] = ModelChoiceField(
-            to_field_name="name",
             queryset=Product.objects.all().order_by("name"),
+            to_field_name="name",
             widget=TextInput(
-                datalist=[p.name for p in Product.objects.all().order_by("name")],
-                attrs={"autocomplete": "off"},
+                datalist=[p.name for p in Product.objects.all().order_by("name")]
             ),
         )
+
         self.fields[
             "product"
         ].help_text = (

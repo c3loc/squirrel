@@ -100,7 +100,12 @@ class Order(models.Model):
 
     amount = models.PositiveIntegerField(default=1)
 
-    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=True)
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        null=True,
+        help_text="If you have more specific requirements, please add them as a comment.",
+    )
 
     state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
     event = models.ForeignKey(
