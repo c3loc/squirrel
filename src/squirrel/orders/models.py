@@ -165,6 +165,24 @@ class Stockpile(models.Model):
     def __str__(self):
         return f"Stockpile of {self.product} ({self.stock}/{self.amount})"
 
+    def __init__(self, *args, **kwargs):
+        super(Stockpile, self).__init__(*args, **kwargs)
+        try:
+            self.inital_product = self.product
+        except Product.DoesNotExist:
+            self.inital_product = None
+
+    def clean(self):
+        if self.inital_product and (self.product != self.inital_product):
+            raise ValidationError("You can’t change the product of a Stockpile!")
+
+    def save(self, *args, **kwargs):
+        """
+        As save does not call full_clean, we call clean explicitly
+        """
+        self.clean()
+        super().save(*args, **kwargs)
+
 
 class Pillage(models.Model):
     """
