@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Q, Sum
+from django.db.models import Sum
 from django.utils import timezone
 
 
@@ -128,6 +128,29 @@ class Order(models.Model):
         unit = f"{self.product.unit} " if self.product.unit else ""
         return "{} {} of {}".format(self.amount, unit, self.product)
 
+    @property
+    def to_pillage(self):
+        """ The amount of the order that has yet to be pillaged """
+        return self.amount - (
+            (self.pillage_set.all().aggregate(Sum("amount"))["amount__sum"] or 0)
+        )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.to_pillage > 0:
+            product_stockpiles = Stockpile.objects.filter(product=self.product)
+
+            with_stock = [s for s in product_stockpiles if s.stock > 0]
+
+            while self.to_pillage > 0 and len(with_stock) > 0:
+                stockpile = with_stock.pop(0)
+                Pillage.objects.create(
+                    order=self,
+                    stockpile=stockpile,
+                    amount=min(self.to_pillage, stockpile.stock),
+                )
+
 
 class Stockpile(models.Model):
     """
@@ -210,12 +233,7 @@ class Pillage(models.Model):
             )
 
         # Get how much is already pillaged for the order in other pillages
-        pillaged = (
-            self.order.pillage_set.filter(~Q(id=self.id)).aggregate(Sum("amount"))[
-                "amount__sum"
-            ]
-            or 0
-        )
+        pillaged = self.order.amount - self.order.to_pillage
 
         if self.amount + pillaged > self.order.amount:
             raise ValidationError(

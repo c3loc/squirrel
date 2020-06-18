@@ -62,6 +62,33 @@ class OrderModelTests(TestCase):
         order = Order(team=self.team)
         self.assertRaises(ValidationError, order.full_clean)
 
+    def test_automatic_pillaging(self):
+        stockpile = Stockpile.objects.create(
+            product=self.product, amount=17, unit_price=990
+        )
+        Order.objects.create(product=self.product, amount=13, team=self.team)
+        pillages = Pillage.objects.all()
+
+        # Check that exactly one pillage is created
+        self.assertEqual(len(pillages), 1)
+
+        # Check that this pillage takes 13 of the product
+        self.assertEqual(pillages[0].amount, 13)
+
+        # Check that the stockpile has 4 remaining
+        self.assertEqual(stockpile.stock, 4)
+
+        # Create a second order to test that pillages are emtied correctly
+        Order.objects.create(product=self.product, amount=10, team=self.team)
+        pillages = Pillage.objects.all()
+
+        self.assertEqual(len(pillages), 2)
+
+        # The pillage for the second order can only have four as the stockpile has 17
+        self.assertEqual(pillages[1].amount, 4)
+
+        self.assertEqual(stockpile.stock, 0)
+
 
 class PurchaseModelTests(TestCase):
     def setUp(self) -> None:
@@ -105,11 +132,10 @@ class StockpilePillageModelTests(TestCase):
     def test_stockpile_stock_calculation(self):
         self.assertEqual(self.stockpile.stock, 10)
 
-        order = Order.objects.create(
+        Order.objects.create(
             amount=7, product=self.product, event=self.event, team=self.team
         )
-        Pillage.objects.create(amount=3, order=order, stockpile=self.stockpile)
-        self.assertEqual(self.stockpile.stock, 7)
+        self.assertEqual(self.stockpile.stock, 3)
 
     def test_pillage_order_fulfilled(self):
         order = Order.objects.create(
@@ -118,7 +144,7 @@ class StockpilePillageModelTests(TestCase):
         pillage = Pillage(amount=8, order=order, stockpile=self.stockpile)
         self.assertRaisesRegex(
             ValidationError,
-            "The order only is for 7. With this pillage of 8, it would go to 8.",
+            "The order only is for 7. With this pillage of 8, it would go to 15.",
             pillage.save,
         )
 
@@ -126,30 +152,10 @@ class StockpilePillageModelTests(TestCase):
         order = Order.objects.create(
             amount=15, product=self.product, event=self.event, team=self.team
         )
-        pillage = Pillage(amount=12, order=order, stockpile=self.stockpile)
+        pillage = Pillage(amount=4, order=order, stockpile=self.stockpile)
 
         self.assertRaisesRegex(
             ValidationError,
-            "The stockpile has 10 available, you requested 12.",
+            "The stockpile has 0 available, you requested 4.",
             pillage.save,
-        )
-
-    def test_pillage_order_exact_amount(self):
-        order = Order.objects.create(
-            amount=8, product=self.product, event=self.event, team=self.team
-        )
-        self.failUnless(
-            Pillage.objects.create(amount=8, order=order, stockpile=self.stockpile)
-        )
-
-    def test_pillage_order_two_pillages_exact_amount(self):
-        order = Order.objects.create(
-            amount=8, product=self.product, event=self.event, team=self.team
-        )
-
-        self.failUnless(
-            Pillage.objects.create(amount=3, order=order, stockpile=self.stockpile)
-        )
-        self.failUnless(
-            Pillage.objects.create(amount=5, order=order, stockpile=self.stockpile)
         )
