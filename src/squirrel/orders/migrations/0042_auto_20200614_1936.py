@@ -4,6 +4,21 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def migrate_from_product_name_to_id(apps, schema_editor):
+    """
+    If the order has a product_suggestion, we create a new product with the same name and set it as product.
+    Then, we remove the product_suggestion field
+    """
+
+    order_model = apps.get_model("orders", "order")
+    product_model = apps.get_model("orders", "product")
+
+    for order in order_model.objects.all():
+        product = product_model.objects.get(name=order.product.name)
+        order.product_new = product
+        order.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -21,14 +36,19 @@ class Migration(migrations.Migration):
                 to="orders.Purchase",
             ),
         ),
-        migrations.AlterField(
+        migrations.AddField(
             model_name="order",
-            name="product",
+            name="product_new",
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
                 to="orders.Product",
             ),
+        ),
+        migrations.RunPython(migrate_from_product_name_to_id),
+        migrations.RemoveField(model_name="order", name="product",),
+        migrations.RenameField(
+            model_name="order", old_name="product_new", new_name="product",
         ),
         migrations.AlterField(
             model_name="stockpile",

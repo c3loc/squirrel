@@ -14,7 +14,9 @@ def create_and_set_product_for_suggestion(apps, schema_editor):
 
     for order in order_model.objects.all():
         if order.product_suggestion:
-            product = product_model.objects.create(name=order.product_suggestion)
+            product, created = product_model.objects.get_or_create(
+                name=order.product_suggestion
+            )
             order.product = product
             order.product_suggestion = ""
             order.save()
@@ -27,6 +29,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_and_set_product_for_suggestion, elidable=True),
+        migrations.RunPython(create_and_set_product_for_suggestion),
         migrations.RemoveField(model_name="order", name="product_suggestion"),
     ]
