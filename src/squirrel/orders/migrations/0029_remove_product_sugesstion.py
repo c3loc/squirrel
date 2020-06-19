@@ -29,6 +29,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_and_set_product_for_suggestion),
+        migrations.RunPython(create_and_set_product_for_suggestion, elidable=True),
         migrations.RemoveField(model_name="order", name="product_suggestion"),
     ]

@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 to="orders.Product",
             ),
         ),
-        migrations.RunPython(migrate_from_product_name_to_id),
+        migrations.RunPython(migrate_from_product_name_to_id, elidable=True),
         migrations.RemoveField(model_name="order", name="product",),
         migrations.RenameField(
             model_name="order", old_name="product_new", new_name="product",
