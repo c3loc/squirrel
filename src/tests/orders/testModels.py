@@ -159,3 +159,32 @@ class StockpilePillageModelTests(TestCase):
             "The stockpile has 0 available, you requested 4.",
             pillage.save,
         )
+
+    def test_stockpile_save_fills_orders(self):
+        # This order will be filled with the existing stockpile of 10, so there are 110 to be pillaged
+        Order.objects.create(product=self.product, team=self.team, amount=120)
+
+        # This must create a second pillage with 90, so there are 20 left
+        Stockpile.objects.create(product=self.product, amount=90, unit_price=42000)
+
+        # Check that two pillages exist and their amounts
+        pillages = Pillage.objects.all()
+
+        self.assertEqual(len(pillages), 2)
+        self.assertEqual(pillages[0].amount, 10)
+        self.assertEqual(pillages[1].amount, 90)
+
+        # Create a third stockpile that has more than enough to fill the order
+        # With this we test that not more than necessary is taken
+        Stockpile.objects.create(product=self.product, amount=100, unit_price=42000)
+
+        # Check the pillages again
+        pillages = Pillage.objects.all()
+
+        self.assertEqual(len(pillages), 3)
+        self.assertEqual(pillages[0].amount, 10)
+        self.assertEqual(pillages[1].amount, 90)
+        self.assertEqual(pillages[2].amount, 20)
+
+        # Check that the last stockpile has 80 left
+        self.assertEqual(Stockpile.objects.get(amount=100).stock, 80)

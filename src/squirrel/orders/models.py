@@ -206,6 +206,24 @@ class Stockpile(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
+        # While there is stock, create pillages for orders that are not topped up yet
+        # TODO: We start with which orders? Possible:
+        # * oldest (id)
+        # * smallest
+        # * largest
+
+        # Get all orders for the product
+        orders = Order.objects.filter(product=self.product)
+
+        # Filter for orders that still need something
+        to_fill = [o for o in orders if o.to_pillage > 0]
+
+        while self.stock > 0 and len(to_fill) > 0:
+            order = to_fill.pop(0)
+            Pillage.objects.create(
+                order=order, stockpile=self, amount=min(self.stock, order.to_pillage),
+            )
+
 
 class Pillage(models.Model):
     """
