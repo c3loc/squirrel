@@ -8,55 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    replaces = [
-        ("orders", "0001_initial"),
-        ("orders", "0002_auto_20191124_2004"),
-        ("orders", "0003_order_state"),
-        ("orders", "0004_order_unit_price"),
-        ("orders", "0005_auto_20191124_2145"),
-        ("orders", "0006_auto_20191125_1325"),
-        ("orders", "0007_product_unit_price"),
-        ("orders", "0008_auto_20191128_2013"),
-        ("orders", "0009_auto_20191201_2035"),
-        ("orders", "0010_auto_20191201_2052"),
-        ("orders", "0011_auto_20191201_2055"),
-        ("orders", "0012_auto_20191202_2113"),
-        ("orders", "0013_auto_20191203_2327"),
-        ("orders", "0014_auto_20191206_0926"),
-        ("orders", "0015_auto_20191208_1753"),
-        ("orders", "0016_auto_20191208_1859"),
-        ("orders", "0017_auto_20191208_2048"),
-        ("orders", "0018_auto_20191209_0839"),
-        ("orders", "0019_auto_20191211_1826"),
-        ("orders", "0020_auto_20191219_2037"),
-        ("orders", "0021_order_comment"),
-        ("orders", "0022_auto_20200112_1611"),
-        ("orders", "0023_auto_20200113_1923"),
-        ("orders", "0024_auto_20200131_1416"),
-        ("orders", "0025_auto_20200131_1610"),
-        ("orders", "0026_auto_20200131_1936"),
-        ("orders", "0027_auto_20200413_1459"),
-        ("orders", "0028_auto_20200421_1957"),
-        ("orders", "0029_remove_product_sugesstion"),
-        ("orders", "0030_require_product"),
-        ("orders", "0031_product_pk_to_name"),
-        ("orders", "0032_remove_url"),
-        ("orders", "0033_remove_good"),
-        ("orders", "0034_unit_price_allow_empty"),
-        ("orders", "0035_product_unit_not_required"),
-        ("orders", "0036_product_default_price"),
-        ("orders", "0037_order_event_required"),
-        ("orders", "0038_pillage_stockpile"),
-        ("orders", "0039_remove_order_unit_price"),
-        ("orders", "0040_auto_20200424_1740"),
-        ("orders", "0041_product_unit_allow_empty"),
-        ("orders", "0042_auto_20200614_1936"),
-        ("orders", "0043_auto_20200614_2214"),
-        ("orders", "0044_auto_20200616_2138"),
-        ("orders", "0045_auto_20200616_2328"),
-    ]
-
     initial = True
 
     dependencies = [
