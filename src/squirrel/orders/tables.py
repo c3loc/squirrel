@@ -1,4 +1,4 @@
-from django_tables2 import TemplateColumn, tables
+from django_tables2 import Column, TemplateColumn, tables
 from squirrel.orders.models import (
     Event,
     Order,
@@ -185,6 +185,15 @@ class PurchaseTable(tables.Table):
 class StockpileTable(tables.Table):
     class Meta:
         model = Stockpile
+        fields = [
+            "product",
+            "stock",
+            "amount",
+            "unit_price",
+            "purchase",
+            "tax_rate",
+            "edit",
+        ]
         attrs = {"class": "table table-sm"}
 
     edit = TemplateColumn(
@@ -197,6 +206,12 @@ class StockpileTable(tables.Table):
         {% endif %}
     """
     )
+
+    stock = Column(empty_values=())
+
+    @staticmethod
+    def render_stock(record):
+        return record.stock
 
     def before_render(self, request):
         if request.user.has_perm("orders.change_stockpile") or request.user.has_perm(
