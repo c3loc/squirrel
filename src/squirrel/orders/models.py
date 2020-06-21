@@ -162,7 +162,9 @@ class Stockpile(models.Model):
     amount = models.PositiveIntegerField()
 
     # Unit price in 10th cents
-    unit_price = models.PositiveIntegerField()
+    unit_price = models.PositiveIntegerField(
+        help_text="Price per unit in 1/10th of a cent"
+    )
 
     """
     A stockpile may belong to a purchase, but does not have to be. Surprisingly often, you will just find things in
