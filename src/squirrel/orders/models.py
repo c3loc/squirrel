@@ -5,8 +5,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum
+from django.db.models import F, FloatField, Sum
 from django.utils import timezone
+from squirrel.orders.utilities import squirrel_round
 
 
 class Event(models.Model):
@@ -64,6 +65,50 @@ class Purchase(models.Model):
 
     ordered_at = models.DateTimeField(default=timezone.now)
     paid_at = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def sum_net(self):
+        """ The sum of the purchase in €, net """
+        if self.is_net:
+            return squirrel_round(self.__sum_without_tax_adjustment()) / 1000
+
+        # Sum over all purchase sums, for each purchase divide by its tax
+        return (
+            squirrel_round(
+                Stockpile.objects.filter(purchase=self).aggregate(
+                    total=Sum(
+                        F("amount") * F("unit_price") / F("tax"),
+                        output_field=FloatField(),
+                    )
+                )["total"]
+            )
+            / 1000
+        )
+
+    @property
+    def sum_gross(self):
+        """ The sum of the purchase in €, gross"""
+        if self.is_net:
+            # Sum over all purchase sums, for each purchase multiply with its tax
+            return (
+                squirrel_round(
+                    Stockpile.objects.filter(purchase=self).aggregate(
+                        total=Sum(
+                            F("amount") * F("unit_price") * F("tax"),
+                            output_field=FloatField(),
+                        )
+                    )["total"]
+                )
+                / 1000
+            )
+
+        return squirrel_round(self.__sum_without_tax_adjustment()) / 1000
+
+    def __sum_without_tax_adjustment(self):
+        """ Returns the sum of all stockpiles without adding or subtracting tax """
+        return Stockpile.objects.filter(purchase=self).aggregate(
+            total=Sum(F("amount") * F("unit_price"))
+        )["total"]
 
     def __str__(self):
         return "Purchase with {} @ {}".format(self.vendor, self.ordered_at.date())
