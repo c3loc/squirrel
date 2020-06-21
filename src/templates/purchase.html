@@ -15,14 +15,17 @@
           {{ formset.management_form }}
           {% for f in formset %}
           <div class="row">
-            <div class="col-4">
+            <div class="col-3">
               {{ f.product|as_crispy_field }}
             </div>
-            <div class="col-4">
+            <div class="col-3">
               {{ f.amount|as_crispy_field }}
             </div>
-            <div class="col-4">
+            <div class="col-3">
               {{ f.unit_price|as_crispy_field }}
+            </div>
+            <div class="col-3">
+              {{ f.tax|as_crispy_field }}
             </div>
             {{ f.id|as_crispy_field }}
             {{ f.purchase|as_crispy_field }}

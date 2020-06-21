@@ -105,11 +105,14 @@ class PurchaseForm(forms.ModelForm):
 class StockpileForm(forms.ModelForm):
     class Meta:
         model = Stockpile
-        fields = ["product", "amount", "unit_price", "purchase"]
+        fields = ["product", "amount", "unit_price", "tax", "purchase"]
 
 
 StockpileFormSet = inlineformset_factory(
-    Purchase, Stockpile, fields=["product", "amount", "unit_price", "id"], extra=1
+    Purchase,
+    Stockpile,
+    fields=["product", "amount", "unit_price", "tax", "id"],
+    extra=1,
 )
 
 

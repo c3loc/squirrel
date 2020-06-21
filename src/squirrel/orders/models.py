@@ -172,6 +172,11 @@ class Stockpile(models.Model):
         Purchase, on_delete=models.CASCADE, null=True, blank=True
     )
 
+    # The tax rate for the stockpile as a factor
+    tax = models.FloatField(
+        verbose_name="Tax rate", help_text="The tax rate as a factor of the net price"
+    )
+
     @property
     def stock(self):
         """

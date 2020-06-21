@@ -40,7 +40,7 @@ class ProductModelTests(TestCase):
     def test_rename_possible(self):
         """ [regression] check that a product can be renamed. This broke when stockpiles referenced products by name, not by id """
         product = Product.objects.create(name="Rename me!")
-        Stockpile.objects.create(product=product, amount=1, unit_price=499)
+        Stockpile.objects.create(product=product, amount=1, unit_price=499, tax=1.04)
 
         product.name = "I was renamed."
 
@@ -64,7 +64,7 @@ class OrderModelTests(TestCase):
 
     def test_automatic_pillaging(self):
         stockpile = Stockpile.objects.create(
-            product=self.product, amount=17, unit_price=990
+            product=self.product, amount=17, unit_price=990, tax=1.19
         )
         Order.objects.create(product=self.product, amount=13, team=self.team)
         pillages = Pillage.objects.all()
@@ -111,10 +111,10 @@ class StockpilePillageModelTests(TestCase):
         self.wrong_product = Product.objects.create(name="Wrong product.")
         self.event = Event.objects.create(name="No Conference")
         self.stockpile = Stockpile.objects.create(
-            amount=10, product=self.product, unit_price=13370
+            amount=10, product=self.product, unit_price=13370, tax=1.24
         )
         self.wrong_stockpile = Stockpile.objects.create(
-            amount=10, product=self.wrong_product, unit_price=23420
+            amount=10, product=self.wrong_product, unit_price=23420, tax=1.02
         )
 
     def test_product_is_checked(self):
@@ -165,7 +165,9 @@ class StockpilePillageModelTests(TestCase):
         Order.objects.create(product=self.product, team=self.team, amount=120)
 
         # This must create a second pillage with 90, so there are 20 left
-        Stockpile.objects.create(product=self.product, amount=90, unit_price=42000)
+        Stockpile.objects.create(
+            product=self.product, amount=90, unit_price=42000, tax=0.83
+        )
 
         # Check that two pillages exist and their amounts
         pillages = Pillage.objects.all()
@@ -176,7 +178,9 @@ class StockpilePillageModelTests(TestCase):
 
         # Create a third stockpile that has more than enough to fill the order
         # With this we test that not more than necessary is taken
-        Stockpile.objects.create(product=self.product, amount=100, unit_price=42000)
+        Stockpile.objects.create(
+            product=self.product, amount=100, unit_price=42000, tax=1.03
+        )
 
         # Check the pillages again
         pillages = Pillage.objects.all()
