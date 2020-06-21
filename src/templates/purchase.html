@@ -73,6 +73,28 @@
               {{ form.vendor|as_crispy_field }}
             </div>
           </div>
+          <div class="row">
+            <div class="col-12">
+              <label for="sum_net">Sum net</label>
+              <div class="input-group mb-3">
+                <input type="text" id="sum_net" class="form-control" aria-label="Amount" value="{{ sum_net }}" readonly>
+                <div class="input-group-append">
+                  <span class="input-group-text">€</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <label for="sum_gross">Sum gross</label>
+              <div class="input-group mb-3">
+                <input type="text" id="sum_gross" class="form-control" aria-label="Amount" value="{{ sum_gross }}" readonly>
+                <div class="input-group-append">
+                  <span class="input-group-text">€</span>
+                </div>
+              </div>
+            </div>
+          </div>
           <button type="submit" class="btn btn-success">Save purchase</button>
         </div>
       </div>

@@ -546,7 +546,19 @@ def purchase(request, purchase_id=None):
             form = PurchaseForm()
             formset = StockpileFormSet()
 
-    return render(request, "purchase.html", {"form": form, "formset": formset})
+    # FIXME: I am sure this can be done better
+    if purchase_object:
+        sum_net = purchase_object.sum_net
+        sum_gross = purchase_object.sum_gross
+    else:
+        sum_net = 0
+        sum_gross = 0
+
+    return render(
+        request,
+        "purchase.html",
+        {"form": form, "formset": formset, "sum_net": sum_net, "sum_gross": sum_gross},
+    )
 
 
 @login_required
