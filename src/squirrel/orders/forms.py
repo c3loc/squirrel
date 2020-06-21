@@ -33,9 +33,7 @@ class OrderForm(forms.ModelForm):
         self.fields["product"] = ModelChoiceField(
             queryset=Product.objects.all().order_by("name"),
             to_field_name="name",
-            widget=TextInput(
-                datalist=[p.name for p in Product.objects.all().order_by("name")]
-            ),
+            widget=TextInput(datalist=[p.name for p in Product.objects.all()]),
         )
 
         self.fields[

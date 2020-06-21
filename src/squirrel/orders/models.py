@@ -44,6 +44,9 @@ class Vendor(models.Model):
 class Product(models.Model):
     """A product that can be ordered"""
 
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=250, default=None, unique=True)
     unit = models.CharField(max_length=20, null=True, blank=True)
 
