@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'account:create_account' %}" role="button" class="btn btn-primary mt-3 mb-3">New Account</a>
+{% for account in accounts %}
+<div class="card mb-3">
+  <h4 class="card-header">
+    {{ account.name }}
+  </h4>
+  <div class="card-body">
+    <div class="mb-3">
+      <a href="{% url 'account:import_transactions' account.id %}" class="btn btn-info">Import transactions</a>
+      <a href="{% url 'account:edit_account' account.id %}" class="btn btn-secondary">Change account</a>
+    </div>
+    <p class="card-text">This account has {{ account.transaction_set.all | length }} transactions.</p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Description</th>
+          <th scope="col">Purchase</th>
+          {% if perms.accounts.edit_transaction %}
+          <th scope="col">&nbsp;</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in account.transaction_set.all %}
+        <tr>
+          <td>{{ transaction.date }}</td>
+          <td>{{ transaction.amount }}</td>
+          <td>{{ transaction.description }}</td>
+          <td>{{ transaction.purchase }}</td>
+          {% if perms.accounts.edit_transaction %}
+          <td><a href="{% url 'account:edit_transaction' transaction.id %}" class="btn btn-primary">Edit</a></td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+  {% endfor %}
+{% endblock %}

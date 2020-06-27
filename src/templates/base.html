@@ -57,6 +57,11 @@
             <a class="nav-link" href="{% url 'pillages' %}">Pillages</a>
           </li>
           {% endif %}
+          {% if perms.accounts.view_account %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'account:accounts' %}">Accounts</a>
+          </li>
+          {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">

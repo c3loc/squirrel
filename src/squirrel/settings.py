@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "squirrel.orders",
+    "squirrel.accounts",
     "crispy_forms",
     "django_tables2",
+    "djmoney",
 ]
 
 # Which templates to use for crispy_forms

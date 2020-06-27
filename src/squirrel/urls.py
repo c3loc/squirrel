@@ -1,6 +1,7 @@
 """
 The URL routing for our project
 """
+from django.conf.urls import include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
@@ -85,5 +86,5 @@ urlpatterns = [
         "pillages/delete/<int:pillage_id>", views.delete_pillage, name="delete_pillage",
     ),
     path("admin/", admin.site.urls),
-    path("accounts/login/", views.login_redirect),
+    path("accounts/", include("squirrel.accounts.urls", namespace="account")),
 ]
