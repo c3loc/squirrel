@@ -35,6 +35,9 @@ class Team(models.Model):
 class Vendor(models.Model):
     """A vendor"""
 
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=250, default=None, unique=True)
 
     def __str__(self):
