@@ -7,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import F, FloatField, Sum
 from django.utils import timezone
+from djmoney.models.fields import MoneyField
 from squirrel.orders.utilities import squirrel_round
 
 
@@ -52,9 +53,9 @@ class Product(models.Model):
 
     name = models.CharField(max_length=250, default=None, unique=True)
     unit = models.CharField(max_length=20, null=True, blank=True)
-
-    # Default price in 10th cents
-    default_price = models.PositiveIntegerField(null=True, blank=True)
+    default_price = MoneyField(
+        max_digits=19, decimal_places=4, default_currency="EUR", null=True, blank=True
+    )
 
     def __str__(self):
         return self.name
