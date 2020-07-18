@@ -73,6 +73,11 @@ class Purchase(models.Model):
     ordered_at = models.DateField(default=date.today)
     paid_at = models.DateField(blank=True, null=True)
 
+    # Sometimes, we get rebates on whole orders. This reflects that.
+    rebate = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0, help_text="Rebate in %"
+    )
+
     @property
     def sum_net(self):
         """ The sum of the purchase in €, net """
@@ -93,7 +98,9 @@ class Purchase(models.Model):
             )["total"],
         ]
 
-        return sum([item for item in sums if item is not None])
+        return (
+            sum([item for item in sums if item is not None]) * (100 - self.rebate) / 100
+        )
 
     @property
     def sum_gross(self):
@@ -114,7 +121,11 @@ class Purchase(models.Model):
                     )
                 )["total"],
             ]
-            return sum([item for item in sums if item is not None])
+            return (
+                sum([item for item in sums if item is not None])
+                * (100 - self.rebate)
+                / 100
+            )
 
         return self.__sum_without_tax_adjustment()
 
@@ -129,7 +140,9 @@ class Purchase(models.Model):
             )["total"],
         ]
 
-        return sum([item for item in sums if item is not None])
+        return (
+            sum([item for item in sums if item is not None]) * (100 - self.rebate) / 100
+        )
 
     def __str__(self):
         return "Purchase with {} @ {}".format(self.vendor, self.ordered_at)

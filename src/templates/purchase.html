@@ -100,6 +100,11 @@
           </div>
           <div class="row">
             <div class="col-12">
+              {{ form.rebate|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
               <label for="sum_net">Sum net</label>
               <div class="input-group mb-3">
                 <input type="text" id="sum_net" class="form-control" aria-label="Amount" value="{{ sum_net|floatformat:2 }}" readonly>

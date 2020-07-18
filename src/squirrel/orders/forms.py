@@ -98,6 +98,7 @@ class PurchaseForm(forms.ModelForm):
             "vendor",
             "ordered_at",
             "paid_at",
+            "rebate",
         ]
 
 
