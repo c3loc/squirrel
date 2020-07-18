@@ -89,7 +89,6 @@ class Purchase(models.Model):
     def sum_gross(self):
         """ The sum of the purchase in €, gross"""
         if self.is_net:
-            print("calculating gross")
             # Sum over all purchase sums, for each purchase multiply with its tax
             return Stockpile.objects.filter(purchase=self).aggregate(
                 total=Sum(
