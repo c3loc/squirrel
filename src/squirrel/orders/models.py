@@ -1,12 +1,13 @@
 """
 Models for our orders
 """
+from datetime import date
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import F, Sum
-from django.utils import timezone
 from djmoney.models.fields import MoneyField
 
 
@@ -69,8 +70,8 @@ class Purchase(models.Model):
     )
     vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT)
 
-    ordered_at = models.DateTimeField(default=timezone.now)
-    paid_at = models.DateTimeField(blank=True, null=True)
+    ordered_at = models.DateField(default=date.today)
+    paid_at = models.DateField(blank=True, null=True)
 
     @property
     def sum_net(self):
@@ -131,7 +132,7 @@ class Purchase(models.Model):
         return sum([item for item in sums if item is not None])
 
     def __str__(self):
-        return "Purchase with {} @ {}".format(self.vendor, self.ordered_at.date())
+        return "Purchase with {} @ {}".format(self.vendor, self.ordered_at)
 
 
 class Order(models.Model):
