@@ -8,10 +8,15 @@
   </h4>
   <div class="card-body">
     <div class="mb-3">
+        <button class="btn btn-primary collapsed" data-toggle="collapse" data-target="#{{ account }}-transactions" aria-expanded="false" aria-controls="{{ account }}-transactions">
+          <span class="if-collapsed">Show transactions</span>
+          <span class="if-not-collapsed">Hide transactions</span>
+        </button>
       <a href="{% url 'account:import_transactions' account.id %}" class="btn btn-info">Import transactions</a>
       <a href="{% url 'account:edit_account' account.id %}" class="btn btn-secondary">Change account</a>
     </div>
     <p class="card-text">This account has {{ account.transaction_set.all | length }} transactions.</p>
+    <div id="{{ account }}-transactions" class="collapse">
     <table class="table table-striped">
       <thead>
         <tr>
