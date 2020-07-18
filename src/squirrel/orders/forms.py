@@ -4,6 +4,7 @@ from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
 from django.forms import ChoiceField, ModelChoiceField, inlineformset_factory
 from squirrel.orders.models import (
+    CostItem,
     Event,
     Order,
     Pillage,
@@ -110,6 +111,14 @@ StockpileFormSet = inlineformset_factory(
     Purchase,
     Stockpile,
     fields=["product", "amount", "unit_price", "tax", "id"],
+    extra=1,
+)
+
+
+CostItemFormSet = inlineformset_factory(
+    Purchase,
+    CostItem,
+    fields=["description", "amount", "unit_price", "tax", "id"],
     extra=1,
 )
 

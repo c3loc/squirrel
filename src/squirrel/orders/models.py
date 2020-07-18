@@ -78,31 +78,57 @@ class Purchase(models.Model):
         if self.is_net:
             return self.__sum_without_tax_adjustment()
 
-        # Sum over all purchase sums, for each purchase divide by its tax
-        return Stockpile.objects.filter(purchase=self).aggregate(
-            total=Sum(
-                F("amount") * F("unit_price") / F("tax"), output_field=MoneyField(),
-            )
-        )["total"]
+        # Sum over all purchase sums and cost items, divide each by its tax
+        sums = [
+            Stockpile.objects.filter(purchase=self).aggregate(
+                total=Sum(
+                    F("amount") * F("unit_price") / F("tax"), output_field=MoneyField(),
+                )
+            )["total"],
+            CostItem.objects.filter(purchase=self).aggregate(
+                total=Sum(
+                    F("amount") * F("unit_price") / F("tax"), output_field=MoneyField(),
+                )
+            )["total"],
+        ]
+
+        return sum([item for item in sums if item is not None])
 
     @property
     def sum_gross(self):
         """ The sum of the purchase in €, gross"""
         if self.is_net:
-            # Sum over all purchase sums, for each purchase multiply with its tax
-            return Stockpile.objects.filter(purchase=self).aggregate(
-                total=Sum(
-                    F("amount") * F("unit_price") * F("tax"), output_field=MoneyField(),
-                )
-            )["total"]
+            # Sum over all purchase sums and cost items, multiply each with its tax
+            sums = [
+                Stockpile.objects.filter(purchase=self).aggregate(
+                    total=Sum(
+                        F("amount") * F("unit_price") * F("tax"),
+                        output_field=MoneyField(),
+                    )
+                )["total"],
+                CostItem.objects.filter(purchase=self).aggregate(
+                    total=Sum(
+                        F("amount") * F("unit_price") * F("tax"),
+                        output_field=MoneyField(),
+                    )
+                )["total"],
+            ]
+            return sum([item for item in sums if item is not None])
 
         return self.__sum_without_tax_adjustment()
 
     def __sum_without_tax_adjustment(self):
-        """ Returns the sum of all stockpiles without adding or subtracting tax """
-        return Stockpile.objects.filter(purchase=self).aggregate(
-            total=Sum(F("amount") * F("unit_price"), output_field=MoneyField())
-        )["total"]
+        """ Returns the sum of all stockpiles and cost items without adding or subtracting tax"""
+        sums = [
+            Stockpile.objects.filter(purchase=self).aggregate(
+                total=Sum(F("amount") * F("unit_price"), output_field=MoneyField())
+            )["total"],
+            CostItem.objects.filter(purchase=self).aggregate(
+                total=Sum(F("amount") * F("unit_price"), output_field=MoneyField())
+            )["total"],
+        ]
+
+        return sum([item for item in sums if item is not None])
 
     def __str__(self):
         return "Purchase with {} @ {}".format(self.vendor, self.ordered_at.date())
@@ -317,3 +343,27 @@ class Pillage(models.Model):
 
     def __str__(self):
         return f"Pillage of {self.amount} for {self.order} from {self.stockpile}"
+
+
+class CostItem(models.Model):
+    """
+    A CostItem is something that costs us additional money, but does not yield a good.
+    E.g. shipping costs etc.
+
+    The sum of all cost items is equally divided to all pillages of stockpiles from this purchase.
+    """
+
+    description = models.CharField(max_length=250)
+    amount = models.PositiveIntegerField()
+    unit_price = MoneyField(max_digits=19, decimal_places=4, default_currency="EUR")
+
+    # All CostItems belong to a purchase
+    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
+
+    # The tax rate for the stockpile as a factor
+    tax = models.FloatField(
+        verbose_name="Tax rate", help_text="The tax rate as a factor of the net price"
+    )
+
+    def __str__(self):
+        return f"Extra cost of {self.description} for {self.purchase}"

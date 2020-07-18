@@ -1,5 +1,6 @@
 from django.contrib import admin
 from squirrel.orders.models import (
+    CostItem,
     Event,
     Order,
     Pillage,
@@ -16,3 +17,4 @@ admin.site.register(Product)
 admin.site.register(Purchase)
 admin.site.register(Pillage)
 admin.site.register(Stockpile)
+admin.site.register(CostItem)

@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django_tables2 import SingleTableView
 from squirrel.orders.forms import (
+    CostItemFormSet,
     EventForm,
     OrderForm,
     PillageForm,
@@ -523,28 +524,35 @@ def purchase(request, purchase_id=None):
             if request.user.has_perm("orders.change_purchase"):
                 form = PurchaseForm(request.POST, instance=purchase_object)
                 formset = StockpileFormSet(request.POST, instance=form.instance)
+                costitem_formset = CostItemFormSet(request.POST, instance=form.instance)
             else:
                 raise PermissionDenied
         else:
             if request.user.has_perm("orders.add_purchase"):
                 form = PurchaseForm(request.POST)
                 formset = StockpileFormSet(request.POST, instance=form.instance)
+                costitem_formset = CostItemFormSet(request.POST, instance=form.instance)
             else:
                 raise PermissionDenied
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid() and formset.is_valid() and costitem_formset.is_valid():
             p = form.save()
             formset.save()
+            costitem_formset.save()
             return redirect(f"/purchases/{p.id}")
 
     else:
         if purchase_object:
             form = PurchaseForm(instance=purchase_object)
             formset = StockpileFormSet(instance=Purchase.objects.get(id=purchase_id))
+            costitem_formset = CostItemFormSet(
+                instance=Purchase.objects.get(id=purchase_id)
+            )
 
         else:
             form = PurchaseForm()
             formset = StockpileFormSet()
+            costitem_formset = CostItemFormSet()
 
     # FIXME: I am sure this can be done better
     if purchase_object:
@@ -557,7 +565,13 @@ def purchase(request, purchase_id=None):
     return render(
         request,
         "purchase.html",
-        {"form": form, "formset": formset, "sum_net": sum_net, "sum_gross": sum_gross},
+        {
+            "form": form,
+            "formset": formset,
+            "costitem_formset": costitem_formset,
+            "sum_net": sum_net,
+            "sum_gross": sum_gross,
+        },
     )
 
 

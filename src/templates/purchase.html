@@ -33,6 +33,31 @@
           {% endfor %}
         </div>
       </div>
+      <div class="card mb-3">
+        <h5 class="card-header">Cost Items</h5>
+        <div class="card-body">
+          {{ costitem_formset.management_form }}
+          {% for f in costitem_formset %}
+          <div class="row">
+            <div class="col-3">
+              {{ f.description|as_crispy_field }}
+            </div>
+            <div class="col-3">
+              {{ f.amount|as_crispy_field }}
+            </div>
+            <div class="col-3">
+              {{ f.unit_price|as_crispy_field }}
+            </div>
+            <div class="col-3">
+              {{ f.tax|as_crispy_field }}
+            </div>
+            {{ f.id|as_crispy_field }}
+            {{ f.purchase|as_crispy_field }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
     </div>
     <div class="col-sm-4">
       <div class="card mb-3">
