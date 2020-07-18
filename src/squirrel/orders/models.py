@@ -5,10 +5,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import F, FloatField, Sum
+from django.db.models import F, Sum
 from django.utils import timezone
 from djmoney.models.fields import MoneyField
-from squirrel.orders.utilities import squirrel_round
 
 
 class Event(models.Model):
@@ -77,44 +76,33 @@ class Purchase(models.Model):
     def sum_net(self):
         """ The sum of the purchase in €, net """
         if self.is_net:
-            return squirrel_round(self.__sum_without_tax_adjustment()) / 1000
+            return self.__sum_without_tax_adjustment()
 
         # Sum over all purchase sums, for each purchase divide by its tax
-        return (
-            squirrel_round(
-                Stockpile.objects.filter(purchase=self).aggregate(
-                    total=Sum(
-                        F("amount") * F("unit_price") / F("tax"),
-                        output_field=FloatField(),
-                    )
-                )["total"]
+        return Stockpile.objects.filter(purchase=self).aggregate(
+            total=Sum(
+                F("amount") * F("unit_price") / F("tax"), output_field=MoneyField(),
             )
-            / 1000
-        )
+        )["total"]
 
     @property
     def sum_gross(self):
         """ The sum of the purchase in €, gross"""
         if self.is_net:
+            print("calculating gross")
             # Sum over all purchase sums, for each purchase multiply with its tax
-            return (
-                squirrel_round(
-                    Stockpile.objects.filter(purchase=self).aggregate(
-                        total=Sum(
-                            F("amount") * F("unit_price") * F("tax"),
-                            output_field=FloatField(),
-                        )
-                    )["total"]
+            return Stockpile.objects.filter(purchase=self).aggregate(
+                total=Sum(
+                    F("amount") * F("unit_price") * F("tax"), output_field=MoneyField(),
                 )
-                / 1000
-            )
+            )["total"]
 
-        return squirrel_round(self.__sum_without_tax_adjustment()) / 1000
+        return self.__sum_without_tax_adjustment()
 
     def __sum_without_tax_adjustment(self):
         """ Returns the sum of all stockpiles without adding or subtracting tax """
         return Stockpile.objects.filter(purchase=self).aggregate(
-            total=Sum(F("amount") * F("unit_price"))
+            total=Sum(F("amount") * F("unit_price"), output_field=MoneyField())
         )["total"]
 
     def __str__(self):
@@ -212,11 +200,7 @@ class Stockpile(models.Model):
 
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     amount = models.PositiveIntegerField()
-
-    # Unit price in 10th cents
-    unit_price = models.PositiveIntegerField(
-        help_text="Price per unit in 1/10th of a cent"
-    )
+    unit_price = MoneyField(max_digits=19, decimal_places=4, default_currency="EUR")
 
     """
     A stockpile may belong to a purchase, but does not have to be. Surprisingly often, you will just find things in

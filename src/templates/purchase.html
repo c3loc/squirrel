@@ -77,7 +77,7 @@
             <div class="col-12">
               <label for="sum_net">Sum net</label>
               <div class="input-group mb-3">
-                <input type="text" id="sum_net" class="form-control" aria-label="Amount" value="{{ sum_net }}" readonly>
+                <input type="text" id="sum_net" class="form-control" aria-label="Amount" value="{{ sum_net|floatformat:2 }}" readonly>
                 <div class="input-group-append">
                   <span class="input-group-text">€</span>
                 </div>
@@ -88,7 +88,7 @@
             <div class="col-12">
               <label for="sum_gross">Sum gross</label>
               <div class="input-group mb-3">
-                <input type="text" id="sum_gross" class="form-control" aria-label="Amount" value="{{ sum_gross }}" readonly>
+                <input type="text" id="sum_gross" class="form-control" aria-label="Amount" value="{{ sum_gross|floatformat:2 }}" readonly>
                 <div class="input-group-append">
                   <span class="input-group-text">€</span>
                 </div>
