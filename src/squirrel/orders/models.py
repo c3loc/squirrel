@@ -8,11 +8,15 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import F, Sum
+from django.db.models.functions import Upper
 from djmoney.models.fields import MoneyField
 
 
 class Event(models.Model):
     """An event for which orders can be made"""
+
+    class Meta:
+        ordering = [Upper("name")]
 
     name = models.CharField(max_length=50, unique=True, default=None)
 
@@ -25,6 +29,7 @@ class Team(models.Model):
 
     class Meta:
         permissions = [("view_budget", "Can view budget")]
+        ordering = [Upper("name")]
 
     name = models.CharField(max_length=50, unique=True, default=None)
     members = models.ManyToManyField(User, blank=True)
@@ -37,7 +42,7 @@ class Vendor(models.Model):
     """A vendor"""
 
     class Meta:
-        ordering = ["name"]
+        ordering = [Upper("name")]
 
     name = models.CharField(max_length=250, default=None, unique=True)
 
@@ -49,7 +54,7 @@ class Product(models.Model):
     """A product that can be ordered"""
 
     class Meta:
-        ordering = ["name"]
+        ordering = [Upper("name")]
 
     name = models.CharField(max_length=250, default=None, unique=True)
     unit = models.CharField(max_length=20, null=True, blank=True)
