@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<a href="{% url 'accounts:create_account' %}" role="button" class="btn btn-primary mt-3 mb-3">New Account</a>
+<a href="{% url 'accounts:create_account' %}" role="button" class="btn btn-primary mt-3 mb-3">Create Account</a>
 {% for account in accounts %}
 <div class="card mb-3">
   <h4 class="card-header">
