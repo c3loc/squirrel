@@ -524,7 +524,7 @@ def purchase(request, purchase_id=None):
             p = form.save()
             formset.save()
             costitem_formset.save()
-            return redirect(reverse("orders:edit_purchase", args=[p.id]))
+            return redirect(reverse("orders:change_purchase", args=[p.id]))
 
     else:
         if purchase_object:

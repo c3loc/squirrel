@@ -3,12 +3,20 @@
 <a href="{% url 'orders:create_stockpile' %}" role="button" class="btn btn-primary mt-3 mb-3">Create Stockpile</a>
 {% for stockpile in stockpiles %}
 <div class="row">
-  <div class="col-9">
-    <span class="align-middle">{{ stockpile.product }} ({{ stockpile.stock }} of {{ stockpile.amount }} left)</span>
+  <div class="col-3">
+    <span class="align-middle">{{ stockpile.product }}</span>
+  </div>
+  <div class="col-2">
+    {{ stockpile.stock }} of {{ stockpile.amount }} left
   </div>
   <div class="col-3">
+    {{ stockpile.unit_price_net }} / {{ stockpile.product.unit }}
+  </div>
+  <div class="col-4">
   <a href="{% url 'orders:change_stockpile' stockpile.id %}" class="btn btn-sm btn-link">Change stockpile</a>
-
+  {% if stockpile.purchase %}
+  <a href="{% url 'orders:change_purchase' stockpile.purchase.id %}" class="btn btn-sm btn-link">Change purchase</a>
+  {% endif %}
   <button class="btn btn-sm {% if stockpile.stock == stockpile.amount %}btn-secondary{% else %}btn-primary{% endif %} collapsed mr-2" data-toggle="collapse" data-target="#stockpile-{{ stockpile.id }}-pillages" aria-expanded="false" aria-controls="stockpile-{{ stockpile.id }}-pillages"{% if stockpile.stock == stockpile.amount %}disabled{% endif %}>
     <span class="if-collapsed">Show pillages</span>
     <span class="if-not-collapsed">Hide pillages</span>

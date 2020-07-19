@@ -29,7 +29,7 @@ urlpatterns = [
     path("events/delete/<int:event_id>", views.delete_event, name="delete_event"),
     path("purchases", views.PurchaseListView.as_view(), name="purchases"),
     path("purchases/new", views.purchase, name="new_purchase"),
-    path("purchases/<int:purchase_id>", views.purchase, name="edit_purchase"),
+    path("purchases/<int:purchase_id>", views.purchase, name="change_purchase"),
     path(
         "purchases/delete/<int:purchase_id>",
         views.delete_purchase,

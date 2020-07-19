@@ -164,7 +164,7 @@ class PurchaseTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_purchase %}
-        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_purchase' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:change_purchase' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_purchase %}
         <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_purchase' record.id %}">Delete</a>
