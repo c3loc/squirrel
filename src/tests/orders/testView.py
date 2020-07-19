@@ -52,7 +52,7 @@ class OrderViewTests(TestCase):
         url = (
             reverse("orders:new_order")
             if id == "new"
-            else reverse("orders:edit_order", args=[id])
+            else reverse("orders:change_order", args=[id])
         )
         return self.client.post(
             url,
@@ -334,7 +334,7 @@ class OrderViewTests(TestCase):
 
         self.client.login(username="loc_engel", password="loc_engel")
 
-        response = self.client.get(reverse("orders:edit_order", args=["1"]))
+        response = self.client.get(reverse("orders:change_order", args=["1"]))
         self.assertEqual(response.status_code, 200)
 
 

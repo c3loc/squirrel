@@ -78,7 +78,7 @@ class OrderTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_order %}
-        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_order' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:change_order' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_order %}
         <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_order' record.id %}">Delete</a>
