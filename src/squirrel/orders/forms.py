@@ -54,7 +54,7 @@ class OrderForm(forms.ModelForm):
                 ),
                 HTML(
                     """
-                    {% if form.instance.id %}<a href="{% url "orders:delete_stockpile" form.instance.id %}"
+                    {% if form.instance.id %}<a href="{% url "orders:delete_order" form.instance.id %}"
                     class="btn btn-outline-danger pull-right">Delete</a>{% endif %}
                     """
                 ),
