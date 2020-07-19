@@ -23,8 +23,7 @@ def accounts(request):
 def create_account(request):
     """Creates a new account"""
     if request.method == "GET":
-        form = AccountForm()
-        return render(request, "instance.html", {"form": form})
+        return get_form(request, Account, AccountForm, None)
 
     if request.method == "POST":
         return post_form(request, Account, AccountForm)
