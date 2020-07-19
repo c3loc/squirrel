@@ -159,3 +159,26 @@ class PillageForm(forms.ModelForm):
     class Meta:
         model = Pillage
         fields = ["amount", "stockpile", "order"]
+
+    def __init__(self, *args, **kwargs):
+        super(PillageForm, self).__init__(*args, **kwargs)
+
+        # Cripsy form settings
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field("amount"),
+            Field("order"),
+            Field("stockpile"),
+            FormActions(
+                Submit("submit", "Save", css_class="btn btn-success"),
+                HTML(
+                    """<a href="{% url "orders:stockpiles" %}" class="btn btn-secondary">Cancel</a>"""
+                ),
+                HTML(
+                    """
+                    {% if form.instance.id %}<a href="{% url "orders:delete_pillage" form.instance.id %}"
+                    class="btn btn-outline-danger pull-right">Delete</a>{% endif %}
+                    """
+                ),
+            ),
+        )

@@ -53,11 +53,6 @@
             <a class="nav-link" href="{% url 'orders:stockpiles' %}">Stockpiles</a>
           </li>
           {% endif %}
-          {% if perms.orders.view_pillage %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'orders:pillages' %}">Pillages</a>
-          </li>
-          {% endif %}
           {% if perms.accounts.view_account %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'accounts:accounts' %}">Accounts</a>

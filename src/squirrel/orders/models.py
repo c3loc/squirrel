@@ -210,7 +210,7 @@ class Order(models.Model):
 
     def __str__(self):
         unit = f"{self.product.unit} " if self.product.unit else ""
-        return "{} {} of {}".format(self.amount, unit, self.product)
+        return f"{self.amount} {unit} {self.product} for {self.team} at {self.event}"
 
     @property
     def to_pillage(self):

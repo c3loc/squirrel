@@ -45,10 +45,8 @@ urlpatterns = [
         views.delete_stockpile,
         name="delete_stockpile",
     ),
-    path("pillages", views.PillageListView.as_view(), name="pillages"),
-    path("pillages/new", views.pillage, name="new_pillage"),
-    path("pillages/<int:pillage_id>", views.pillage, name="change_pillage"),
+    path("pillages/<int:pillage_id>", views.change_pillage, name="change_pillage"),
     path(
-        "pillages/delete/<int:pillage_id>", views.delete_pillage, name="delete_pillage",
+        "pillages/<int:pillage_id>/delete", views.delete_pillage, name="delete_pillage",
     ),
 ]

@@ -570,51 +570,14 @@ def delete_purchase(request, purchase_id=None):
 
 
 @login_required
-@permission_required("orders.delete_stockpile", raise_exception=True)
-def delete_stockpile(request, stockpile_id=None):
-    stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
-    stockpile_object.delete()
-
-    return redirect("orders:stockpiles")
-
-
-@login_required
-def pillage(request, pillage_id=None):
-    if pillage_id:
-        pillage_object = get_object_or_404(Pillage, id=pillage_id)
-    else:
-        pillage_object = None
+def change_pillage(request, pillage_id):
+    if request.method == "GET":
+        return get_form(request, Pillage, PillageForm, pillage_id)
 
     if request.method == "POST":
-        if pillage_object:
-            if request.user.has_perm("orders.change_pillage"):
-                form = PillageForm(request.POST, instance=pillage_object)
-            else:
-                raise PermissionDenied
-        else:
-            if request.user.has_perm("orders.add_pillage"):
-                form = PillageForm(request.POST)
-            else:
-                raise PermissionDenied
-
-        if form.is_valid():
-            pillage_object = form.save()
-            return redirect("orders:pillages")
-    else:
-        if pillage_object:
-            if request.user.has_perm("orders.view_pillage"):
-                form = PillageForm(instance=pillage_object)
-            else:
-                raise PermissionDenied
-        else:
-            if request.user.has_perm("orders.add_pillage"):
-                form = PillageForm()
-            else:
-                raise PermissionDenied
-
-    return render(
-        request, "pillage.html", {"form": form, "events": Event.objects.all()}
-    )
+        return post_form(
+            request, Pillage, PillageForm, pillage_id, next_page="orders:stockpiles"
+        )
 
 
 @login_required
@@ -623,7 +586,7 @@ def delete_pillage(request, pillage_id=None):
     pillage_object = get_object_or_404(Pillage, id=pillage_id)
     pillage_object.delete()
 
-    return redirect("orders:pillages")
+    return redirect("orders:stockpiles")
 
 
 @login_required
@@ -663,3 +626,12 @@ def change_stockpile(request, stockpile_id):
         )
 
     return HttpResponse(status=405)
+
+
+@login_required
+@permission_required("orders.delete_stockpile", raise_exception=True)
+def delete_stockpile(request, stockpile_id=None):
+    stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
+    stockpile_object.delete()
+
+    return redirect("orders:stockpiles")
