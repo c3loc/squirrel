@@ -242,6 +242,9 @@ class Stockpile(models.Model):
     It can then be pillaged by orders.
     """
 
+    class Meta:
+        ordering = [Upper("product__name")]
+
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     amount = models.PositiveIntegerField()
     unit_price = MoneyField(max_digits=19, decimal_places=4, default_currency="EUR")
