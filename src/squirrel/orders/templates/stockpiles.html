@@ -2,39 +2,36 @@
 {% block content %}
 <a href="{% url 'orders:create_stockpile' %}" role="button" class="btn btn-primary mt-3 mb-3">Create Stockpile</a>
 {% for stockpile in stockpiles %}
-<div class="card mb-1">
-  <div class="card-body">
-    {{ stockpile.product }} ({{ stockpile.stock }} of {{ stockpile.amount }} left)
-    <a href="{% url 'orders:change_stockpile' stockpile.id %}" class="btn btn-sm btn-secondary float-right">Change stockpile</a>
-    <button class="btn btn-sm btn-primary collapsed float-right mr-2" data-toggle="collapse" data-target="#stockpile-{{ stockpile.id }}-pillages" aria-expanded="false" aria-controls="stockpile-{{ stockpile.id }}-pillages">
-      <span class="if-collapsed">Show pillages</span>
-      <span class="if-not-collapsed">Hide pillages</span>
-    </button>
-    <div id="stockpile-{{ stockpile.id }}-pillages" class="collapse">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Amount</th>
-            <th scope="col">Order</th>
-            {% if perms.orders.change_pillage %}
-            <th scope="col">&nbsp;</th>
-            {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for pillage in stockpile.pillage_set.all %}
-          <tr>
-            <td>{{ pillage.amount }}</td>
-            <td>{{ pillage.order }}</td>
-            {% if perms.orders.change_pillage %}
-            <td><a href="{% url 'orders:change_pillage' pillage.id %}" class="btn btn-primary">Edit</a></td>
-            {% endif %}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+<div class="row">
+  <div class="col-9">
+    <span class="align-middle">{{ stockpile.product }} ({{ stockpile.stock }} of {{ stockpile.amount }} left)</span>
+  </div>
+  <div class="col-3">
+  <a href="{% url 'orders:change_stockpile' stockpile.id %}" class="btn btn-sm btn-link">Change stockpile</a>
+
+  <button class="btn btn-sm {% if stockpile.stock == stockpile.amount %}btn-secondary{% else %}btn-primary{% endif %} collapsed mr-2" data-toggle="collapse" data-target="#stockpile-{{ stockpile.id }}-pillages" aria-expanded="false" aria-controls="stockpile-{{ stockpile.id }}-pillages"{% if stockpile.stock == stockpile.amount %}disabled{% endif %}>
+    <span class="if-collapsed">Show pillages</span>
+    <span class="if-not-collapsed">Hide pillages</span>
+  </button>
   </div>
 </div>
+{% if stockpile.stock != stockpile.amount %}
+<div id="stockpile-{{ stockpile.id }}-pillages" class="row collapse">
+  <div class="col-12">
+    {% for pillage in stockpile.pillage_set.all %}
+    <div class="row ml-2 mt-1">
+      <div class="col-6">
+        <span class="align-middle">{{ pillage.amount }} for <strong>{{ pillage.order.team }}</strong>, ordered on {{ pillage.order.created_at.date }} by {{ pillage.order.created_by }}</span>
+      </div>
+      <div class="col-6">
+        <a href="{% url 'orders:change_order' pillage.order.id %}" class="btn btn-sm btn-link">Change order</a>
+        <a href="{% url 'orders:change_pillage' pillage.id %}" class="btn btn-sm btn-link">Change pillage</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+<hr class="m-1">
 {% endfor %}
 {% endblock %}
