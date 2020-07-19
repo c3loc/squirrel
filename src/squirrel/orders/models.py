@@ -263,6 +263,18 @@ class Stockpile(models.Model):
     )
 
     @property
+    def unit_price_net(self):
+        """ Calculates the net unit price """
+        if self.purchase and self.purchase.is_net:
+            return self.unit_price
+
+        if self.purchase:
+            return self.unit_price / self.tax
+
+        # If the Stockpile has no purchase, we assume a net price
+        return self.unit_price
+
+    @property
     def stock(self):
         """
         The stock is calculated by taking the total amount bought and subtracting the sum of pillages.
