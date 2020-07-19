@@ -13,7 +13,7 @@
           <span class="if-not-collapsed">Hide transactions</span>
         </button>
       <a href="{% url 'accounts:import_transactions' account.id %}" class="btn btn-info">Import transactions</a>
-      <a href="{% url 'accounts:edit_account' account.id %}" class="btn btn-secondary">Change account</a>
+      <a href="{% url 'accounts:change_account' account.id %}" class="btn btn-secondary">Change account</a>
     </div>
     <p class="card-text">This account has {{ account.transaction_set.all | length }} transactions.</p>
     <div id="account-{{ account.id }}-transactions" class="collapse">
@@ -24,7 +24,7 @@
           <th scope="col">Amount</th>
           <th scope="col">Description</th>
           <th scope="col">Purchase</th>
-          {% if perms.accounts.edit_transaction %}
+          {% if perms.accounts.change_transaction %}
           <th scope="col">&nbsp;</th>
           {% endif %}
         </tr>
@@ -37,7 +37,7 @@
           <td>{{ transaction.description }}</td>
           <td>{{ transaction.purchase }}</td>
           {% if perms.accounts.edit_transaction %}
-          <td><a href="{% url 'accounts:edit_transaction' transaction.id %}" class="btn btn-primary">Edit</a></td>
+          <td><a href="{% url 'accounts:change_transaction' transaction.id %}" class="btn btn-primary">Edit</a></td>
           {% endif %}
         </tr>
         {% endfor %}

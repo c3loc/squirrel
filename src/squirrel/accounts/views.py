@@ -32,9 +32,8 @@ def create_account(request):
 
 
 @login_required
-@permission_required("accounts.edit_account", raise_exception=True)
-def edit_account(request, account_id):
-    """Modifies an account"""
+@permission_required("accounts.change_account", raise_exception=True)
+def change_account(request, account_id):
     if request.method == "GET":
         return get_form(request, Account, AccountForm, account_id)
 
@@ -46,8 +45,7 @@ def edit_account(request, account_id):
 
 @login_required
 @permission_required("accounts.edit_transaction", raise_exception=True)
-def edit_transaction(request, transaction_id):
-    """Modifies a transaction"""
+def change_transaction(request, transaction_id):
     if request.method == "GET":
         return get_form(request, Transaction, TransactionForm, transaction_id)
 

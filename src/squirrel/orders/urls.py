@@ -35,9 +35,11 @@ urlpatterns = [
         views.delete_purchase,
         name="delete_purchase",
     ),
-    path("stockpiles", views.StockpileListView.as_view(), name="stockpiles"),
-    path("stockpiles/new", views.stockpile, name="new_stockpile"),
-    path("stockpiles/<int:stockpile_id>", views.stockpile, name="edit_stockpile"),
+    path("stockpiles", views.stockpiles, name="stockpiles"),
+    path("stockpiles/create", views.create_stockpile, name="create_stockpile"),
+    path(
+        "stockpiles/<int:stockpile_id>", views.change_stockpile, name="change_stockpile"
+    ),
     path(
         "stockpiles/delete/<int:stockpile_id>",
         views.delete_stockpile,
@@ -45,7 +47,7 @@ urlpatterns = [
     ),
     path("pillages", views.PillageListView.as_view(), name="pillages"),
     path("pillages/new", views.pillage, name="new_pillage"),
-    path("pillages/<int:pillage_id>", views.pillage, name="edit_pillage"),
+    path("pillages/<int:pillage_id>", views.pillage, name="change_pillage"),
     path(
         "pillages/delete/<int:pillage_id>", views.delete_pillage, name="delete_pillage",
     ),

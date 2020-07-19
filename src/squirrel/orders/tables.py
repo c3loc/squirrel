@@ -230,7 +230,7 @@ class PillageTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_pillage %}
-        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_pillage' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:change_pillage' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_pillage %}
         <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_pillage' record.id %}">Delete</a>

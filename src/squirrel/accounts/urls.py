@@ -6,7 +6,7 @@ app_name = "accounts"
 urlpatterns = [
     path("accounts", views.accounts, name="accounts"),
     path("accounts/create", views.create_account, name="create_account"),
-    path("accounts/<int:account_id>", views.edit_account, name="edit_account"),
+    path("accounts/<int:account_id>", views.change_account, name="change_account"),
     path(
         "accounts/<int:account_id>/delete", views.delete_account, name="delete_account"
     ),
@@ -17,8 +17,8 @@ urlpatterns = [
     ),
     path(
         "transactions/<int:transaction_id>",
-        views.edit_transaction,
-        name="edit_transaction",
+        views.change_transaction,
+        name="change_transaction",
     ),
     path(
         "transactions/<int:transaction_id>/delete",
