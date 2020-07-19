@@ -1,11 +1,10 @@
-from django_tables2 import Column, TemplateColumn, tables
+from django_tables2 import TemplateColumn, tables
 from squirrel.orders.models import (
     Event,
     Order,
     Pillage,
     Product,
     Purchase,
-    Stockpile,
     Team,
     Vendor,
 )
@@ -176,46 +175,6 @@ class PurchaseTable(tables.Table):
     def before_render(self, request):
         if request.user.has_perm("orders.change_purchase") or request.user.has_perm(
             "orders.delete_purchase"
-        ):
-            self.columns.show("edit")
-        else:
-            self.columns.hide("edit")
-
-
-class StockpileTable(tables.Table):
-    class Meta:
-        model = Stockpile
-        fields = [
-            "product",
-            "stock",
-            "amount",
-            "unit_price",
-            "purchase",
-            "tax_rate",
-            "edit",
-        ]
-        attrs = {"class": "table table-sm"}
-
-    edit = TemplateColumn(
-        """
-        {% if perms.orders.change_stockpile %}
-        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_stockpile' record.id %}">Edit</a>
-        {% endif %}
-        {% if perms.orders.delete_stockpile %}
-        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_stockpile' record.id %}">Delete</a>
-        {% endif %}
-    """
-    )
-
-    stock = Column(empty_values=())
-
-    @staticmethod
-    def render_stock(record):
-        return record.stock
-
-    def before_render(self, request):
-        if request.user.has_perm("orders.change_stockpile") or request.user.has_perm(
-            "orders.delete_stockpile"
         ):
             self.columns.show("edit")
         else:

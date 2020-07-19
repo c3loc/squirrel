@@ -35,10 +35,10 @@ from squirrel.orders.tables import (
     PillageTable,
     ProductTable,
     PurchaseTable,
-    StockpileTable,
     TeamTable,
     VendorTable,
 )
+from squirrel.util.views import get_form, post_form
 
 
 class OrderListView(LoginRequiredMixin, SingleTableView):
@@ -86,13 +86,6 @@ class PurchaseListView(PermissionRequiredMixin, SingleTableView):
     model = Purchase
     table_class = PurchaseTable
     template_name = "purchases.html"
-
-
-class StockpileListView(PermissionRequiredMixin, SingleTableView):
-    permission_required = "orders.view_stockpile"
-    model = Stockpile
-    table_class = StockpileTable
-    template_name = "stockpiles.html"
 
 
 class PillageListView(PermissionRequiredMixin, SingleTableView):
@@ -577,45 +570,6 @@ def delete_purchase(request, purchase_id=None):
 
 
 @login_required
-def stockpile(request, stockpile_id=None):
-    if stockpile_id:
-        stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
-    else:
-        stockpile_object = None
-
-    if request.method == "POST":
-        if stockpile_object:
-            if request.user.has_perm("orders.change_stockpile"):
-                form = StockpileForm(request.POST, instance=stockpile_object)
-            else:
-                raise PermissionDenied
-        else:
-            if request.user.has_perm("orders.add_stockpile"):
-                form = StockpileForm(request.POST)
-            else:
-                raise PermissionDenied
-
-        if form.is_valid():
-            stockpile_object = form.save()
-            return redirect("orders:stockpiles")
-    else:
-        if stockpile_object:
-            if request.user.has_perm("orders.view_stockpile"):
-                form = StockpileForm(instance=stockpile_object)
-            else:
-                raise PermissionDenied
-        else:
-            if request.user.has_perm("orders.add_stockpile"):
-                form = StockpileForm()
-            else:
-                raise PermissionDenied
-
-    return render(
-        request, "stockpile.html", {"form": form, "events": Event.objects.all()}
-    )
-
-
-@login_required
 @permission_required("orders.delete_stockpile", raise_exception=True)
 def delete_stockpile(request, stockpile_id=None):
     stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
@@ -670,3 +624,42 @@ def delete_pillage(request, pillage_id=None):
     pillage_object.delete()
 
     return redirect("orders:pillages")
+
+
+@login_required
+@permission_required("orders.view_stockpiles", raise_exception=True)
+def stockpiles(request):
+    """ Renders a list of all stockpiles """
+    return render(request, "stockpiles.html", {"stockpiles": Stockpile.objects.all()})
+
+
+@login_required
+@permission_required("orders:create_stockpile", raise_exception=True)
+def create_stockpile(request):
+    if request.method == "GET":
+        return get_form(request, Stockpile, StockpileForm, None)
+
+    if request.method == "POST":
+        return post_form(
+            request, Stockpile, StockpileForm, next_page="orders:stockpiles"
+        )
+
+    return HttpResponse(status=405)
+
+
+@login_required
+@permission_required("orders:change_stockpile", raise_exception=True)
+def change_stockpile(request, stockpile_id):
+    if request.method == "GET":
+        return get_form(request, Stockpile, StockpileForm, stockpile_id)
+
+    if request.method == "POST":
+        return post_form(
+            request,
+            Stockpile,
+            StockpileForm,
+            stockpile_id,
+            next_page="orders:stockpiles",
+        )
+
+    return HttpResponse(status=405)

@@ -1,6 +1,6 @@
-from crispy_forms.bootstrap import Field
+from crispy_forms.bootstrap import Field, FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Fieldset, Layout, Submit
+from crispy_forms.layout import HTML, Fieldset, Layout, Submit
 from django import forms
 from django.forms import ChoiceField, ModelChoiceField, inlineformset_factory
 from squirrel.orders.models import (
@@ -103,9 +103,40 @@ class PurchaseForm(forms.ModelForm):
 
 
 class StockpileForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(StockpileForm, self).__init__(*args, **kwargs)
+
+        # Cripsy form settings
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field("product"),
+            Field("amount"),
+            Field("unit_price"),
+            Field("tax"),
+            Field("purchase"),
+            FormActions(
+                Submit("submit", "Save", css_class="btn btn-success"),
+                HTML(
+                    """<a href="{% url "orders:stockpiles" %}" class="btn btn-secondary">Cancel</a>"""
+                ),
+                HTML(
+                    """
+                    {% if form.instance.id %}<a href="{% url "orders:delete_stockpile" form.instance.id %}"
+                    class="btn btn-outline-danger pull-right">Delete</a>{% endif %}
+                    """
+                ),
+            ),
+        )
+
     class Meta:
         model = Stockpile
-        fields = ["product", "amount", "unit_price", "tax", "purchase"]
+        fields = [
+            "product",
+            "amount",
+            "unit_price",
+            "tax",
+            "purchase",
+        ]
 
 
 StockpileFormSet = inlineformset_factory(
