@@ -50,7 +50,7 @@ class OrderViewTests(TestCase):
 
     def post_order(self, id="new", state="REQ", amount=1, comment="", event=1):
         url = (
-            reverse("orders:new_order")
+            reverse("orders:create_order")
             if id == "new"
             else reverse("orders:change_order", args=[id])
         )
@@ -114,10 +114,10 @@ class OrderViewTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Order.objects.all().count(), 0)
 
-    def test_new_order_has_comment_field(self):
+    def test_create_order_has_comment_field(self):
         self.view_user.user_permissions.add(self.add_permission)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get(reverse("orders:new_order"))
+        response = self.client.get(reverse("orders:create_order"))
 
         print(response.content)
         self.assertEqual(response.status_code, 200)
@@ -292,7 +292,7 @@ class OrderViewTests(TestCase):
         Event.objects.create(name="12c3")
         Event.objects.create(name="42c3")
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get(reverse("orders:new_order"))
+        response = self.client.get(reverse("orders:create_order"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="2" selected>12c3</option>')
 
@@ -314,7 +314,7 @@ class OrderViewTests(TestCase):
 
         self.view_user.user_permissions.add(self.add_permission)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get(reverse("orders:new_order"))
+        response = self.client.get(reverse("orders:create_order"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="" selected>---------</option>')
 
@@ -322,7 +322,7 @@ class OrderViewTests(TestCase):
         self.team_a.members.add(self.user)
         self.user.user_permissions.add(self.add_permission)
         self.client.login(username="engel", password="engel")
-        response = self.client.get(reverse("orders:new_order"))
+        response = self.client.get(reverse("orders:create_order"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="1" selected>')
 

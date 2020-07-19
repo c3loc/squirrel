@@ -81,7 +81,7 @@ class OrderFormTests(TestCase):
 
     def test_require_state(self):
         self.client.login(username="helpdesk", password="test123")
-        url = reverse("orders:new_order")
+        url = reverse("orders:create_order")
         response = self.client.post(
             url, {"amount": 1, "product": self.productB.id, "team": self.teamB.id},
         )

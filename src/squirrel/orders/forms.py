@@ -2,7 +2,7 @@ from crispy_forms.bootstrap import Field, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Fieldset, Layout, Submit
 from django import forms
-from django.forms import ChoiceField, ModelChoiceField, inlineformset_factory
+from django.forms import inlineformset_factory
 from squirrel.orders.models import (
     CostItem,
     Event,
@@ -14,46 +14,15 @@ from squirrel.orders.models import (
     Team,
     Vendor,
 )
-from squirrel.orders.widgets import TextInput
 
 
 class OrderForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        my_teams = kwargs.pop("teams")
-        my_states = kwargs.pop("states")
-        super(OrderForm, self).__init__(*args, **kwargs)
-
-        # Cripsy form settings
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset("Item", "amount", Field("product", autocomplete="off"), "comment"),
-            Fieldset("Metadata", "state", "team", "event"),
-            Submit("submit", "Save order", css_class="btn-success"),
-        )
-
-        self.fields["product"] = ModelChoiceField(
-            queryset=Product.objects.all().order_by("name"),
-            to_field_name="name",
-            widget=TextInput(datalist=[p.name for p in Product.objects.all()]),
-        )
-
-        self.fields[
-            "product"
-        ].help_text = (
-            "If you have more specific requirements, please add them as a comment."
-        )
-
-        self.fields["state"] = ChoiceField(choices=my_states)
-        self.fields["team"] = ModelChoiceField(queryset=my_teams.order_by("name"))
-        self.fields["event"].queryset = Event.objects.all().order_by("-id")
-
     class Meta:
         model = Order
         fields = [
             "amount",
             "product",
             "comment",
-            "state",
             "team",
             "event",
         ]
@@ -61,6 +30,36 @@ class OrderForm(forms.ModelForm):
         widgets = {
             "comment": forms.Textarea(attrs={"rows": 3, "cols": 30}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(OrderForm, self).__init__(*args, **kwargs)
+
+        # Cripsy form settings
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                "Item",
+                "amount",
+                Field(
+                    "product",
+                    help_text="If you have more specific requirements, please add them as a comment.",
+                ),
+                "comment",
+            ),
+            Fieldset("Metadata", "team", "event"),
+            FormActions(
+                Submit("submit", "Save", css_class="btn btn-success"),
+                HTML(
+                    """<a href="{% url "orders:orders" %}" class="btn btn-secondary">Cancel</a>"""
+                ),
+                HTML(
+                    """
+                    {% if form.instance.id %}<a href="{% url "orders:delete_stockpile" form.instance.id %}"
+                    class="btn btn-outline-danger pull-right">Delete</a>{% endif %}
+                    """
+                ),
+            ),
+        )
 
 
 class ProductForm(forms.ModelForm):

@@ -158,29 +158,8 @@ class Order(models.Model):
 
     class Meta:
         permissions = [
-            ("request_order", "Can request a order"),
-            ("approve_order", "Can approve a order"),
-            ("receive_order", "Can receive order"),
-            ("complete_order", "Can complete order"),
             ("export_csv", "Can export all orders as CSV"),
-            ("view_order_all_teams", "Can view orders for all teams"),
-            ("add_order_all_teams", "Can add orders for all teams"),
-            ("change_order_all_teams", "Can change orders for all teams"),
-            ("delete_order_all_teams", "Can delete orders for all teams"),
         ]
-
-    STATE_CHOICES = [
-        ("REQ", "Requested"),  # User has requested Order
-        (
-            "APP",
-            "Approved",
-        ),  # Order was approved by purchase_net department and will be purchased
-        (
-            "REA",
-            "Ready for pick-up",
-        ),  # Order has been delivered (and commissioned if necessary)
-        ("COM", "Completed"),  # Order has been picked up by the team
-    ]
 
     amount = models.PositiveIntegerField(default=1)
 
@@ -191,7 +170,6 @@ class Order(models.Model):
         help_text="If you have more specific requirements, please add them as a comment.",
     )
 
-    state = models.CharField(choices=STATE_CHOICES, default="REQ", max_length=30)
     event = models.ForeignKey(
         Event, on_delete=models.PROTECT, related_name="orders", null=True
     )

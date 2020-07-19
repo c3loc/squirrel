@@ -4,10 +4,10 @@ from squirrel.orders import views
 app_name = "orders"
 
 urlpatterns = [
-    path("orders", views.OrderListView.as_view(), name="orders"),
-    path("orders/new", views.order, name="new_order"),
-    path("orders/<int:order_id>", views.order, name="change_order"),
-    path("orders/delete/<int:order_id>", views.delete_order, name="delete_order"),
+    path("orders", views.orders, name="orders"),
+    path("orders/create", views.create_order, name="create_order"),
+    path("orders/<int:order_id>", views.change_order, name="change_order"),
+    path("orders/<int:order_id>/delete", views.delete_order, name="delete_order"),
     path("orders/export", views.export_orders_csv, name="export_orders_csv"),
     path("products", views.ProductListView.as_view(), name="products"),
     path("products/new", views.product, name="new_product"),
