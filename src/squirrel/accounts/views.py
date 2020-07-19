@@ -15,6 +15,7 @@ from squirrel.util.views import get_form, post_form
 @login_required
 @permission_required("accounts.view_account", raise_exception=True)
 def accounts(request):
+    """ Renders a list of all accounts """
     return render(request, "accounts.html", {"accounts": Account.objects.all()})
 
 
@@ -58,7 +59,6 @@ def change_transaction(request, transaction_id):
 @login_required
 @permission_required("accounts.delete_account", raise_exception=True)
 def delete_account(request, account_id):
-    """Deletes an account"""
     account = get_object_or_404(Account, id=account_id)
     account.delete()
     return redirect("accounts:accounts")
@@ -67,7 +67,6 @@ def delete_account(request, account_id):
 @login_required
 @permission_required("accounts.delete_transaction", raise_exception=True)
 def delete_transaction(request, transaction_id):
-    """Deletes a transaction"""
     transaction = get_object_or_404(Transaction, id=transaction_id)
     transaction.delete()
     return redirect("accounts:accounts")
