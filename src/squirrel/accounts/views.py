@@ -4,6 +4,7 @@ from io import StringIO
 from re import sub
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from djmoney.money import Money
 from squirrel.accounts.forms import AccountForm, ImportTransactionsForm, TransactionForm
@@ -52,6 +53,8 @@ def create_account(request):
     if request.method == "POST":
         return post_form(request, Account, AccountForm)
 
+    return HttpResponse(status=405)
+
 
 @login_required
 @permission_required("accounts.edit_account", raise_exception=True)
@@ -63,6 +66,8 @@ def edit_account(request, account_id):
     if request.method == "POST":
         return post_form(request, Account, AccountForm, account_id)
 
+    return HttpResponse(status=405)
+
 
 @login_required
 @permission_required("accounts.edit_transaction", raise_exception=True)
@@ -73,6 +78,8 @@ def edit_transaction(request, transaction_id):
 
     if request.method == "POST":
         return post_form(request, Transaction, TransactionForm, transaction_id)
+
+    return HttpResponse(status=405)
 
 
 @login_required
@@ -126,4 +133,6 @@ def import_transactions(request, account_id):
                 date=date,
             )
 
-    return redirect("accounts:accounts")
+        return redirect("accounts:accounts")
+
+    return HttpResponse(status=405)
