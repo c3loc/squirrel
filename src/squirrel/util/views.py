@@ -1,7 +1,7 @@
 """ Utility functions that we need in many places
 """
 
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 
 
 def get_form(request, model, form, instance_id):
@@ -20,7 +20,7 @@ def get_form(request, model, form, instance_id):
     return render(request, "instance.html", {"form": form_instance})
 
 
-def post_form(request, model, form, instance_id=None):
+def post_form(request, model, form, instance_id=None, next_page="orders:orders"):
     """ Saves the form in the request if valid and redirects to the account overview.
         Shows the form again if it is invalid
     """
@@ -34,6 +34,7 @@ def post_form(request, model, form, instance_id=None):
     form_instance = form(request.POST, instance=instance)
     if form_instance.is_valid():
         form_instance.save()
-        return redirect("accounts:accounts")
+
+        return redirect(reverse(next_page))
 
     return render(request, "instance.html", {"form": form_instance})

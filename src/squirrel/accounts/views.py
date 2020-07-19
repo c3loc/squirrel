@@ -22,12 +22,11 @@ def accounts(request):
 @login_required
 @permission_required("accounts.create_account", raise_exception=True)
 def create_account(request):
-    """Creates a new account"""
     if request.method == "GET":
         return get_form(request, Account, AccountForm, None)
 
     if request.method == "POST":
-        return post_form(request, Account, AccountForm)
+        return post_form(request, Account, AccountForm, next_page="accounts:accounts")
 
     return HttpResponse(status=405)
 
@@ -39,7 +38,9 @@ def change_account(request, account_id):
         return get_form(request, Account, AccountForm, account_id)
 
     if request.method == "POST":
-        return post_form(request, Account, AccountForm, account_id)
+        return post_form(
+            request, Account, AccountForm, account_id, next_page="accounts:accounts"
+        )
 
     return HttpResponse(status=405)
 
@@ -51,7 +52,13 @@ def change_transaction(request, transaction_id):
         return get_form(request, Transaction, TransactionForm, transaction_id)
 
     if request.method == "POST":
-        return post_form(request, Transaction, TransactionForm, transaction_id)
+        return post_form(
+            request,
+            Transaction,
+            TransactionForm,
+            transaction_id,
+            next_page="accounts:accounts",
+        )
 
     return HttpResponse(status=405)
 
