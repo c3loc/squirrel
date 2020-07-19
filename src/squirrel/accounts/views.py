@@ -9,31 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from djmoney.money import Money
 from squirrel.accounts.forms import AccountForm, ImportTransactionsForm, TransactionForm
 from squirrel.accounts.models import Account, Transaction
-
-
-def get_form(request, model, form, instance_id):
-    """ Shows the form with the provided instance
-    """
-    model_instance = get_object_or_404(model, id=instance_id)
-    form_instance = form(instance=model_instance)
-    return render(request, "instance.html", {"form": form_instance})
-
-
-def post_form(request, model, form, instance_id=None):
-    """ Saves the form in the request if valid and redirects to the account overview.
-        Shows the form again if it is invalid
-    """
-    # Get the instance of our object
-    instance = None
-    if instance_id:
-        instance = get_object_or_404(model, id=instance_id)
-
-    form_instance = form(request.POST, instance=instance)
-    if form_instance.is_valid():
-        form_instance.save()
-        return redirect("accounts:accounts")
-    else:
-        return render(request, "instance.html", {"form": form_instance})
+from squirrel.util.views import get_form, post_form
 
 
 @login_required
