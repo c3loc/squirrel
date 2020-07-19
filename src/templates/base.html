@@ -21,46 +21,46 @@
         {% if user.is_authenticated %}
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'orders' %}">Orders</a>
+            <a class="nav-link" href="{% url 'orders:orders' %}">Orders</a>
           </li>
           {% if perms.orders.view_product %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'products' %}">Products</a>
+            <a class="nav-link" href="{% url 'orders:products' %}">Products</a>
           </li>
           {% endif %}
           {% if perms.orders.view_purchase %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'purchases' %}">Purchases</a>
+            <a class="nav-link" href="{% url 'orders:purchases' %}">Purchases</a>
           </li>
           {% endif %}
           {% if perms.orders.view_vendor %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'vendors' %}">Vendors</a>
+            <a class="nav-link" href="{% url 'orders:vendors' %}">Vendors</a>
           </li>
           {% endif %}
           {% if perms.orders.view_team %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'teams' %}">Teams</a>
+            <a class="nav-link" href="{% url 'orders:teams' %}">Teams</a>
           </li>
           {% endif %}
           {% if perms.orders.view_event %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'events' %}">Events</a>
+            <a class="nav-link" href="{% url 'orders:events' %}">Events</a>
           </li>
           {% endif %}
           {% if perms.orders.view_stockpile %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'stockpiles' %}">Stockpiles</a>
+            <a class="nav-link" href="{% url 'orders:stockpiles' %}">Stockpiles</a>
           </li>
           {% endif %}
           {% if perms.orders.view_pillage %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'pillages' %}">Pillages</a>
+            <a class="nav-link" href="{% url 'orders:pillages' %}">Pillages</a>
           </li>
           {% endif %}
           {% if perms.accounts.view_account %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'account:accounts' %}">Accounts</a>
+            <a class="nav-link" href="{% url 'accounts:accounts' %}">Accounts</a>
           </li>
           {% endif %}
         </ul>

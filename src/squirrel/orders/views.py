@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django_tables2 import SingleTableView
 from squirrel.orders.forms import (
     CostItemFormSet,
@@ -39,14 +39,6 @@ from squirrel.orders.tables import (
     TeamTable,
     VendorTable,
 )
-
-
-def login_redirect(request):
-    return redirect("login")
-
-
-def orders_redirect(request):
-    return redirect("orders")
 
 
 class OrderListView(LoginRequiredMixin, SingleTableView):
@@ -214,7 +206,7 @@ def order(request, order_id=None):
                 order_object.created_by = request.user
             order_object.save()
 
-            return redirect("orders")
+            return redirect("orders:orders")
     else:
         if order_object:
             # view a existing order
@@ -283,7 +275,7 @@ def delete_order(request, order_id=None):
     else:
         raise PermissionDenied
 
-    return redirect("orders")
+    return redirect("orders:orders")
 
 
 @login_required
@@ -307,7 +299,7 @@ def vendor(request, vendor_id=None):
 
         if form.is_valid():
             vendor_object = form.save()
-            return redirect("vendors")
+            return redirect("orders:vendors")
     else:
         if vendor_object:
             if request.user.has_perm("orders.view_vendor"):
@@ -329,7 +321,7 @@ def delete_vendor(request, vendor_id=None):
     vendor_object = get_object_or_404(Vendor, id=vendor_id)
     vendor_object.delete()
 
-    return redirect("vendors")
+    return redirect("orders:vendors")
 
 
 @login_required
@@ -353,7 +345,7 @@ def event(request, event_id=None):
 
         if form.is_valid():
             form.save()
-            return redirect("events")
+            return redirect("orders:events")
     else:
         if event_object:
             if request.user.has_perm("orders.view_event"):
@@ -375,7 +367,7 @@ def delete_event(request, event_id=None):
     event_object = get_object_or_404(Event, id=event_id)
     event_object.delete()
 
-    return redirect("events")
+    return redirect("orders:events")
 
 
 @login_required
@@ -400,7 +392,7 @@ def product(request, product_id=None):
 
         if form.is_valid():
             form.save()
-            return redirect("products")
+            return redirect("orders:products")
     else:
         if product_object:
             form = ProductForm(instance=product_object)
@@ -416,7 +408,7 @@ def delete_product(request, product_id=None):
     product_object = get_object_or_404(Product, id=product_id)
     product_object.delete()
 
-    return redirect("products")
+    return redirect("orders:products")
 
 
 @login_required
@@ -441,7 +433,7 @@ def team(request, team_id=None):
 
         if form.is_valid():
             form.save()
-            return redirect("teams")
+            return redirect("orders:teams")
     else:
         if team_object:
             form = TeamForm(instance=team_object)
@@ -457,7 +449,7 @@ def delete_team(request, team_id=None):
     team_object = get_object_or_404(Team, id=team_id)
     team_object.delete()
 
-    return redirect("teams")
+    return redirect("orders:teams")
 
 
 @login_required
@@ -539,7 +531,7 @@ def purchase(request, purchase_id=None):
             p = form.save()
             formset.save()
             costitem_formset.save()
-            return redirect(f"/purchases/{p.id}")
+            return redirect(reverse("orders:edit_purchase", args=[p.id]))
 
     else:
         if purchase_object:
@@ -581,7 +573,7 @@ def delete_purchase(request, purchase_id=None):
     purchase_object = get_object_or_404(Purchase, id=purchase_id)
     purchase_object.delete()
 
-    return redirect("purchases")
+    return redirect("orders:purchases")
 
 
 @login_required
@@ -605,7 +597,7 @@ def stockpile(request, stockpile_id=None):
 
         if form.is_valid():
             stockpile_object = form.save()
-            return redirect("stockpiles")
+            return redirect("orders:stockpiles")
     else:
         if stockpile_object:
             if request.user.has_perm("orders.view_stockpile"):
@@ -629,7 +621,7 @@ def delete_stockpile(request, stockpile_id=None):
     stockpile_object = get_object_or_404(Stockpile, id=stockpile_id)
     stockpile_object.delete()
 
-    return redirect("stockpiles")
+    return redirect("orders:stockpiles")
 
 
 @login_required
@@ -653,7 +645,7 @@ def pillage(request, pillage_id=None):
 
         if form.is_valid():
             pillage_object = form.save()
-            return redirect("pillages")
+            return redirect("orders:pillages")
     else:
         if pillage_object:
             if request.user.has_perm("orders.view_pillage"):
@@ -677,4 +669,4 @@ def delete_pillage(request, pillage_id=None):
     pillage_object = get_object_or_404(Pillage, id=pillage_id)
     pillage_object.delete()
 
-    return redirect("pillages")
+    return redirect("orders:pillages")

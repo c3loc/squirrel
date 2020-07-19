@@ -20,10 +20,10 @@ class VendorTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_vendor %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_vendor' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_vendor' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_vendor %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_vendor' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_vendor' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -46,10 +46,10 @@ class TeamTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_team %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_team' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_team' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_team %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_team' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_team' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -79,10 +79,10 @@ class OrderTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_order %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_order' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_order' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_order %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_order' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_order' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -114,10 +114,10 @@ class ProductTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_product %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_product' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_product' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_product %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_product' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_product' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -140,10 +140,10 @@ class EventTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_event %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_event' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_event' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_event %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_event' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_event' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -165,10 +165,10 @@ class PurchaseTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_purchase %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_purchase' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_purchase' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_purchase %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_purchase' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_purchase' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -199,10 +199,10 @@ class StockpileTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_stockpile %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_stockpile' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_stockpile' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_stockpile %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_stockpile' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_stockpile' record.id %}">Delete</a>
         {% endif %}
     """
     )
@@ -230,10 +230,10 @@ class PillageTable(tables.Table):
     edit = TemplateColumn(
         """
         {% if perms.orders.change_pillage %}
-        <a class="btn btn-primary btn-sm" href="{% url 'edit_pillage' record.id %}">Edit</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'orders:edit_pillage' record.id %}">Edit</a>
         {% endif %}
         {% if perms.orders.delete_pillage %}
-        <a class="btn btn-danger btn-sm" href="{% url 'delete_pillage' record.id %}">Delete</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'orders:delete_pillage' record.id %}">Delete</a>
         {% endif %}
     """
     )

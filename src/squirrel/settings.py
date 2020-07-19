@@ -152,7 +152,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "public")
 
 # Login and logout config
 LOGOUT_REDIRECT_URL = "login"
-LOGIN_REDIRECT_URL = "orders"
+LOGIN_REDIRECT_URL = "orders:orders"
 
 # django-tables2 config
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"

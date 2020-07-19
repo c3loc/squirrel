@@ -7,7 +7,7 @@
   <h1>Pillages</h1>
   <p>
     {% if perms.pillages.add_pillage %}
-    <a href="{% url 'new_pillage' %}" role="button" class="btn btn-primary">New Pillage</a>
+    <a href="{% url 'orders:new_pillage' %}" role="button" class="btn btn-primary">New Pillage</a>
     {% endif %}
   </p>
   {% render_table table %}

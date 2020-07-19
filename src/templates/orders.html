@@ -7,10 +7,10 @@
   <h1>Orders</h1>
   <p>
     {% if perms.orders.add_order %}
-    <a href="{% url 'new_order' %}" role="button" class="btn btn-primary">New Order</a>
+    <a href="{% url 'orders:new_order' %}" role="button" class="btn btn-primary">New Order</a>
     {% endif %}
     {% if perms.orders.export_csv %}
-    <a href="{% url 'export_orders_csv' %}" role="button" class="btn btn-secondary">Export as CSV</a>
+    <a href="{% url 'orders:export_orders_csv' %}" role="button" class="btn btn-secondary">Export as CSV</a>
     {% endif %}
   </p>
   {% render_table table %}

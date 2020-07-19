@@ -137,12 +137,12 @@ class AuthenticatedFrontendViewTests(TestCase):
 
     def test_logout_button(self):
         """Frontend shows logout button to authenticated users"""
-        url = reverse("orders")
+        url = reverse("orders:orders")
         response = self.client.get(url)
         self.assertContains(response, "Log out</a>")
 
     def test_change_password_button(self):
         """Frontend shows change password button to authenticated users"""
-        url = reverse("orders")
+        url = reverse("orders:orders")
         response = self.client.get(url)
         self.assertContains(response, "Change password</a>")

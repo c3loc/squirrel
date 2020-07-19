@@ -30,7 +30,7 @@ def post_form(request, model, form, instance_id=None):
     form_instance = form(request.POST, instance=instance)
     if form_instance.is_valid():
         form_instance.save()
-        return redirect("account:accounts")
+        return redirect("accounts:accounts")
     else:
         return render(request, "instance.html", {"form": form_instance})
 
@@ -81,7 +81,7 @@ def delete_account(request, account_id):
     """Deletes an account"""
     account = get_object_or_404(Account, id=account_id)
     account.delete()
-    return redirect("account:accounts")
+    return redirect("accounts:accounts")
 
 
 @login_required
@@ -90,7 +90,7 @@ def delete_transaction(request, transaction_id):
     """Deletes a transaction"""
     transaction = get_object_or_404(Transaction, id=transaction_id)
     transaction.delete()
-    return redirect("account:accounts")
+    return redirect("accounts:accounts")
 
 
 @login_required

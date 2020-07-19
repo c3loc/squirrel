@@ -7,7 +7,7 @@
   <h1>Stockpiles</h1>
   <p>
     {% if perms.stockpiles.add_stockpile %}
-    <a href="{% url 'new_stockpile' %}" role="button" class="btn btn-primary">New Stockpile</a>
+    <a href="{% url 'orders:new_stockpile' %}" role="button" class="btn btn-primary">New Stockpile</a>
     {% endif %}
   </p>
   {% render_table table %}

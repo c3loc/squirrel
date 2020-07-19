@@ -2,163 +2,8 @@ from test.support import EnvironmentVarGuard
 
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from django.urls import resolve
-from squirrel.orders import views
+from django.urls import reverse
 from squirrel.orders.models import Event, Order, Product, Team, Vendor
-
-
-class RoutingTests(TestCase):
-    """Test routing of all urlpatterns"""
-
-    def test_orders_resolves_orders(self):
-        view = resolve("/orders")
-        self.assertEqual(view.url_name, "orders")
-
-    def test_new_order_resolves_new_order(self):
-        view = resolve("/orders/new")
-        self.assertEqual(view.func, views.order)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_order_resolves_order(self):
-        view = resolve("/orders/23")
-        self.assertEqual(view.func, views.order)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"order_id": 23})
-
-    def test_delete_order_resolves_delete_order(self):
-        view = resolve("/orders/delete/19")
-        self.assertEqual(view.func, views.delete_order)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"order_id": 19})
-
-    def test_new_event_resolves_new_event(self):
-        view = resolve("/events/new")
-        self.assertEqual(view.func, views.event)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_event_resolves_event(self):
-        view = resolve("/events/23")
-        self.assertEqual(view.func, views.event)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"event_id": 23})
-
-    def test_delete_event_resolves_delete_event(self):
-        view = resolve("/events/delete/19")
-        self.assertEqual(view.func, views.delete_event)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"event_id": 19})
-
-    def test_products_resolves_products(self):
-        view = resolve("/products")
-        self.assertEqual(view.url_name, "products")
-
-    def test_new_product_resolves_new_product(self):
-        view = resolve("/products/new")
-        self.assertEqual(view.func, views.product)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_product_resolves_product(self):
-        view = resolve("/products/17")
-        self.assertEqual(view.func, views.product)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"product_id": 17})
-
-    def test_delete_product_resolves_delete_product(self):
-        view = resolve("/products/delete/12")
-        self.assertEqual(view.func, views.delete_product)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"product_id": 12})
-
-    def test_teams_resolves_teams(self):
-        view = resolve("/teams")
-        self.assertEqual(view.url_name, "teams")
-
-    def test_new_team_resolves_new_team(self):
-        view = resolve("/teams/new")
-        self.assertEqual(view.func, views.team)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_team_resolves_team(self):
-        view = resolve("/teams/17")
-        self.assertEqual(view.func, views.team)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"team_id": 17})
-
-    def test_delete_team_resolves_delete_team(self):
-        view = resolve("/teams/delete/12")
-        self.assertEqual(view.func, views.delete_team)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"team_id": 12})
-
-    def test_purchases_resolves_purchases(self):
-        view = resolve("/purchases")
-        self.assertEqual(view.url_name, "purchases")
-
-    def test_new_purchase_resolves_new_purchase(self):
-        view = resolve("/purchases/new")
-        self.assertEqual(view.func, views.purchase)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_purchase_resolves_purchase(self):
-        view = resolve("/purchases/17")
-        self.assertEqual(view.func, views.purchase)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"purchase_id": 17})
-
-    def test_delete_purchase_resolves_delete_purchase(self):
-        view = resolve("/purchases/delete/12")
-        self.assertEqual(view.func, views.delete_purchase)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"purchase_id": 12})
-
-    def test_stockpiles_resolves_stockpiles(self):
-        view = resolve("/stockpiles")
-        self.assertEqual(view.url_name, "stockpiles")
-
-    def test_new_stockpile_resolves_new_stockpile(self):
-        view = resolve("/stockpiles/new")
-        self.assertEqual(view.func, views.stockpile)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_stockpile_resolves_stockpile(self):
-        view = resolve("/stockpiles/17")
-        self.assertEqual(view.func, views.stockpile)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"stockpile_id": 17})
-
-    def test_delete_stockpile_resolves_delete_stockpile(self):
-        view = resolve("/stockpiles/delete/12")
-        self.assertEqual(view.func, views.delete_stockpile)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"stockpile_id": 12})
-
-    def test_pillages_resolves_pillages(self):
-        view = resolve("/pillages")
-        self.assertEqual(view.url_name, "pillages")
-
-    def test_new_pillage_resolves_new_pillage(self):
-        view = resolve("/pillages/new")
-        self.assertEqual(view.func, views.pillage)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {})
-
-    def test_pillage_resolves_pillage(self):
-        view = resolve("/pillages/17")
-        self.assertEqual(view.func, views.pillage)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"pillage_id": 17})
-
-    def test_delete_pillage_resolves_delete_pillage(self):
-        view = resolve("/pillages/delete/12")
-        self.assertEqual(view.func, views.delete_pillage)
-        self.assertEqual(view.args, ())
-        self.assertEqual(view.kwargs, {"pillage_id": 12})
 
 
 class OrderViewTests(TestCase):
@@ -204,8 +49,13 @@ class OrderViewTests(TestCase):
         self.eventA = Event.objects.create(name="Required Event")
 
     def post_order(self, id="new", state="REQ", amount=1, comment="", event=1):
+        url = (
+            reverse("orders:new_order")
+            if id == "new"
+            else reverse("orders:edit_order", args=[id])
+        )
         return self.client.post(
-            "/orders/{}".format(id),
+            url,
             {
                 "amount": amount,
                 "product": self.product.id,
@@ -217,15 +67,16 @@ class OrderViewTests(TestCase):
         )
 
     def test_view_login_required(self):
-        response = self.client.get("/orders")
+        url = reverse("orders:orders")
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/accounts/login/?next=/orders")
+        self.assertEqual(response.url, f"/accounts/login/?next={url}")
 
     def test_can_not_see_orders_without_permission_or_membership(self):
         Order.objects.create(product=self.product, team=self.team_a)
         Order.objects.create(product=self.product, team=self.team_b)
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/orders")
+        response = self.client.get(reverse("orders:orders"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<tbody></tbody>", html=True)
 
@@ -234,7 +85,7 @@ class OrderViewTests(TestCase):
         Order.objects.create(product=self.product, team=self.team_a)
         Order.objects.create(product=self.product, team=self.team_b)
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/orders")
+        response = self.client.get(reverse("orders:orders"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "The A-Team")
         self.assertNotContains(response, "Not the A-Team")
@@ -243,7 +94,7 @@ class OrderViewTests(TestCase):
         Order.objects.create(product=self.product, team=self.team_a)
         Order.objects.create(product=self.product, team=self.team_b)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/orders")
+        response = self.client.get(reverse("orders:orders"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "The A-Team")
         self.assertContains(response, "Not the A-Team")
@@ -266,7 +117,7 @@ class OrderViewTests(TestCase):
     def test_new_order_has_comment_field(self):
         self.view_user.user_permissions.add(self.add_permission)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/orders/new")
+        response = self.client.get(reverse("orders:new_order"))
 
         print(response.content)
         self.assertEqual(response.status_code, 200)
@@ -280,19 +131,19 @@ class OrderViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.post_order("new", "REQ")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         self.assertEqual(Order.objects.all().count(), 1)
         response = self.post_order("new", "APP")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         self.assertEqual(Order.objects.all().count(), 2)
         response = self.post_order("new", "REA")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         self.assertEqual(Order.objects.all().count(), 3)
         response = self.post_order("new", "COM")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         self.assertEqual(Order.objects.all().count(), 4)
 
     def test_request_user_can_request_but_nothing_else(self):
@@ -300,7 +151,7 @@ class OrderViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.post_order("new", "REQ")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         self.assertEqual(Order.objects.all().count(), 1)
         response = self.post_order("new", "APP")
         self.assertEqual(response.status_code, 200)
@@ -324,22 +175,22 @@ class OrderViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.post_order(order.id, "REQ")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         response = self.post_order(order.id, "REQ", 2)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         response = self.post_order(order.id, "REQ", 2, 17.00)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         response = self.post_order(order.id, "APP")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         response = self.post_order(order.id, "REA")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         response = self.post_order(order.id, "COM")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
 
     def test_team_members_can_change_some_fields(self):
         self.team_a.members.add(self.user)
@@ -353,7 +204,7 @@ class OrderViewTests(TestCase):
         # we can change the amount
         response = self.post_order(my_order.id, "REQ", 2)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         # we can not change other teams objects
         response = self.post_order(order.id, "REQ", 2)
         self.assertEqual(response.status_code, 403)
@@ -370,7 +221,7 @@ class OrderViewTests(TestCase):
         # we can approve a order
         response = self.post_order(order.id, "APP")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         # we can no longer change this order
         response = self.post_order(order.id, "REQ")
 
@@ -379,7 +230,9 @@ class OrderViewTests(TestCase):
            not in the team we’re trying to delete the order from"""
         order = Order.objects.create(product=self.product, team=self.team_a)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.post("/orders/delete/{}".format(order.id))
+
+        url = reverse("orders:delete_order", args=[order.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Order.objects.all().count(), 1)
 
@@ -388,7 +241,9 @@ class OrderViewTests(TestCase):
         order = Order.objects.create(product=self.product, team=self.team_a)
         self.view_user.user_permissions.add(self.delete_permission)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.post("/orders/delete/{}".format(order.id))
+
+        url = reverse("orders:delete_order", args=[order.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Order.objects.all().count(), 1)
 
@@ -399,9 +254,11 @@ class OrderViewTests(TestCase):
         self.view_user.user_permissions.add(self.delete_permission)
 
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.post("/orders/delete/{}".format(order.id))
+
+        url = reverse("orders:delete_order", args=[order.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
+        self.assertEqual(response.url, reverse("orders:orders"))
         self.assertEqual(Order.objects.all().count(), 0)
 
     def test_team_members_can_delete_orders(self):
@@ -414,12 +271,18 @@ class OrderViewTests(TestCase):
         order = Order.objects.create(product=self.product, team=self.team_b)
         self.user.user_permissions.add(self.delete_permission)
         self.client.login(username="engel", password="engel")
-        response = self.client.post("/orders/delete/{}".format(my_order.id))
+
+        url = reverse("orders:delete_order", args=[my_order.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/orders")
-        response = self.client.post("/orders/delete/{}".format(order.id))
+        self.assertEqual(response.url, reverse("orders:orders"))
+
+        url = reverse("orders:delete_order", args=[order.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
-        response = self.client.post("/orders/delete/{}".format(my_approved_order.id))
+
+        url = reverse("orders:delete_order", args=[my_approved_order.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
     def test_event_preset_by_setting(self):
@@ -429,7 +292,7 @@ class OrderViewTests(TestCase):
         Event.objects.create(name="12c3")
         Event.objects.create(name="42c3")
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/orders/new")
+        response = self.client.get(reverse("orders:new_order"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="2" selected>12c3</option>')
 
@@ -451,7 +314,7 @@ class OrderViewTests(TestCase):
 
         self.view_user.user_permissions.add(self.add_permission)
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/orders/new")
+        response = self.client.get(reverse("orders:new_order"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="" selected>---------</option>')
 
@@ -459,7 +322,7 @@ class OrderViewTests(TestCase):
         self.team_a.members.add(self.user)
         self.user.user_permissions.add(self.add_permission)
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/orders/new")
+        response = self.client.get(reverse("orders:new_order"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<option value="1" selected>')
 
@@ -471,7 +334,7 @@ class OrderViewTests(TestCase):
 
         self.client.login(username="loc_engel", password="loc_engel")
 
-        response = self.client.get("/orders/1")
+        response = self.client.get(reverse("orders:edit_order", args=["1"]))
         self.assertEqual(response.status_code, 200)
 
 
@@ -488,18 +351,19 @@ class OrderExportViewTests(TestCase):
         self.view_user.user_permissions.add(self.export_permission)
 
     def test_view_login_required(self):
-        response = self.client.get("/orders/export")
+        url = reverse("orders:export_orders_csv")
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/accounts/login/?next=/orders/export")
+        self.assertEqual(response.url, f"/accounts/login/?next={url}")
 
     def test_non_privileged_can_not_export(self):
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/orders/export")
+        response = self.client.get(reverse("orders:export_orders_csv"))
         self.assertEqual(response.status_code, 403)
 
     def test_privileged_can_export(self):
         self.client.login(username="exporter", password="exporter")
-        response = self.client.get("/orders/export")
+        response = self.client.get(reverse("orders:export_orders_csv"))
         self.assertEqual(response.status_code, 200)
 
 
@@ -529,31 +393,32 @@ class ProductViewTests(TestCase):
 
     def test_view_new_product_status_ok(self):
         self.client.login(username="order_engel", password="order_engel")
-        response = self.client.get("/products/new")
+        response = self.client.get(reverse("orders:new_product"))
         self.assertEqual(response.status_code, 200)
 
     def test_view_login_required(self):
-        response = self.client.get("/products")
+        url = reverse("orders:products")
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/accounts/login/?next=/products")
+        self.assertEqual(response.url, f"/accounts/login/?next={url}")
 
     def test_require_view_permissions_fails(self):
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/products")
+        response = self.client.get(reverse("orders:products"))
         self.assertEqual(response.status_code, 403)
 
     def test_require_view_permissions_ok(self):
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/products")
+        response = self.client.get(reverse("orders:products"))
         self.assertEqual(response.status_code, 200)
 
     def test_require_add_permission_fails(self):
         self.client.login(username="loc_engel", password="loc_engel")
         vendor = Vendor.objects.get(name="ACME Inc.")
 
+        url = reverse("orders:new_product")
         response = self.client.post(
-            "/products/new",
-            {"name": "Awesome Beer", "unit": "Hectoliter", "vendor": vendor.id},
+            url, {"name": "Awesome Beer", "unit": "Hectoliter", "vendor": vendor.id},
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.all().count(), 0)
@@ -561,11 +426,12 @@ class ProductViewTests(TestCase):
     def test_require_add_permission_ok(self):
         self.client.login(username="order_engel", password="order_engel")
 
+        url = reverse("orders:new_product")
         response = self.client.post(
-            "/products/new", {"name": "Awesome Beer", "unit": "Hectoliter"},
+            url, {"name": "Awesome Beer", "unit": "Hectoliter"},
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/products")
+        self.assertEqual(response.url, reverse("orders:products"))
         self.assertEqual(Product.objects.all().count(), 1)
 
     def test_require_change_permission_fails(self):
@@ -573,9 +439,9 @@ class ProductViewTests(TestCase):
         vendor = Vendor.objects.get(name="ACME Inc.")
 
         self.client.login(username="order_engel", password="order_engel")
+        url = reverse("orders:edit_product", args=[product.id])
         response = self.client.post(
-            "/products/{}".format(product.id),
-            {"name": "Awesome Beer", "unit": "Hectoliter", "vendor": vendor.id},
+            url, {"name": "Awesome Beer", "unit": "Hectoliter", "vendor": vendor.id},
         )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.get(id=product.id).name, "Bad Beer")
@@ -584,27 +450,31 @@ class ProductViewTests(TestCase):
         product = Product.objects.create(name="Bad Beer")
 
         self.client.login(username="order_admin", password="order_admin")
+        url = reverse("orders:edit_product", args=[product.id])
         response = self.client.post(
-            "/products/{}".format(product.id),
-            {"name": "Awesome Beer", "unit": "Hectoliter"},
+            url, {"name": "Awesome Beer", "unit": "Hectoliter"},
         )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/products")
+        self.assertEqual(response.url, reverse("orders:products"))
         self.assertEqual(Product.objects.get(id=product.id).name, "Awesome Beer")
 
     def test_require_delete_permission_fails(self):
         product = Product.objects.create(name="Bad Beer")
         self.client.login(username="order_admin", password="order_admin")
-        response = self.client.post("/products/delete/{}".format(product.id))
+
+        url = reverse("orders:delete_product", args=[product.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Product.objects.all().count(), 1)
 
     def test_require_delete_permission_ok(self):
         product = Product.objects.create(name="Bad Beer")
         self.client.login(username="morre", password="morre")
-        response = self.client.post("/products/delete/{}".format(product.id))
+
+        url = reverse("orders:delete_product", args=[product.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/products")
+        self.assertEqual(response.url, reverse("orders:products"))
         self.assertEqual(Product.objects.all().count(), 0)
 
 
@@ -632,39 +502,44 @@ class VendorViewTests(TestCase):
         user.user_permissions.add(delete_permission)
 
     def test_view_login_required(self):
-        response = self.client.get("/vendors")
+        url = reverse("orders:vendors")
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/accounts/login/?next=/vendors")
+        self.assertEqual(response.url, f"/accounts/login/?next={url}")
 
     def test_require_view_permissions_fails(self):
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/vendors")
+        response = self.client.get(reverse("orders:vendors"))
         self.assertEqual(response.status_code, 403)
 
     def test_require_view_permissions_ok(self):
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/vendors")
+        response = self.client.get(reverse("orders:vendors"))
         self.assertEqual(response.status_code, 200)
 
     def test_require_add_permission_fails(self):
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.post("/vendors/new", {"name": "Bällebäder for the win"},)
+        response = self.client.post(
+            reverse("orders:new_vendor"), {"name": "Bällebäder for the win"},
+        )
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Vendor.objects.all().count(), 0)
 
     def test_require_add_permission_ok(self):
         self.client.login(username="order_engel", password="order_engel")
-        response = self.client.post("/vendors/new", {"name": "Bällebäder for the win"},)
+        response = self.client.post(
+            reverse("orders:new_vendor"), {"name": "Bällebäder for the win"},
+        )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/vendors")
+        self.assertEqual(response.url, reverse("orders:vendors"))
         self.assertEqual(Vendor.objects.all().count(), 1)
 
     def test_require_change_permission_fails(self):
         vendor = Vendor.objects.create(name="Kein Bällebadverkäufer")
         self.client.login(username="order_engel", password="order_engel")
-        response = self.client.post(
-            "/vendors/{}".format(vendor.id), {"name": "Bällebäder for the win"},
-        )
+
+        url = reverse("orders:edit_vendor", args=[vendor.id])
+        response = self.client.post(url, {"name": "Bällebäder for the win"},)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(
             Vendor.objects.get(id=vendor.id).name, "Kein Bällebadverkäufer"
@@ -673,11 +548,10 @@ class VendorViewTests(TestCase):
     def test_require_change_permission_ok(self):
         vendor = Vendor.objects.create(name="Kein Bällebadverkäufer")
         self.client.login(username="order_admin", password="order_admin")
-        response = self.client.post(
-            "/vendors/{}".format(vendor.id), {"name": "Bällebäder for the win"},
-        )
+        url = reverse("orders:edit_vendor", args=[vendor.id])
+        response = self.client.post(url, {"name": "Bällebäder for the win"},)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/vendors")
+        self.assertEqual(response.url, reverse("orders:vendors"))
         self.assertEqual(
             Vendor.objects.get(id=vendor.id).name, "Bällebäder for the win"
         )
@@ -685,16 +559,18 @@ class VendorViewTests(TestCase):
     def test_require_delete_permission_fails(self):
         vendor = Vendor.objects.create(name="Bad Beer")
         self.client.login(username="order_admin", password="order_admin")
-        response = self.client.post("/vendors/delete/{}".format(vendor.id))
+        url = reverse("orders:delete_vendor", args=[vendor.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Vendor.objects.all().count(), 1)
 
     def test_require_delete_permission_ok(self):
         vendor = Vendor.objects.create(name="Kein Bällebadverkäufer")
         self.client.login(username="morre", password="morre")
-        response = self.client.post("/vendors/delete/{}".format(vendor.id))
+        url = reverse("orders:delete_vendor", args=[vendor.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/vendors")
+        self.assertEqual(response.url, reverse("orders:vendors"))
         self.assertEqual(Vendor.objects.all().count(), 0)
 
 
@@ -722,57 +598,68 @@ class TeamViewTests(TestCase):
         user.user_permissions.add(delete_permission)
 
     def test_view_login_required(self):
-        response = self.client.get("/teams")
+        url = reverse("orders:teams")
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/accounts/login/?next=/teams")
+        self.assertEqual(response.url, f"/accounts/login/?next={url}")
 
     def test_require_view_permissions_fails(self):
         self.client.login(username="engel", password="engel")
-        response = self.client.get("/teams")
+        response = self.client.get(reverse("orders:teams"))
         self.assertEqual(response.status_code, 403)
 
     def test_require_view_permissions_ok(self):
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.get("/teams")
+        response = self.client.get(reverse("orders:teams"))
         self.assertEqual(response.status_code, 200)
 
     def test_require_add_permission_fails(self):
         self.client.login(username="loc_engel", password="loc_engel")
-        response = self.client.post("/teams/new", {"name": "Creatures"})
+
+        url = reverse("orders:new_team")
+        response = self.client.post(url, {"name": "Creatures"})
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Team.objects.all().count(), 0)
 
     def test_require_add_permission_ok(self):
         self.client.login(username="order_engel", password="order_engel")
-        response = self.client.post("/teams/new", {"name": "Creatures"})
+
+        url = reverse("orders:new_team")
+        response = self.client.post(url, {"name": "Creatures"})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/teams")
+        self.assertEqual(response.url, reverse("orders:teams"))
         self.assertEqual(Team.objects.all().count(), 1)
 
     def test_require_change_permission_fails(self):
         team = Team.objects.create(name="BadWolf")
         self.client.login(username="order_engel", password="order_engel")
-        response = self.client.post("/teams/{}".format(team.id), {"name": "GoodWolf"})
+
+        url = reverse("orders:edit_team", args=[team.id])
+        response = self.client.post(url, {"name": "GoodWolf"})
         self.assertEqual(response.status_code, 403)
 
     def test_require_change_permission_ok(self):
         team = Team.objects.create(name="BadWolf")
         self.client.login(username="order_admin", password="order_admin")
-        response = self.client.post("/teams/{}".format(team.id), {"name": "GoodWolf"})
+        url = reverse("orders:edit_team", args=[team.id])
+        response = self.client.post(url, {"name": "GoodWolf"})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/teams")
+        self.assertEqual(response.url, reverse("orders:teams"))
 
     def test_require_delete_permission_fails(self):
         team = Team.objects.create(name="EvilTeam")
         self.client.login(username="order_admin", password="order_admin")
-        response = self.client.post("/teams/delete/{}".format(team.id))
+
+        url = reverse("orders:delete_team", args=[team.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Team.objects.all().count(), 1)
 
     def test_require_delete_permission_ok(self):
         team = Team.objects.create(name="EvilTeam")
         self.client.login(username="morre", password="morre")
-        response = self.client.post("/teams/delete/{}".format(team.id))
+        url = reverse("orders:delete_team", args=[team.id])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/teams")
+        self.assertEqual(response.url, reverse("orders:teams"))
         self.assertEqual(Team.objects.all().count(), 0)

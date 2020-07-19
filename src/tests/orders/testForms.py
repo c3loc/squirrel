@@ -1,17 +1,12 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from squirrel.orders.forms import OrderForm, ProductForm
+from django.urls import reverse
+from squirrel.orders.forms import OrderForm
 from squirrel.orders.models import Event, Order, Product, Team
 
 
 class ProductFormTests(TestCase):
-    def test_default_price_positive(self):
-        form_data = {
-            "name": "Testprodukt",
-            "default_price": -10.00,
-        }
-        form = ProductForm(data=form_data)
-        self.assertFalse(form.is_valid())
+    pass
 
 
 class OrderFormTests(TestCase):
@@ -86,9 +81,9 @@ class OrderFormTests(TestCase):
 
     def test_require_state(self):
         self.client.login(username="helpdesk", password="test123")
+        url = reverse("orders:new_order")
         response = self.client.post(
-            "/orders/new",
-            {"amount": 1, "product": self.productB.id, "team": self.teamB.id},
+            url, {"amount": 1, "product": self.productB.id, "team": self.teamB.id},
         )
         self.assertEqual(response.status_code, 200)
         # TODO: why does this fail, but not the one below? something about the select?

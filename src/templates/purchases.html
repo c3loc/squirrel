@@ -7,7 +7,7 @@
   <h1>Purchases</h1>
   <p>
     {% if perms.purchases.add_purchase %}
-    <a href="{% url 'new_purchase' %}" role="button" class="btn btn-primary">New Purchase</a>
+    <a href="{% url 'orders:new_purchase' %}" role="button" class="btn btn-primary">New Purchase</a>
     {% endif %}
   </p>
   {% render_table table %}
