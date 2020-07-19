@@ -12,11 +12,11 @@ class PasswordResetTests(TestCase):
         self.response = self.client.get(url)
 
     def test_status_code(self):
-        self.assertEquals(self.response.status_code, 200)
+        self.assertEqual(self.response.status_code, 200)
 
     def test_view_function(self):
         view = resolve("/reset")
-        self.assertEquals(view.func.view_class, auth_views.PasswordResetView)
+        self.assertEqual(view.func.view_class, auth_views.PasswordResetView)
 
     def test_csrf(self):
         self.assertContains(self.response, "csrfmiddlewaretoken")
@@ -69,11 +69,11 @@ class PasswordResetDoneTests(TestCase):
         self.response = self.client.get(url)
 
     def test_status_code(self):
-        self.assertEquals(self.response.status_code, 200)
+        self.assertEqual(self.response.status_code, 200)
 
     def test_view_function(self):
         view = resolve("/reset/done")
-        self.assertEquals(view.func.view_class, auth_views.PasswordResetDoneView)
+        self.assertEqual(view.func.view_class, auth_views.PasswordResetDoneView)
 
 
 class PasswordChangeTests(TestCase):
@@ -87,11 +87,11 @@ class PasswordChangeTests(TestCase):
         self.response = self.client.get(url)
 
     def test_status_code(self):
-        self.assertEquals(self.response.status_code, 200)
+        self.assertEqual(self.response.status_code, 200)
 
     def test_view_function(self):
         view = resolve("/change")
-        self.assertEquals(view.func.view_class, auth_views.PasswordChangeView)
+        self.assertEqual(view.func.view_class, auth_views.PasswordChangeView)
 
     def test_csrf(self):
         self.assertContains(self.response, "csrfmiddlewaretoken")
@@ -123,11 +123,11 @@ class PasswordChangeDoneTests(TestCase):
         self.response = self.client.get(url)
 
     def test_status_code(self):
-        self.assertEquals(self.response.status_code, 302)
+        self.assertEqual(self.response.status_code, 302)
 
     def test_view_function(self):
         view = resolve("/change/done")
-        self.assertEquals(view.func.view_class, auth_views.PasswordChangeDoneView)
+        self.assertEqual(view.func.view_class, auth_views.PasswordChangeDoneView)
 
 
 class AuthenticatedFrontendViewTests(TestCase):
