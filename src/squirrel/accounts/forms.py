@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Layout, Submit
 from django import forms
 from squirrel.accounts.models import Account, Transaction
+from squirrel.orders.models import Purchase
 
 
 class AccountForm(forms.ModelForm):
@@ -63,6 +64,10 @@ class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = ["date", "amount", "description", "purchase", "account"]
+
+    purchase = forms.ModelChoiceField(
+        queryset=Purchase.objects.order_by("ordered_at"), required=False
+    )
 
 
 class ImportTransactionsForm(forms.Form):
