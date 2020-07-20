@@ -99,7 +99,7 @@ def import_transactions(request, account_id):
             amount = (
                 Money(sub(r"[^\d.]", "", row["Withdrawal"]), currency="EUR")
                 if row["Withdrawal"] != ""
-                else Money(sub(r"[^\d.]", "", row["Deposit"]), currency="EUR")
+                else Money(sub(r"[^\d.]", "", row["Deposit"]), currency="EUR") * -1
             )
 
             # Parse the date in the DD.MM.YYYY format
