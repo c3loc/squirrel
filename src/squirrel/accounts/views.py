@@ -95,11 +95,12 @@ def import_transactions(request, account_id):
 
         for row in csv_reader:
             # Set the amount to the withdrawn sum or the Deposit sum.
-            # The regex removes all non-decmial characters
+            # The regex removes all non-decmial characters.
+            # Withdrawals are negative amounts and therefore multiplied by -1
             amount = (
-                Money(sub(r"[^\d.]", "", row["Withdrawal"]), currency="EUR")
+                Money(sub(r"[^\d.]", "", row["Withdrawal"]), currency="EUR") * -1
                 if row["Withdrawal"] != ""
-                else Money(sub(r"[^\d.]", "", row["Deposit"]), currency="EUR") * -1
+                else Money(sub(r"[^\d.]", "", row["Deposit"]), currency="EUR")
             )
 
             # Parse the date in the DD.MM.YYYY format
