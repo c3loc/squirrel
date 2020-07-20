@@ -33,7 +33,7 @@
           <td>{{ transaction.date }}</td>
           <td>{{ transaction.amount }}</td>
           <td>{{ transaction.description }}</td>
-          <td>{{ transaction.purchase }}</td>
+          <td>{% for purchase in transaction.purchase.all %}{{ purchase }}{% if not forloop.last %}<br/>{% endif %}{% endfor %}</td>
           {% if perms.accounts.edit_transaction %}
           <td><a href="{% url 'accounts:change_transaction' transaction.id %}" class="btn btn-primary">Edit</a></td>
           {% endif %}

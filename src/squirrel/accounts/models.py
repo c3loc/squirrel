@@ -25,9 +25,7 @@ class Transaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     description = models.CharField(blank=True, null=True, max_length=1000)
     date = models.DateField(default=date.today)
-    purchase = models.ForeignKey(
-        Purchase, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    purchase = models.ManyToManyField(Purchase, blank=True)
 
     def __str__(self):
         return f"{self.account}: {self.amount} - {self.description}"
