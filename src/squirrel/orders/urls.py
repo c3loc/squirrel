@@ -27,8 +27,8 @@ urlpatterns = [
     path("events/new", views.event, name="new_event"),
     path("events/<int:event_id>", views.event, name="edit_event"),
     path("events/delete/<int:event_id>", views.delete_event, name="delete_event"),
-    path("purchases", views.PurchaseListView.as_view(), name="purchases"),
-    path("purchases/new", views.purchase, name="new_purchase"),
+    path("purchases", views.purchases, name="purchases"),
+    path("purchases/new", views.purchase, name="create_purchase"),
     path("purchases/<int:purchase_id>", views.purchase, name="change_purchase"),
     path(
         "purchases/delete/<int:purchase_id>",

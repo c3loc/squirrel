@@ -1,0 +1,22 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'orders:create_purchase' %}" role="button" class="btn btn-primary mt-3 mb-3">Create purchase</a>
+{% for purchase in purchases %}
+<div class="row">
+  <div class="col-2">
+    <span class="align-middle">{{ purchase.ordered_at }}</span>
+  </div>
+  <div class="col-3">
+    {{ purchase.vendor }}
+  </div>
+  <div class="col-2">
+    {{ purchase.sum_net|floatformat:2 }} €
+  </div>
+  <div class="col-2">
+  <a href="{% url 'orders:change_purchase' purchase.id %}" class="btn btn-sm btn-link">Change purchase</a>
+  </div>
+</div>
+<hr class="m-1">
+{% endfor %}
+{% endblock %}

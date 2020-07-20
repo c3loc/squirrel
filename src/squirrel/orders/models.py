@@ -67,6 +67,9 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
+    class Meta:
+        ordering = ["ordered_at"]
+
     is_net = models.BooleanField(verbose_name="Prices are net", default=True,)
     paid = models.BooleanField(help_text="Is the purchase paid?", default=False)
     payment_method = models.CharField(max_length=255, blank=True)
@@ -150,7 +153,7 @@ class Purchase(models.Model):
         )
 
     def __str__(self):
-        return "Purchase with {} @ {}".format(self.vendor, self.ordered_at)
+        return f"{self.vendor} @ {self.ordered_at} ({self.sum_gross:.2f} €)"
 
 
 class Order(models.Model):

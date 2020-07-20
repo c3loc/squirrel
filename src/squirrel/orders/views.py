@@ -28,13 +28,7 @@ from squirrel.orders.models import (
     Team,
     Vendor,
 )
-from squirrel.orders.tables import (
-    EventTable,
-    ProductTable,
-    PurchaseTable,
-    TeamTable,
-    VendorTable,
-)
+from squirrel.orders.tables import EventTable, ProductTable, TeamTable, VendorTable
 from squirrel.util.views import get_form, post_form
 
 
@@ -64,13 +58,6 @@ class EventListView(PermissionRequiredMixin, SingleTableView):
     model = Event
     table_class = EventTable
     template_name = "events.html"
-
-
-class PurchaseListView(PermissionRequiredMixin, SingleTableView):
-    permission_required = "orders.view_purchase"
-    model = Purchase
-    table_class = PurchaseTable
-    template_name = "purchases.html"
 
 
 @login_required
@@ -315,15 +302,6 @@ def purchase(request, purchase_id=None):
 
 
 @login_required
-@permission_required("orders.delete_purchase", raise_exception=True)
-def delete_purchase(request, purchase_id=None):
-    purchase_object = get_object_or_404(Purchase, id=purchase_id)
-    purchase_object.delete()
-
-    return redirect("orders:purchases")
-
-
-@login_required
 def change_pillage(request, pillage_id):
     if request.method == "GET":
         return get_form(request, Pillage, PillageForm, pillage_id)
@@ -477,3 +455,45 @@ def export_orders_csv(request):
         writer.writerow(line)
 
     return response
+
+
+@login_required
+@permission_required("orders.view_purchases", raise_exception=True)
+def purchases(request):
+    """ Renders a list of all purchases """
+    return render(request, "purchases.html", {"purchases": Purchase.objects.all()})
+
+
+# @login_required
+# @permission_required("orders:create_purchase", raise_exception=True)
+# def create_purchase(request):
+#     if request.method == "GET":
+#         return get_form(request, Purchase, PurchaseForm, None)
+
+#     if request.method == "POST":
+#         return post_form(request, Purchase, PurchaseForm, next_page="orders:purchases")
+
+#     return HttpResponse(status=405)
+
+
+# @login_required
+# @permission_required("orders:change_purchase", raise_exception=True)
+# def change_purchase(request, purchase_id):
+#     if request.method == "GET":
+#         return get_form(request, Purchase, PurchaseForm, purchase_id)
+
+#     if request.method == "POST":
+#         return post_form(
+#             request, Purchase, PurchaseForm, purchase_id, next_page="orders:purchases",
+#         )
+
+#     return HttpResponse(status=405)
+
+
+@login_required
+@permission_required("orders.delete_purchase", raise_exception=True)
+def delete_purchase(request, purchase_id=None):
+    purchase_object = get_object_or_404(Purchase, id=purchase_id)
+    purchase_object.delete()
+
+    return redirect("orders:purchases")
