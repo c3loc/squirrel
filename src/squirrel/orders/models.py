@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import F, Sum
 from django.db.models.functions import Upper
 from djmoney.models.fields import MoneyField
+from djmoney.money import Money
 
 
 class Event(models.Model):
@@ -106,8 +107,11 @@ class Purchase(models.Model):
             )["total"],
         ]
 
-        return (
-            sum([item for item in sums if item is not None]) * (100 - self.rebate) / 100
+        return Money(
+            sum([item for item in sums if item is not None])
+            * (100 - self.rebate)
+            / 100,
+            currency="EUR",
         )
 
     @property
@@ -129,10 +133,11 @@ class Purchase(models.Model):
                     )
                 )["total"],
             ]
-            return (
+            return Money(
                 sum([item for item in sums if item is not None])
                 * (100 - self.rebate)
-                / 100
+                / 100,
+                currency="EUR",
             )
 
         return self.__sum_without_tax_adjustment()
@@ -148,12 +153,15 @@ class Purchase(models.Model):
             )["total"],
         ]
 
-        return (
-            sum([item for item in sums if item is not None]) * (100 - self.rebate) / 100
+        return Money(
+            sum([item for item in sums if item is not None])
+            * (100 - self.rebate)
+            / 100,
+            currency="EUR",
         )
 
     def __str__(self):
-        return f"{self.vendor} @ {self.ordered_at} ({self.sum_gross:.2f} €)"
+        return f"{self.vendor} @ {self.ordered_at} ({self.sum_gross})"
 
 
 class Order(models.Model):

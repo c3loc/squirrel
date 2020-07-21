@@ -2,7 +2,9 @@ from crispy_forms.bootstrap import Field, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Layout, Submit
 from django import forms
+from djmoney.money import Money
 from squirrel.accounts.models import Account, Transaction
+from squirrel.orders.models import Purchase
 
 
 class AccountForm(forms.ModelForm):
@@ -44,7 +46,8 @@ class TransactionForm(forms.ModelForm):
             Field("date"),
             Field("amount"),
             Field("description"),
-            Field("purchase"),
+            Field("purchases_suggestion"),
+            Field("purchases"),
             Field("account"),
             FormActions(
                 Submit("submit", "Save", css_class="btn btn-success"),
@@ -60,11 +63,43 @@ class TransactionForm(forms.ModelForm):
             ),
         )
 
-        self.fields["purchase"].widget.attrs["size"] = "20"
+        self.fields["purchases"].widget.attrs["size"] = "20"
+
+        # Get all purchases where the difference of the abs(gross sum) to the transaction amount is less than a cent
+        self.purchases_suggestion_choices = ()
+        purchases = Purchase.objects.all()
+        for purchase in purchases:
+            if abs(self.instance.amount) - purchase.sum_gross <= Money(
+                0.01, currency="EUR"
+            ) and abs(self.instance.amount) - purchase.sum_gross >= Money(
+                -0.01, currency="EUR"
+            ):
+                self.purchases_suggestion_choices += ((purchase.id, str(purchase)),)
+
+        # Set the suggestion list to the purchases we found
+        self.fields["purchases_suggestion"].choices = self.purchases_suggestion_choices
 
     class Meta:
         model = Transaction
-        fields = ["date", "amount", "description", "purchase", "account"]
+        fields = ["date", "amount", "description", "purchases", "account"]
+
+    purchases_suggestion = forms.MultipleChoiceField(
+        help_text="This field only shows likely matching purchases. All purchases you select here are added to the saved purchases below.",
+        required=False,
+    )
+
+    def save(self, *args, **kwargs):
+        # Get the IDs from all purchases in the „purchases“ field. This is needed because the Query to get the
+        # „purchases“ field is ordered and we can’t union queries with ORDER BY later on.
+        ids = [purchase.id for purchase in self.cleaned_data["purchases"]]
+
+        # Get all Purchases that are in the „purchases“ or „purchases_suggestion“ field and set the actual field to that
+        # queryset before saving
+        self.cleaned_data["purchases"] = Purchase.objects.filter(
+            id__in=ids + self.cleaned_data["purchases_suggestion"]
+        )
+
+        return super().save(*args, **kwargs)
 
 
 class ImportTransactionsForm(forms.Form):
