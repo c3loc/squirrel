@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django_tables2 import SingleTableView
+from djmoney.money import Money
 from squirrel.orders.forms import (
     CostItemFormSet,
     EventForm,
@@ -285,8 +286,8 @@ def purchase(request, purchase_id=None):
         sum_net = purchase_object.sum_net
         sum_gross = purchase_object.sum_gross
     else:
-        sum_net = 0
-        sum_gross = 0
+        sum_net = Money(0, currency="EUR")
+        sum_gross = Money(0, currency="EUR")
 
     return render(
         request,

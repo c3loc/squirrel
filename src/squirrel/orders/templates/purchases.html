@@ -11,7 +11,7 @@
     {{ purchase.vendor }}
   </div>
   <div class="col-2">
-    {{ purchase.sum_net|floatformat:2 }} €
+    {{ purchase.sum_net }}
   </div>
   <div class="col-2">
   <a href="{% url 'orders:change_purchase' purchase.id %}" class="btn btn-sm btn-link">Change purchase</a>
