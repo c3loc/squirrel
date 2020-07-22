@@ -323,7 +323,7 @@ def delete_pillage(request, pillage_id=None):
 
 
 @login_required
-@permission_required("orders.view_stockpiles", raise_exception=True)
+@permission_required("orders.view_stockpile", raise_exception=True)
 def stockpiles(request):
     """ Renders a list of all stockpiles """
     return render(request, "stockpiles.html", {"stockpiles": Stockpile.objects.all()})
@@ -371,7 +371,7 @@ def delete_stockpile(request, stockpile_id=None):
 
 
 @login_required
-@permission_required("orders.view_orders", raise_exception=True)
+@permission_required("orders.view_order", raise_exception=True)
 def orders(request):
     """ Renders a list of all orders """
     return render(request, "orders.html", {"orders": Order.objects.all()})
