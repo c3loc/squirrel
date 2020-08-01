@@ -97,10 +97,10 @@ class PurchaseModelTests(TestCase):
         self.product = Product.objects.create(name="Dr. Cave Johnson")
         self.purchase = Purchase.objects.create(vendor=self.vendor)
         self.order_req = Order.objects.create(
-            product=self.product, team=self.team, amount=27, state="REQ"
+            product=self.product, team=self.team, amount=27
         )
         self.order_app = Order.objects.create(
-            product=self.product, team=self.team, amount=23, state="APP"
+            product=self.product, team=self.team, amount=23
         )
 
 

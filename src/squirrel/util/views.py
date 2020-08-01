@@ -4,13 +4,13 @@
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 
 
-def get_form(request, model, form, instance_id):
+def get_form(request, model, form, instance_id, form_initial=None):
     """ Shows the form with the provided instance
     """
 
     # If no instance is specified, use an empty form
     if not instance_id:
-        form_instance = form()
+        form_instance = form(initial=form_initial)
 
     # If it is specified, get the instance and fill the form
     else:

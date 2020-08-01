@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<a href="{% url 'orders:create_stockpile' %}" role="button" class="btn btn-primary mt-3 mb-3">Create Stockpile</a>
+<a href="{% url 'orders:add_stockpile' %}" role="button" class="btn btn-primary mt-3 mb-3">Create Stockpile</a>
 {% for stockpile in stockpiles %}
 <div class="row">
   <div class="col-3">

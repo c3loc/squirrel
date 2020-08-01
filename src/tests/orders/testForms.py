@@ -1,8 +1,7 @@
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
-from django.urls import reverse
 from squirrel.orders.forms import OrderForm
-from squirrel.orders.models import Event, Order, Product, Team
+from squirrel.orders.models import Event, Product, Team
 
 
 class ProductFormTests(TestCase):
@@ -37,7 +36,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_teams(self):
         """Teams are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
+        form = OrderForm(teams=Team.objects.all())
 
         self.assertEqual(form.fields["team"].queryset[0], self.teamA)
         self.assertEqual(form.fields["team"].queryset[1], self.teamB)
@@ -46,7 +45,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_events(self):
         """Events are sorted by id"""
-        form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
+        form = OrderForm(teams=Team.objects.all())
 
         self.assertEqual(form.fields["event"].queryset[0], self.eventC)
         self.assertEqual(form.fields["event"].queryset[1], self.eventB)
@@ -55,7 +54,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_products(self):
         """Products are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all(), states=Order.STATE_CHOICES)
+        form = OrderForm(teams=Team.objects.all())
 
         self.assertEqual(form.fields["product"].queryset[0], self.productA)
         self.assertEqual(form.fields["product"].queryset[1], self.productB)
@@ -66,69 +65,10 @@ class OrderFormTests(TestCase):
         form_data = {
             "product": self.productB.name,
             "team": self.teamB.id,
-            "state": "REQ",
             "event": self.eventA,
         }
-        form = OrderForm(
-            data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
-        )
+        form = OrderForm(data=form_data, teams=Team.objects.all())
         self.assertFalse(form.is_valid())
         form_data["amount"] = 1
-        form = OrderForm(
-            data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
-        )
-        self.assertTrue(form.is_valid())
-
-    def test_require_state(self):
-        self.client.login(username="helpdesk", password="test123")
-        url = reverse("orders:create_order")
-        response = self.client.post(
-            url, {"amount": 1, "product": self.productB.id, "team": self.teamB.id},
-        )
-        self.assertEqual(response.status_code, 200)
-        # TODO: why does this fail, but not the one below? something about the select?
-        # self.assertContains(response, '<select name="state" class="select form-control is-invalid" id="id_state">', html=True)
-        self.assertContains(
-            response,
-            b'<select name="state" class="select form-control is-invalid" id="id_state">',
-        )
-
-    def test_team_members_can_set_team(self):
-        form_data = {
-            "amount": 1,
-            "product": self.productB.name,
-            "team": self.teamB.id,
-            "state": "REQ",
-            "event": self.eventA,
-        }
-        form = OrderForm(
-            data=form_data,
-            teams=Team.objects.filter(id=self.teamB.id),
-            states=Order.STATE_CHOICES,
-        )
-        self.assertTrue(form.is_valid())
-
-    def test_non_team_members_can_not_set_team(self):
-        form_data = {
-            "amount": 1,
-            "product": self.productB.name,
-            "team": self.teamB.id,
-            "state": "REQ",
-        }
-        form = OrderForm(
-            data=form_data, teams=Team.objects.none(), states=Order.STATE_CHOICES
-        )
-        self.assertFalse(form.is_valid())
-
-    def test_valid_permission_can_set_team(self):
-        form_data = {
-            "amount": 1,
-            "product": self.productB.name,
-            "team": self.teamB.id,
-            "state": "REQ",
-            "event": self.eventA,
-        }
-        form = OrderForm(
-            data=form_data, teams=Team.objects.all(), states=Order.STATE_CHOICES
-        )
+        form = OrderForm(data=form_data, teams=Team.objects.all())
         self.assertTrue(form.is_valid())

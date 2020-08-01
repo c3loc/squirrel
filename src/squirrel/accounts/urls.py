@@ -5,7 +5,7 @@ app_name = "accounts"
 
 urlpatterns = [
     path("accounts", views.accounts, name="accounts"),
-    path("accounts/create", views.create_account, name="create_account"),
+    path("accounts/add", views.add_account, name="add_account"),
     path("accounts/<int:account_id>", views.change_account, name="change_account"),
     path(
         "accounts/<int:account_id>/delete", views.delete_account, name="delete_account"

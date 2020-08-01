@@ -5,7 +5,7 @@ app_name = "orders"
 
 urlpatterns = [
     path("orders", views.orders, name="orders"),
-    path("orders/create", views.create_order, name="create_order"),
+    path("orders/add", views.add_order, name="add_order"),
     path("orders/<int:order_id>", views.change_order, name="change_order"),
     path("orders/<int:order_id>/delete", views.delete_order, name="delete_order"),
     path("orders/export", views.export_orders_csv, name="export_orders_csv"),
@@ -28,7 +28,7 @@ urlpatterns = [
     path("events/<int:event_id>", views.event, name="edit_event"),
     path("events/delete/<int:event_id>", views.delete_event, name="delete_event"),
     path("purchases", views.purchases, name="purchases"),
-    path("purchases/new", views.purchase, name="create_purchase"),
+    path("purchases/new", views.purchase, name="add_purchase"),
     path("purchases/<int:purchase_id>", views.purchase, name="change_purchase"),
     path(
         "purchases/delete/<int:purchase_id>",
@@ -36,7 +36,7 @@ urlpatterns = [
         name="delete_purchase",
     ),
     path("stockpiles", views.stockpiles, name="stockpiles"),
-    path("stockpiles/create", views.create_stockpile, name="create_stockpile"),
+    path("stockpiles/add", views.add_stockpile, name="add_stockpile"),
     path(
         "stockpiles/<int:stockpile_id>", views.change_stockpile, name="change_stockpile"
     ),

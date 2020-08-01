@@ -1,6 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.core import mail
 from django.test import TestCase
 from django.urls import resolve, reverse
@@ -132,7 +132,9 @@ class PasswordChangeDoneTests(TestCase):
 
 class AuthenticatedFrontendViewTests(TestCase):
     def setUp(self) -> None:
-        User.objects.create_user(username="test", password="ufgdlneginetriunae")
+        user = User.objects.create_user(username="test", password="ufgdlneginetriunae")
+        user.user_permissions.add(Permission.objects.get(codename="view_order"))
+
         self.client.login(username="test", password="ufgdlneginetriunae")
 
     def test_logout_button(self):

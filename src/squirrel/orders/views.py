@@ -1,5 +1,6 @@
 import csv
 
+from decouple import config
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -330,8 +331,8 @@ def stockpiles(request):
 
 
 @login_required
-@permission_required("orders:create_stockpile", raise_exception=True)
-def create_stockpile(request):
+@permission_required("orders.add_stockpile", raise_exception=True)
+def add_stockpile(request):
     if request.method == "GET":
         return get_form(request, Stockpile, StockpileForm, None)
 
@@ -344,7 +345,7 @@ def create_stockpile(request):
 
 
 @login_required
-@permission_required("orders:change_stockpile", raise_exception=True)
+@permission_required("orders.change_stockpile", raise_exception=True)
 def change_stockpile(request, stockpile_id):
     if request.method == "GET":
         return get_form(request, Stockpile, StockpileForm, stockpile_id)
@@ -378,10 +379,13 @@ def orders(request):
 
 
 @login_required
-@permission_required("orders:create_order", raise_exception=True)
-def create_order(request):
+@permission_required("orders.add_order", raise_exception=True)
+def add_order(request):
     if request.method == "GET":
-        return get_form(request, Order, OrderForm, None)
+
+        event = Event.objects.get(name=config("DEFAULT_ORDER_EVENT", default=None))
+
+        return get_form(request, Order, OrderForm, None, form_initial={"event": event})
 
     if request.method == "POST":
         return post_form(request, Order, OrderForm, next_page="orders:orders")
@@ -390,7 +394,7 @@ def create_order(request):
 
 
 @login_required
-@permission_required("orders:change_order", raise_exception=True)
+@permission_required("orders.change_order", raise_exception=True)
 def change_order(request, order_id):
     if request.method == "GET":
         return get_form(request, Order, OrderForm, order_id)
@@ -466,8 +470,8 @@ def purchases(request):
 
 
 # @login_required
-# @permission_required("orders:create_purchase", raise_exception=True)
-# def create_purchase(request):
+# @permission_required("orders:add_purchase", raise_exception=True)
+# def add_purchase(request):
 #     if request.method == "GET":
 #         return get_form(request, Purchase, PurchaseForm, None)
 
