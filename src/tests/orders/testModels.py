@@ -33,12 +33,18 @@ class VendorModelTests(TestCase):
 
 class ProductModelTests(TestCase):
     def test_require_name(self):
-        """ test that a product needs to have a name """
+        """
+
+        test that a product needs to have a name """
         product = Product()
         self.assertRaises(IntegrityError, product.save)
 
     def test_rename_possible(self):
-        """ [regression] check that a product can be renamed. This broke when stockpiles referenced products by name, not by id """
+        """[regression] check that a product can be renamed
+
+        This broke when stockpiles referenced products
+        by name, not by id
+        """
         product = Product.objects.create(name="Rename me!")
         Stockpile.objects.create(product=product, amount=1, unit_price=499, tax=1.04)
 

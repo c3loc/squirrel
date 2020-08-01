@@ -68,7 +68,7 @@ class TransactionForm(forms.ModelForm):
         # Get all purchases where the difference of the abs(gross sum) to the transaction amount is less than a cent
         self.purchases_suggestion_choices = ()
         purchases = Purchase.objects.all()
-        for purchase in purchases:
+        for purchase in purchases:  # TODO: check Django money comparison accuracy
             if abs(self.instance.amount) - purchase.sum_gross <= Money(
                 0.01, currency="EUR"
             ) and abs(self.instance.amount) - purchase.sum_gross >= Money(
@@ -84,17 +84,18 @@ class TransactionForm(forms.ModelForm):
         fields = ["date", "amount", "description", "purchases", "account"]
 
     purchases_suggestion = forms.MultipleChoiceField(
-        help_text="This field only shows likely matching purchases. All purchases you select here are added to the saved purchases below.",
+        help_text="This field only shows likely matching purchases. All purchases you select "
+        "here are added to the saved purchases below.",
         required=False,
     )
 
     def save(self, *args, **kwargs):
-        # Get the IDs from all purchases in the „purchases“ field. This is needed because the Query to get the
-        # „purchases“ field is ordered and we can’t union queries with ORDER BY later on.
+        # Get the IDs from all purchases in the „purchases“ field. This is needed because the
+        # Query to get the „purchases“ field is ordered and we can’t union queries with ORDER BY later on.
         ids = [purchase.id for purchase in self.cleaned_data["purchases"]]
 
-        # Get all Purchases that are in the „purchases“ or „purchases_suggestion“ field and set the actual field to that
-        # queryset before saving
+        # Get all Purchases that are in the „purchases“ or „purchases_suggestion“ field and set
+        # the actual field to that queryset before saving
         self.cleaned_data["purchases"] = Purchase.objects.filter(
             id__in=ids + self.cleaned_data["purchases_suggestion"]
         )

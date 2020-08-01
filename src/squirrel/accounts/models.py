@@ -6,7 +6,8 @@ from squirrel.orders.models import Purchase
 
 
 class Account(models.Model):
-    """ A bank account """
+    """A bank account
+    """
 
     name = models.CharField(max_length=50, unique=True)
 
@@ -15,7 +16,8 @@ class Account(models.Model):
 
 
 class Transaction(models.Model):
-    """ A transaction on a bank account """
+    """A transaction on a bank account
+    """
 
     class Meta:
         ordering = ["date", "id"]

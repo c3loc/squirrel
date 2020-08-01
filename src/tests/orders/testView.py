@@ -74,7 +74,8 @@ class OrderViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<textarea name="comment" cols="30" rows="3" maxlength="1000" class="textarea form-control" id="id_comment">',
+            '<textarea name="comment" cols="30" rows="3" maxlength="1000" '
+            'class="textarea form-control" id="id_comment">',
         )
 
     def test_event_preset_by_setting(self):
