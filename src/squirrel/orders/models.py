@@ -247,8 +247,11 @@ class Stockpile(models.Model):
     )
 
     # The tax rate for the stockpile as a factor
-    tax = models.FloatField(
-        verbose_name="Tax rate", help_text="The tax rate as a factor of the net price"
+    tax = models.DecimalField(
+        max_digits=19,
+        decimal_places=4,
+        verbose_name="Tax rate",
+        help_text="The tax rate as a factor of the net price",
     )
 
     @property
