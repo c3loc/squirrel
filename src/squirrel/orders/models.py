@@ -203,7 +203,8 @@ class Order(models.Model):
 
     @property
     def to_pillage(self):
-        """ The amount of the order that has yet to be pillaged """
+        """The amount of the order that has yet to be pillaged
+        """
         return self.amount - (
             (self.pillage_set.all().aggregate(Sum("amount"))["amount__sum"] or 0)
         )

@@ -83,7 +83,8 @@ def delete_transaction(request, transaction_id):
 @login_required
 @permission_required("accounts.add_transaction", raise_exception=True)
 def import_transactions(request, account_id):
-    """Imports transactions for a specific account"""
+    """Imports transactions for a specific account
+    """
     if request.method == "GET":
         form = ImportTransactionsForm()
         return render(request, "instance.html", {"form": form})
