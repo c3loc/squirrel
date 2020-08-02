@@ -16,6 +16,11 @@ urlpatterns = [
         name="import_transactions",
     ),
     path(
+        "accounts/<int:account_id>/export-transaction-csv",
+        views.export_transaction_csv,
+        name="export_transaction_csv",
+    ),
+    path(
         "transactions/<int:transaction_id>",
         views.change_transaction,
         name="change_transaction",

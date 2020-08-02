@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from djmoney.money import Money
 from squirrel.accounts.forms import AccountForm, ImportTransactionsForm, TransactionForm
 from squirrel.accounts.models import Account, Transaction
+from squirrel.orders.models import Pillage, Stockpile
 from squirrel.util.views import get_form, post_form
 
 
@@ -116,3 +117,90 @@ def import_transactions(request, account_id):
         return redirect("accounts:accounts")
 
     return HttpResponse(status=405)
+
+
+@login_required
+@permission_required("accounts.view_transaction", raise_exception=True)
+def export_transaction_csv(request, account_id):
+    """Exports all transactions with related orders as csv
+    """
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type="text/csv")
+    response[
+        "Content-Disposition"
+    ] = 'attachment; filename="squirrel-transaction-export.csv"'
+
+    field_names = ["Date", "Description", "Transfer", "Deposit", "Withdrawal"]
+
+    lines = [field_names]
+
+    for transaction in Transaction.objects.filter(account=account_id):
+
+        lines.append(
+            [
+                transaction.date,
+                transaction.description,
+                "",  # Transfer is always empty
+                transaction.amount
+                if not transaction.amount < Money(0, currency="EUR")
+                else "",
+                transaction.amount
+                if transaction.amount < Money(0, currency="EUR")
+                else "",
+            ]
+        )
+
+        # If the transaction is a Deposit, continue - nobody pays for deposits
+        if not transaction.amount < Money(0, currency="EUR"):
+            continue
+
+        # for related orders with purchase/stockpile
+        team_amount = {}
+
+        for purchase in transaction.purchases.all():
+            stockpiles = Stockpile.objects.filter(purchase=purchase)
+
+            for stockpile in stockpiles:
+                for pillage in Pillage.objects.filter(stockpile=stockpile):
+                    if pillage.order.team in team_amount:
+                        old_amount = team_amount[pillage.order.team]
+                    else:
+                        old_amount = Money(0, currency="EUR")
+
+                    team_amount[pillage.order.team] = (
+                        old_amount
+                        + Money(
+                            pillage.amount
+                            * pillage.stockpile.unit_price.amount
+                            * pillage.stockpile.tax
+                            * (100 - purchase.rebate)
+                            / 100,
+                            currency="EUR",
+                        )
+                        if pillage.stockpile.purchase.is_net
+                        else Money(
+                            pillage.amount
+                            * pillage.stockpile.unit_price.amount
+                            * (100 - purchase.rebate)
+                            / 100,
+                            currency="EUR",
+                        )
+                    )
+
+        for team, amount in team_amount.items():
+            lines.append(
+                [
+                    "",  # Date
+                    team,  # Description
+                    "",  # Transfer
+                    "",  # Deposit
+                    amount * -1,
+                ]
+            )
+
+    writer = csv.writer(response)
+    for line in lines:
+        writer.writerow(line)
+
+    return response
