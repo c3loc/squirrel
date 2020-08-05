@@ -36,7 +36,7 @@ class OrderFormTests(TestCase):
 
     def test_sorted_teams(self):
         """Teams are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all())
+        form = OrderForm()
 
         self.assertEqual(form.fields["team"].queryset[0], self.teamA)
         self.assertEqual(form.fields["team"].queryset[1], self.teamB)
@@ -44,17 +44,17 @@ class OrderFormTests(TestCase):
         self.assertEqual(len(form.fields["team"].queryset), 3)
 
     def test_sorted_events(self):
-        """Events are sorted by id"""
-        form = OrderForm(teams=Team.objects.all())
+        """Events are sorted by name"""
+        form = OrderForm()
 
-        self.assertEqual(form.fields["event"].queryset[0], self.eventC)
+        self.assertEqual(form.fields["event"].queryset[0], self.eventA)
         self.assertEqual(form.fields["event"].queryset[1], self.eventB)
-        self.assertEqual(form.fields["event"].queryset[2], self.eventA)
+        self.assertEqual(form.fields["event"].queryset[2], self.eventC)
         self.assertEqual(len(form.fields["event"].queryset), 3)
 
     def test_sorted_products(self):
         """Products are sorted alphabetically"""
-        form = OrderForm(teams=Team.objects.all())
+        form = OrderForm()
 
         self.assertEqual(form.fields["product"].queryset[0], self.productA)
         self.assertEqual(form.fields["product"].queryset[1], self.productB)
@@ -63,12 +63,12 @@ class OrderFormTests(TestCase):
 
     def test_require_amount(self):
         form_data = {
-            "product": self.productB.name,
+            "product": self.productB,
             "team": self.teamB.id,
             "event": self.eventA,
         }
-        form = OrderForm(data=form_data, teams=Team.objects.all())
+        form = OrderForm(data=form_data)
         self.assertFalse(form.is_valid())
         form_data["amount"] = 1
-        form = OrderForm(data=form_data, teams=Team.objects.all())
+        form = OrderForm(data=form_data)
         self.assertTrue(form.is_valid())

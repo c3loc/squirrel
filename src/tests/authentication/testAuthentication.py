@@ -97,7 +97,6 @@ class PasswordChangeTests(TestCase):
         self.assertContains(self.response, "csrfmiddlewaretoken")
 
     def test_contains_form(self):
-        print(repr(self.response))
         form = self.response.context.get("form")
         self.assertIsInstance(form, PasswordChangeForm)
 

@@ -70,7 +70,6 @@ class OrderViewTests(TestCase):
         self.client.login(username="loc_engel", password="loc_engel")
         response = self.client.get(reverse("orders:add_order"))
 
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
@@ -98,8 +97,6 @@ class OrderViewTests(TestCase):
     #     self.client.login(username="loc_engel", password="loc_engel")
     #     response = self.client.get("/orders/new")
     #     self.assertEqual(response.status_code, 200)
-    #     print(response.status_code)
-    #     print(response.content)
     #     self.assertContains(response, '<option value="3" selected>42c3</option>')
 
     def test_event_no_event_defined(self):
