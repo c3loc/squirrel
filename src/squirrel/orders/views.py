@@ -383,7 +383,10 @@ def orders(request):
 def add_order(request):
     if request.method == "GET":
 
-        event = Event.objects.get(name=config("DEFAULT_ORDER_EVENT", default=None))
+        if config("DEFAULT_ORDER_EVENT", default=None):
+            event = Event.objects.get(name=config("DEFAULT_ORDER_EVENT"))
+        else:
+            event = None
 
         return get_form(request, Order, OrderForm, None, form_initial={"event": event})
 
